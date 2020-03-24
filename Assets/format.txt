@@ -1,0 +1,2 @@
+sizeX:sizeY, rabbit:pX:pY, grass:pX:pY
+sizeX:sizeY, rabbit:pX:pY, grass:pX:pY
