@@ -28,7 +28,6 @@ namespace World
                     objectsNames.Add(opt[0].Trim());
                     objectsPositions.Add(new Vector3(int.Parse(opt[1]), 0f, int.Parse(opt[2])));
                 }
-                Debug.Log(objectsNames.Count);
 
             } catch (System.Exception e)
             {
@@ -42,7 +41,7 @@ namespace World
             World world = worldGO.GetComponent<World>();
 
             world.size = size;
-            world.transform.position = position;
+            world.transform.Translate(position);
 
             for (int i=0; i<objectsNames.Count; i++)
             {
@@ -50,13 +49,15 @@ namespace World
                 prefabs.TryGetValue(objectsNames[i], out prefab);
                 if(objectsNames[i] == "rabbit")
                 {
-                    Debug.Log("Rabbit: " + objectsPositions[i]);
                     world.AddRabbit(prefab, objectsPositions[i]);
+                } else if (objectsNames[i] == "grass")
+                {
+                    world.AddGrass(prefab, objectsPositions[i]);
                 }
             }
 
             world.Apply();
-            return position;
+            return size;
         }
 
         public Vector2 ResetWorld(GameObject world, Vector3 position, Transform parent, SimulationObjectPrefab[] prefabs)

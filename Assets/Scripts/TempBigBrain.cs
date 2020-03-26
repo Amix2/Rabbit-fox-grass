@@ -3,8 +3,8 @@ using UnityEditor;
 
 public class TempBigBrain : IBigBrain
 {
-    public Vector2 GetDecision(float[] inputs)
+    public Vector3 GetDecision(float[] inputs)
     {
-        return new Vector2(0.5f, 0.5f);
+        return new Vector3(0.5f, 0f, 0.5f);
     }
 }

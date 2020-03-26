@@ -1,75 +1,133 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace World
 {
-
     public class WorldCreator : MonoBehaviour
     {
         public GameObject worldPrefab;
         public SimulationObjectPrefab[] objectPrefabs;
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
+        public bool fastMode = false;
 
-        IBigBrain bigBrain;
-        List<WorldBuilder> worldOptions;
-        List<GameObject> worldGameObjects;
-        List<World> worlds;
-        public Dictionary<string, GameObject> prefabs;
+        private IBigBrain bigBrain;
+        private List<WorldBuilder> worldOptions;
+        private List<GameObject> worldGameObjects;
+        private List<World> worlds;
+        private Dictionary<string, GameObject> prefabs;
+        private Vector2Int size;
+        private float gapBetweenWorlds;
 
-        void Start()
+        private void Start()
         {
-            bigBrain = new TempBigBrain();
-            worldGameObjects = new List<GameObject>();
-            worlds = new List<World>();
-            prefabs = new Dictionary<string, GameObject>();
+            gapBetweenWorlds = 1;
+            // Create field objects
+            InitResources();
+            // Fill List<WorldBuilder> worldOptions from input file (TextAsset worldDefinitionFile)
+            ParseInputFile();
+            // Create worlds based on int numberOfWorldsToCreate
+            CreateAllWorlds();
+        }
 
-            foreach(var prefabInfo in objectPrefabs)
+        private void CreateAllWorlds()
+        {
+            Vector3 offset = Vector3.zero;  // offset to bottom-left corner
+            int worldsOnX = 0;
+            for (int i = 0; i < numberOfWorldsToCreate; i++)
             {
-                prefabs.Add(prefabInfo.name, prefabInfo.prefab);
+                GameObject world = CreateWorld(ref offset, ref worldsOnX, i);
+                worldGameObjects.Add(world);
+                world.GetComponent<World>().bigBrain = bigBrain;
+                worlds.Add(world.GetComponent<World>());
             }
+        }
 
-            worldOptions = new List<WorldBuilder>();
+        private GameObject CreateWorld(ref Vector3 offset, ref int worldsOnX, int i)
+        {
+            int builderIndex = Random.Range(0, worldOptions.Count);
+            WorldBuilder builder = worldOptions[builderIndex];
+            GameObject world = Instantiate(worldPrefab);
+            world.name = "World_" + i;
+            var lastSize = builder.CreateWorld(world, offset, null, prefabs);   // Apply setup from file to giver world
+            worldsOnX++;
+            offset.x += gapBetweenWorlds + lastSize.x;
+            if (worldsOnX >= size.x)    // Start new row
+            {
+                offset.x = 0;
+                offset.z += gapBetweenWorlds + lastSize.y;
+                worldsOnX = 0;
+            }
+            return world;
+        }
+
+        private void ParseInputFile()
+        {
             foreach (var line in worldDefinitionFile.text.Split('\n'))
             {
                 try
                 {
                     worldOptions.Add(new WorldBuilder(line));
-                } catch (System.Exception e)
+                }
+                catch (System.Exception e)
                 {
                     Debug.LogError(e);
                 }
             }
-
-            for(int i=0; i<numberOfWorldsToCreate; i++)
-            {
-                int builderIndex = Random.Range(0, worldOptions.Count - 1);
-                WorldBuilder builder = worldOptions[builderIndex];
-                GameObject world = Instantiate(worldPrefab);
-                world.name = "World_" + i;
-                builder.CreateWorld(world, Vector3.zero, null, prefabs);
-
-                worldGameObjects.Add(world);
-                worlds.Add(world.GetComponent<World>());
-            }
         }
 
-        void UpdateAllWorlds()
+        private void InitResources()
         {
-            foreach(World world in worlds)
+            bigBrain = new TempBigBrain();
+            worldGameObjects = new List<GameObject>();
+            worlds = new List<World>();
+            prefabs = new Dictionary<string, GameObject>();
+            worldOptions = new List<WorldBuilder>();
+
+            foreach (var prefabInfo in objectPrefabs)
+            {
+                prefabs.Add(prefabInfo.name, prefabInfo.prefab);
+            }
+
+            size = CalculateSize(numberOfWorldsToCreate);
+        }
+
+        private void UpdateAllWorlds()
+        {
+            foreach (World world in worlds)
             {
                 world.UpdateBehaviour();
             }
         }
+
+        private void FixedUpdate()
+        {
+            if (!fastMode)
+            {
+                UpdateAllWorlds();
+            }
+        }
+
+        private void Update()
+        {
+            if (fastMode)
+            {
+                UpdateAllWorlds();
+            }
+        }
+
+        private Vector2Int CalculateSize(int numOfWorlds)
+        {
+            for (int d = (int)Mathf.Sqrt(numOfWorlds); d > 1; d--)
+            {
+                if (d * (numOfWorlds / d) == numOfWorlds)
+                {
+                    return new Vector2Int(numOfWorlds / d, d);
+                }
+            }
+            return new Vector2Int(numOfWorlds, 1);
+        }
     }
-
-   
-
-
-
-
-
 
     [System.Serializable]
     public struct SimulationObjectPrefab
@@ -77,5 +135,4 @@ namespace World
         public string name;
         public GameObject prefab;
     }
-
 }

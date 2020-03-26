@@ -27,5 +27,6 @@ public class Player
     public float cameraMoveSensitivity = 0.001f;
     public float cameraScrollSensitivity = 0.1f;
     public float cameraRotateSensitivity = 500f;
+    public float animalViewRange = 10f;
 }
 

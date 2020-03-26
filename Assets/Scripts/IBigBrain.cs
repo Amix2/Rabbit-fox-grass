@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IBigBrain
 {
-    Vector2 GetDecision(float[] inputs);
+    Vector3 GetDecision(float[] inputs);
 }

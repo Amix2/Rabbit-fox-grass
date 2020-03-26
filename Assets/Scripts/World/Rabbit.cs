@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Rabbit : MonoBehaviour
+public class Rabbit : Animal
 {
 
 }
