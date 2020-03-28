@@ -207,7 +207,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh13952
+  m_Name: pb_Mesh13950
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -698,7 +698,7 @@ MonoBehaviour:
     prefab: {fileID: 7695852279255118766, guid: dece207615384e146a4ecd312b4bdf3e,
       type: 3}
   worldDefinitionFile: {fileID: 4900000, guid: 3b86f657692996945a8651c011c79376, type: 3}
-  numberOfWorldsToCreate: 1
+  numberOfWorldsToCreate: 20
   fastMode: 0
 --- !u!4 &758577819
 Transform:

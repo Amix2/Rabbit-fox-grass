@@ -1,15 +1,13 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace World
 {
-
     internal class WorldBuilder
     {
-        Vector2Int size;
-        List<string> objectsNames;
-        List<Vector3> objectsPositions;
+        private Vector2Int size;
+        private readonly List<string> objectsNames;
+        private readonly List<Vector3> objectsPositions;
 
         public WorldBuilder(string options)
         {
@@ -26,14 +24,13 @@ namespace World
                 {
                     string[] opt = optionsArr[i].Trim().Split(':');
                     objectsNames.Add(opt[0].Trim());
-                    objectsPositions.Add(new Vector3(int.Parse(opt[1]), 0f, int.Parse(opt[2])));
+                    objectsPositions.Add(new Vector3(int.Parse(opt[1]) + 0.5f, 0f, int.Parse(opt[2]) + 0.5f));
                 }
-
-            } catch (System.Exception e)
+            }
+            catch (System.Exception e)
             {
                 throw new System.Exception(options + " is not valid world definition, error: " + e.Message);
             }
-
         }
 
         public Vector2 CreateWorld(GameObject worldGO, Vector3 position, Transform parent, Dictionary<string, GameObject> prefabs)
@@ -43,14 +40,15 @@ namespace World
             world.size = size;
             world.transform.Translate(position);
 
-            for (int i=0; i<objectsNames.Count; i++)
+            for (int i = 0; i < objectsNames.Count; i++)
             {
                 GameObject prefab;
                 prefabs.TryGetValue(objectsNames[i], out prefab);
-                if(objectsNames[i] == "rabbit")
+                if (objectsNames[i] == "rabbit")
                 {
                     world.AddRabbit(prefab, objectsPositions[i]);
-                } else if (objectsNames[i] == "grass")
+                }
+                else if (objectsNames[i] == "grass")
                 {
                     world.AddGrass(prefab, objectsPositions[i]);
                 }

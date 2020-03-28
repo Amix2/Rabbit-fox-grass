@@ -17,6 +17,7 @@ public class Animal : MonoBehaviour
 
             num++;
         }
+        print(num);
         velocity = brain.GetDecision(inputs);
     }
 
@@ -26,11 +27,13 @@ public class Animal : MonoBehaviour
     }
 
     private void Update()
-    { 
-        if (transform.localPosition.x <= 0 || transform.localPosition.x >= worldSize.x-1) velocity.x = 0;
-        if (transform.localPosition.z <= 0 || transform.localPosition.z >= worldSize.y-1) velocity.z = 0;
-        if (velocity.sqrMagnitude > 0) transform.forward = velocity.normalized;
-        transform.Translate(velocity * Time.deltaTime);
+    {
+        var newPosition = transform.localPosition + (velocity * Time.deltaTime);
+        newPosition.x = Mathf.Clamp(newPosition.x, 0.5f, worldSize.x - 0.5f);
+        newPosition.z = Mathf.Clamp(newPosition.z, 0.5f, worldSize.y - 0.5f);
+        if ((newPosition - transform.localPosition).sqrMagnitude > 0) transform.forward = (newPosition - transform.localPosition).normalized;
+        transform.localPosition = newPosition;
+        Debug.DrawRay(transform.position, velocity);
     }
 
 }

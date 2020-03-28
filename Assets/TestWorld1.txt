@@ -1,3 +1,2 @@
-6:5, rabbit:2:2, grass:0:0
-6:5, rabbit:3:2, grass:5:0
-6:5, rabbit:2:3, grass:0:3
+6:5, rabbit:0:0, rabbit:5:0, rabbit:0:4,  rabbit:5:4
+6:5, grass:0:0, grass:5:0, grass:0:4,  grass:5:4

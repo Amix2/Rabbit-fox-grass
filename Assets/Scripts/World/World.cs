@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace World
@@ -40,17 +39,17 @@ namespace World
             grassList.Add(grassGO.GetComponent<Grass>());
         }
 
-        GameObject AddGameObject(GameObject prefab, Vector3 position)
+        private GameObject AddGameObject(GameObject prefab, Vector3 position)
         {
             var obj = Instantiate(prefab, transform);
-            obj.transform.Translate(position);
+            obj.transform.localPosition = position;
             return obj;
         }
 
 
         public void UpdateBehaviour()
         {
-            foreach(var rabbit in rabbitList)
+            foreach (var rabbit in rabbitList)
             {
                 rabbit.UpdateBehaviour(bigBrain);
             }
