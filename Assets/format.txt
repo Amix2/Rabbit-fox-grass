@@ -1,2 +1,1 @@
-sizeX:sizeY, rabbit:pX:pY, grass:pX:pY
-sizeX:sizeY, rabbit:pX:pY, grass:pX:pY
+sizeX,sizeY | <animal> : 1 : position :  1,2 - 2,3 - 3,4 

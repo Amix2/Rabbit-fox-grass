@@ -1,2 +1,1 @@
-6:5, rabbit:0:0, rabbit:5:0, rabbit:0:4,  rabbit:5:4
-6:5, grass:0:0, grass:5:0, grass:0:4,  grass:5:4
+7,7 | rabbit : 1 : position : 3,3 | grass : 1 : position : 2,2 - 3,2 - 4,2 - 4,3 - 4,4 - 3,4 - 2,4  - 2,3  

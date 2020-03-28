@@ -46,7 +46,6 @@ namespace World
             return obj;
         }
 
-
         public void UpdateBehaviour()
         {
             foreach (var rabbit in rabbitList)

@@ -9,7 +9,6 @@ namespace World
         public SimulationObjectPrefab[] objectPrefabs;
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
-        public bool fastMode = false;
 
         private IBigBrain bigBrain;
         private List<WorldBuilder> worldOptions;
@@ -65,14 +64,14 @@ namespace World
         {
             foreach (var line in worldDefinitionFile.text.Split('\n'))
             {
-                try
-                {
+                //try
+                //{
                     worldOptions.Add(new WorldBuilder(line));
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError(e);
-                }
+                //}
+                //catch (System.Exception e)
+                //{
+                //    Debug.LogError(e);
+                //}
             }
         }
 
@@ -92,7 +91,7 @@ namespace World
             size = CalculateSize(numberOfWorldsToCreate);
         }
 
-        private void UpdateAllWorlds()
+        private void UpdateBehaviourAllWorlds()
         {
             foreach (World world in worlds)
             {
@@ -102,17 +101,17 @@ namespace World
 
         private void FixedUpdate()
         {
-            if (!fastMode)
+            if (!Settings.Player.fastTrainingMode)
             {
-                UpdateAllWorlds();
+                UpdateBehaviourAllWorlds();
             }
         }
 
         private void Update()
         {
-            if (fastMode)
+            if (Settings.Player.fastTrainingMode)
             {
-                UpdateAllWorlds();
+                UpdateBehaviourAllWorlds();
             }
         }
 

@@ -28,5 +28,7 @@ public class Player
     public float cameraScrollSensitivity = 0.1f;
     public float cameraRotateSensitivity = 500f;
     public float animalViewRange = 10f;
+    public bool fastTrainingMode = false;
+    public string[] allowedObjectNames;
 }
 

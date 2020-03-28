@@ -70,6 +70,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Demo White Rabbit
       objectReference: {fileID: 0}
+    - target: {fileID: 1115346038830892, guid: 3f9dcd6bf73fe2f40806fb0074f456c4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4787067198595134, guid: 3f9dcd6bf73fe2f40806fb0074f456c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -125,6 +129,16 @@ PrefabInstance:
     - target: {fileID: 4787067198595134, guid: 3f9dcd6bf73fe2f40806fb0074f456c4, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 95476112841948836, guid: 3f9dcd6bf73fe2f40806fb0074f456c4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114735056877410658, guid: 3f9dcd6bf73fe2f40806fb0074f456c4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f9dcd6bf73fe2f40806fb0074f456c4, type: 3}
