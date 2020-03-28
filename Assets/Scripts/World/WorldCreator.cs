@@ -46,7 +46,7 @@ namespace World
         {
             int builderIndex = Random.Range(0, worldOptions.Count);
             WorldBuilder builder = worldOptions[builderIndex];
-            GameObject world = Instantiate(worldPrefab);
+            GameObject world = Instantiate(worldPrefab, this.transform);
             world.name = "World_" + i;
             var lastSize = builder.CreateWorld(world, offset, null, prefabs);   // Apply setup from file to giver world
             worldsOnX++;
@@ -64,14 +64,14 @@ namespace World
         {
             foreach (var line in worldDefinitionFile.text.Split('\n'))
             {
-                //try
-                //{
+                try
+                {
                     worldOptions.Add(new WorldBuilder(line));
-                //}
-                //catch (System.Exception e)
-                //{
-                //    Debug.LogError(e);
-                //}
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError(e);
+                }
             }
         }
 

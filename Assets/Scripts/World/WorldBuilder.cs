@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 namespace World
 {
@@ -11,42 +11,52 @@ namespace World
         private readonly List<int> objectsCount;
         private readonly List<PositionSelector> objectsPositions;
 
-
-        public WorldBuilder(string options)
+        public WorldBuilder(string options) // example options = " 7,7 | rabbit : 1 : position : 3,3 | grass : 1 : position : 2,2 - 3,2 - 4,2 - 4,3 - 4,4 - 3,4 - 2,4  - 2,3 "
         {
-            //try
-            //{
-            objectsNames = new List<string>();
-            objectsPositions = new List<PositionSelector>();
-            objectsCount = new List<int>();
-
-            string[] optionsArr = options.Split('|');
-
-            string[] sizeStr = optionsArr[0].Trim().Split(',');
-            size = new Vector2Int(int.Parse(sizeStr[0]), int.Parse(sizeStr[1]));
-            for (int i = 1; i < optionsArr.Length; i++)
+            try
             {
-                string[] option = optionsArr[i].Trim().Split(':');
-                if(! Settings.Player.allowedObjectNames.Contains(option[0].Trim()))
+                objectsNames = new List<string>();
+                objectsPositions = new List<PositionSelector>();
+                objectsCount = new List<int>();
+
+                string[] optionsArr = options.Split('|');
+
+                // parse size, first parameter
+                string[] sizeStr = optionsArr[0].Split(',');
+                size = new Vector2Int(int.Parse(sizeStr[0]), int.Parse(sizeStr[1]));
+
+                // parse other, one by one
+                for (int i = 1; i < optionsArr.Length; i++)
                 {
-                    throw new System.Exception(option[0] + " is not valid object name");
-                }
-                objectsNames.Add(option[0].Trim());
-                objectsCount.Add(int.Parse(option[1]));
-                if (option[2].Trim() == "position")
-                {
-                    objectsPositions.Add(PositionSelector.FromList(option[3]));
-                }
-                else
-                {
-                    throw new System.Exception(option[2] + " is not valid input type");
+                    ParseOneOption(optionsArr, i);
                 }
             }
-            //}
-            //catch (System.Exception e)
-            //{
-            //    throw new System.Exception(options + " is not valid world definition, error: " + e.Message);
-            //}
+            catch (System.Exception e)
+            {
+                throw new System.Exception(options + " is not valid world definition, error: " + e.Message);
+            }
+        }
+
+        private void ParseOneOption(string[] optionsArr, int i)
+        {
+            string[] option = optionsArr[i].Split(':');
+
+            // check if object name is allowed (set allowed in Settings)
+            if (!Settings.Player.allowedObjectNames.Contains(option[0].Trim()))
+            {
+                throw new System.Exception(option[0] + " is not valid object name");
+            }
+
+            objectsNames.Add(option[0].Trim());
+            objectsCount.Add(int.Parse(option[1]));
+            if (option[2].Trim() == "position")
+            {
+                objectsPositions.Add(PositionSelector.FromList(option[3]));
+            }
+            else
+            {
+                throw new System.Exception(option[2] + " is not valid input type");
+            }
         }
 
         public Vector2 CreateWorld(GameObject worldGO, Vector3 position, Transform parent, Dictionary<string, GameObject> prefabs)
@@ -59,7 +69,7 @@ namespace World
             {
                 GameObject prefab;
                 prefabs.TryGetValue(objectsNames[i], out prefab);
-                for(int c=0; c<objectsCount[i]; c++)
+                for (int c = 0; c < objectsCount[i]; c++)
                 {
                     if (objectsNames[i] == "rabbit")
                     {
@@ -83,10 +93,10 @@ namespace World
     }
 }
 
-class PositionSelector
+internal class PositionSelector
 {
-    Vector2[] positions;
-    int ind = 0;
+    private Vector2[] positions;
+    private int ind = 0;
 
     public static PositionSelector FromList(string list)
     {
@@ -99,7 +109,7 @@ class PositionSelector
         return selector;
     }
 
-    PositionSelector(int size)
+    private PositionSelector(int size)
     {
         positions = new Vector2[size];
     }
@@ -110,8 +120,7 @@ class PositionSelector
         return new Vector3(retPos.x, 0f, retPos.y);
     }
 
-
-    void AddPosition(Vector2 pos)
+    private void AddPosition(Vector2 pos)
     {
         positions[ind] = pos;
         ind++;
