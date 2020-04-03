@@ -9,6 +9,7 @@ namespace World
         public SimulationObjectPrefab[] objectPrefabs;
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
+        public FitnessCalculatorOptions fitnessFunction;
 
         private IBigBrain bigBrain;
         private List<WorldBuilder> worldOptions;
@@ -17,10 +18,12 @@ namespace World
         private Dictionary<string, GameObject> prefabs;
         private Vector2Int size;
         private float gapBetweenWorlds;
+        private IFitnessCalculator fitnessCalculator;
 
         private void Start()
         {
             gapBetweenWorlds = 1;
+            fitnessCalculator = fitnessFunction.GetCalculator();
             // Create field objects
             InitResources();
             // Fill List<WorldBuilder> worldOptions from input file (TextAsset worldDefinitionFile)
@@ -37,17 +40,17 @@ namespace World
             {
                 GameObject world = CreateWorld(ref offset, ref worldsOnX, i);
                 worldGameObjects.Add(world);
-                world.GetComponent<World>().bigBrain = bigBrain;
                 worlds.Add(world.GetComponent<World>());
             }
         }
 
-        private GameObject CreateWorld(ref Vector3 offset, ref int worldsOnX, int i)
+        private GameObject CreateWorld(ref Vector3 offset, ref int worldsOnX, int index)
         {
             int builderIndex = Random.Range(0, worldOptions.Count);
             WorldBuilder builder = worldOptions[builderIndex];
             GameObject world = Instantiate(worldPrefab, this.transform);
-            world.name = "World_" + i;
+            world.name = "World_" + index;
+            world.GetComponent<World>().bigBrain = bigBrain;
             var lastSize = builder.CreateWorld(world, offset, null, prefabs);   // Apply setup from file to giver world
             worldsOnX++;
             offset.x += gapBetweenWorlds + lastSize.x;
@@ -91,11 +94,28 @@ namespace World
             size = CalculateSize(numberOfWorldsToCreate);
         }
 
-        private void UpdateBehaviourAllWorlds()
+        private bool UpdateBehaviourAllWorlds()
         {
-            foreach (World world in worlds)
+            for (int i=0; i<worlds.Count; i++)
             {
-                world.UpdateBehaviour();
+                var alive = worlds[i].UpdateTurn();
+                if (!alive)
+                {
+                    print(fitnessCalculator.CalculateFitness(worlds[i].History));
+                    Destroy(worlds[i].gameObject);
+                    worlds.RemoveAt(i);
+                    i--;
+                }
+            }
+            return worlds.Count > 0;
+        }
+
+        private void UpdateAllWorlds()
+        {
+            var anyWorldsLeft = UpdateBehaviourAllWorlds();
+            if(!anyWorldsLeft)
+            {
+                CreateAllWorlds();
             }
         }
 
@@ -103,7 +123,7 @@ namespace World
         {
             if (!Settings.Player.fastTrainingMode)
             {
-                UpdateBehaviourAllWorlds();
+                UpdateAllWorlds();
             }
         }
 
@@ -111,7 +131,7 @@ namespace World
         {
             if (Settings.Player.fastTrainingMode)
             {
-                UpdateBehaviourAllWorlds();
+                UpdateAllWorlds();
             }
         }
 

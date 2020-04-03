@@ -42,21 +42,16 @@ namespace World
             string[] option = optionsArr[i].Split(':');
 
             // check if object name is allowed (set allowed in Settings)
-            if (!Settings.Player.allowedObjectNames.Contains(option[0].Trim()))
-            {
+            if (!Settings.World.allowedObjectNames.Contains(option[0].Trim()))
                 throw new System.Exception(option[0] + " is not valid object name");
-            }
 
             objectsNames.Add(option[0].Trim());
             objectsCount.Add(int.Parse(option[1]));
+
             if (option[2].Trim() == "position")
-            {
                 objectsPositions.Add(PositionSelector.FromList(option[3]));
-            }
             else
-            {
                 throw new System.Exception(option[2] + " is not valid input type");
-            }
         }
 
         public Vector2 CreateWorld(GameObject worldGO, Vector3 position, Transform parent, Dictionary<string, GameObject> prefabs)
@@ -69,7 +64,7 @@ namespace World
             {
                 GameObject prefab;
                 prefabs.TryGetValue(objectsNames[i], out prefab);
-                for (int c = 0; c < objectsCount[i]; c++)
+                for (int c = 0; c < objectsCount[i]; c++)   // spawn required amount of objects in random position from given list
                 {
                     if (objectsNames[i] == "rabbit")
                     {
