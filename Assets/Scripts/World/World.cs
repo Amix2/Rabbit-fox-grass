@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace World
 {
     public class World : MonoBehaviour
     {
-        public IBigBrain bigBrain;
         public Vector2Int size;
 
         private List<Rabbit> rabbitList;
@@ -29,6 +29,8 @@ namespace World
             var rabbitGO = AddGameObject(prefab, position);
             rabbitGO.name = "Rabbit_" + rabbitList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = size;
+            rabbitGO.GetComponent<Rabbit>().Brain = new NeuralNetwork(Settings.Player.neuralNetworkLayers);
+            new Vector3(transform.position.x, transform.position.y, transform.position.z);
             rabbitList.Add(rabbitGO.GetComponent<Rabbit>());
         }
 
@@ -50,7 +52,7 @@ namespace World
         {
             foreach (var rabbit in rabbitList)
             {
-                rabbit.UpdateBehaviour(bigBrain);
+                rabbit.UpdateBehaviour();
             }
         }
     }

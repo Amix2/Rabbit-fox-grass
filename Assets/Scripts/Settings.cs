@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Settings : MonoBehaviour
 {
-
     public Player player;
+
     public static Player Player
     {
         get { return instance.player; }
@@ -13,11 +13,11 @@ public class Settings : MonoBehaviour
 
 
     private static Settings instance;
+
     private void Awake()
     {
         instance = this;
     }
-
 }
 
 [System.Serializable]
@@ -30,5 +30,5 @@ public class Player
     public float animalViewRange = 10f;
     public bool fastTrainingMode = false;
     public string[] allowedObjectNames;
+    public int[] neuralNetworkLayers = new[] {2, 10, 10, 2};
 }
-

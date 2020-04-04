@@ -2,23 +2,32 @@
 
 public class Animal : MonoBehaviour
 {
-    private Vector3 velocity = Vector3.zero;
-    public Vector2Int worldSize;
+    public IBigBrain Brain
+    {
+        get => _brain;
+        set => _brain = value;
+    }
 
+    public Vector2Int worldSize;
+    private IBigBrain _brain;
+    private Vector3 velocity = Vector3.zero;
     private float lastUpdateTime;
 
-    public void UpdateBehaviour(IBigBrain brain)
+    public void UpdateBehaviour()
     {
-        float[] inputs = null;
         var colliders = Physics.OverlapSphere(transform.position, Settings.Player.animalViewRange);
         int num = 0;
         foreach (var collider in colliders)
         {
-            if (collider.gameObject.transform == transform || collider.gameObject.transform.parent != transform.parent) continue;
+            if (collider.gameObject.transform == transform ||
+                collider.gameObject.transform.parent != transform.parent) continue;
 
             num++;
         }
-        Vector3 decision = brain.GetDecision(inputs);
+
+        var inputs = new[] {transform.localPosition.x / worldSize.x, transform.localPosition.z / worldSize.y};
+        Vector3 decision = _brain.GetDecision(inputs);
+        
         if (Settings.Player.fastTrainingMode)
         {
             velocity = decision * Time.fixedDeltaTime / (Time.time - lastUpdateTime);
@@ -29,6 +38,7 @@ public class Animal : MonoBehaviour
             velocity = decision;
         }
     }
+
 
     private void Start()
     {

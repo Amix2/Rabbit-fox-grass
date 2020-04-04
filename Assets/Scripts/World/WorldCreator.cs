@@ -9,8 +9,7 @@ namespace World
         public SimulationObjectPrefab[] objectPrefabs;
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
-
-        private IBigBrain bigBrain;
+        
         private List<WorldBuilder> worldOptions;
         private List<GameObject> worldGameObjects;
         private List<World> worlds;
@@ -37,7 +36,6 @@ namespace World
             {
                 GameObject world = CreateWorld(ref offset, ref worldsOnX, i);
                 worldGameObjects.Add(world);
-                world.GetComponent<World>().bigBrain = bigBrain;
                 worlds.Add(world.GetComponent<World>());
             }
         }
@@ -77,7 +75,6 @@ namespace World
 
         private void InitResources()
         {
-            bigBrain = new TempBigBrain();
             worldGameObjects = new List<GameObject>();
             worlds = new List<World>();
             prefabs = new Dictionary<string, GameObject>();

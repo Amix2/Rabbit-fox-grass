@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using NumSharp;
 using UnityEngine;
 
 public interface IBigBrain
 {
-    Vector3 GetDecision(float[] inputs);
+    Vector3 GetDecision(NDArray inputs);
 }
