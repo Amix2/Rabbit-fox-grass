@@ -8,10 +8,17 @@ public class Animal : MonoBehaviour
         set => _brain = value;
     }
 
+    public float Health => _health;
+    public int Score => _score;
+    public bool IsAlive => _health > 0;
+
     public Vector2Int worldSize;
     private IBigBrain _brain;
+    private float _health = 1.0f;
+    private int _score = 0;
     private Vector3 velocity = Vector3.zero;
     private float lastUpdateTime;
+
 
     public void UpdateBehaviour()
     {
@@ -27,7 +34,7 @@ public class Animal : MonoBehaviour
 
         var inputs = new[] {transform.localPosition.x / worldSize.x, transform.localPosition.z / worldSize.y};
         Vector3 decision = _brain.GetDecision(inputs);
-        
+
         if (Settings.Player.fastTrainingMode)
         {
             velocity = decision * Time.fixedDeltaTime / (Time.time - lastUpdateTime);
@@ -38,7 +45,6 @@ public class Animal : MonoBehaviour
             velocity = decision;
         }
     }
-
 
     private void Start()
     {
@@ -52,6 +58,8 @@ public class Animal : MonoBehaviour
 
     private void Update()
     {
+        if (!IsAlive) return;
+
         var newPosition = transform.localPosition + (velocity * Time.deltaTime);
         newPosition.x = Mathf.Clamp(newPosition.x, 0.5f, worldSize.x - 0.5f);
         newPosition.z = Mathf.Clamp(newPosition.z, 0.5f, worldSize.y - 0.5f);
@@ -60,5 +68,9 @@ public class Animal : MonoBehaviour
         if (velocity.sqrMagnitude > 0) transform.forward = velocity.normalized;
 
         transform.localPosition = newPosition;
+
+        _health -= Settings.Player.healthLosePerTick;
+        if (IsAlive) _score++;
+        else gameObject.SetActive(false);
     }
 }

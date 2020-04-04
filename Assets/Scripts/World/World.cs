@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace World
@@ -50,10 +51,23 @@ namespace World
 
         public void UpdateBehaviour()
         {
-            foreach (var rabbit in rabbitList)
+            if (IsAnyAnimalAlive())
             {
-                rabbit.UpdateBehaviour();
+                foreach (var rabbit in rabbitList)
+                {
+                    if (rabbit.IsAlive)
+                        rabbit.UpdateBehaviour();
+                }
             }
+            else
+            {
+                Debug.Log("All animals are dead");
+            }
+        }
+
+        private bool IsAnyAnimalAlive()
+        {
+            return rabbitList.Any(rabbit => rabbit.IsAlive);
         }
     }
 }
