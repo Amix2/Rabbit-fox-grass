@@ -14,8 +14,10 @@ namespace World
 
         public static float deltaTime;
 
-        private List<Rabbit> rabbitList;
-        private List<Grass> grassList;
+        public List<Rabbit> rabbitList;
+        public List<Grass> grassList;
+
+        private ConcurrentBag<Rabbit> deadRabbits;
 
         private WorldHistory history;
         public WorldHistory History
@@ -30,7 +32,50 @@ namespace World
             rabbitList = new List<Rabbit>();
             grassList = new List<Grass>();
             history = new WorldHistory();
+            deadRabbits = new ConcurrentBag<Rabbit>();
         }
+
+        public void HandleDeath(Rabbit rabbit)
+        {
+            deadRabbits.Add(rabbit);
+        }
+
+        /// <summary>
+        /// Destroy dead animals
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateTurn()
+        {
+            history.lifeTime++;
+            if (rabbitList.Count == deadRabbits.Count) return false;
+
+            while(deadRabbits.TryTake(out Rabbit deadRabbit))
+            {
+                history.RabbitDeath(deadRabbit.Position);
+                Destroy(deadRabbit.gameObject);
+                rabbitList.Remove(deadRabbit);
+            }
+
+            return true;
+
+        }
+
+        private void Start()
+        {
+            if (Settings.Player.renderOptions == RenderOptions.None)
+            {
+                foreach (Transform eachChild in transform)
+                {
+                    if (eachChild.name == "Model")
+                    {
+                        eachChild.gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+
+        //////////////////////////////////////////
+        /// Setup
 
         public void Apply()
         {
@@ -62,109 +107,6 @@ namespace World
             var obj = Instantiate(prefab, transform);
             obj.transform.localPosition = position;
             return obj;
-        }
-
-        public bool UpdateTurn()
-        {
-            history.lifeTime++;
-
-            float sqrViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
-            int initialListSize = Mathf.Min((int)Settings.World.animalViewRange, grassList.Count);
-
-                Profiler.BeginSample("rabbit neighbours parallel");
-            FillAllRabbitsPrayPredatorParallel(sqrViewRange, initialListSize);
-                Profiler.EndSample();
-
-                Profiler.BeginSample("rabbit nei normal");
-            FillAllRabbitsPrayPredatorLinear(sqrViewRange, initialListSize);
-                Profiler.EndSample();
-
-            Profiler.BeginSample("rabbit linear");
-            for (int i = 0; i < rabbitList.Count; i++)
-            {
-                var alive = rabbitList[i].UpdateTurn();
-                if (!alive)
-                {
-                    history.RabbitDeath(rabbitList[i].Position);
-                    Destroy(rabbitList[i].gameObject);
-                    rabbitList.RemoveAt(i);
-                    i--;
-                }
-            }
-            Profiler.EndSample();
-
-            //Profiler.BeginSample("rabbit parallel");
-            //Parallel.ForEach(rabbitList, rabbit =>
-            //{
-            //    rabbit.UpdateTurn();
-            //});
-
-            //Profiler.EndSample();
-            //foreach(Rabbit rabbit in rabbitList)
-            //{
-            //    if (!rabbit.IsAlive)
-            //    {
-            //        history.RabbitDeath(rabbit.transform.position);
-            //        Destroy(rabbit.gameObject);
-            //    }
-            //}
-            //rabbitList.RemoveAll(rabbit => !rabbit.IsAlive);
-
-
-
-            foreach (var grass in grassList)
-            {
-                grass.UpdateTurn();
-            }
-
-            return rabbitList.Count > 0;
-
-        }
-
-        private void FillAllRabbitsPrayPredatorLinear(float sqrViewRange, int initialListSize)
-        {
-            foreach (Rabbit rabbit in rabbitList)
-            {
-                FillRabbitPrayPredator(rabbit, sqrViewRange, initialListSize);
-            }
-        }
-
-        private void FillAllRabbitsPrayPredatorParallel(float sqrViewRange, int initialListSize)
-        {
-            Parallel.ForEach<Rabbit>(rabbitList, rabbit =>
-
-            {
-                FillRabbitPrayPredator(rabbit, sqrViewRange, initialListSize);
-            }
-            );
-        }
-
-        void FillRabbitPrayPredator(Rabbit rabbit, float sqrAnimalViewRange, int initialListSize)
-        {
-            rabbit.prayList = new List<INeuralNetInputProvider>(initialListSize);
-            rabbit.predatorList = new List<INeuralNetInputProvider>(initialListSize);
-            Vector3 position = rabbit.Position;
-            foreach (Grass grass in grassList)
-            {
-                if ((grass.Position - position).sqrMagnitude < sqrAnimalViewRange)
-                {
-                    rabbit.prayList.Add(grass);
-                }
-            }
-        }
-
-        private void Start()
-        {
-            if (Settings.Player.renderOptions == RenderOptions.None)
-            {
-                foreach (Transform eachChild in transform)
-                {
-                    if (eachChild.name == "Model")
-                    {
-                        eachChild.gameObject.SetActive(false);
-                    }
-                }
-            }
         }
     }
 }

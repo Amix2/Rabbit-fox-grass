@@ -872,8 +872,8 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 1
-    renderOptions: 2
+    fastTrainingMode: 0
+    renderOptions: 0
   world:
     animalViewRange: 10
     allowedObjectNames:

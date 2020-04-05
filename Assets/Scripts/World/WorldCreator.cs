@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -22,9 +24,97 @@ namespace World
         private float gapBetweenWorlds;
         private IFitnessCalculator fitnessCalculator;
 
+        private MultiListIterator<Rabbit> rabbitIterator;
+        private MultiListIterator<Grass> grassIterator;
+
+        private ConcurrentBag<World> deadWorlds;
+
+
+        private bool UpdateBehaviourAllWorldsParallel()
+        {
+            Parallel.ForEach(rabbitIterator, rabbit =>
+            {
+                rabbit.UpdateTurn();
+            });
+            rabbitIterator.Reset();
+
+            Parallel.ForEach(grassIterator, grass =>
+            {
+                grass.UpdateTurn();
+            });
+            grassIterator.Reset();
+
+            for (int i = 0; i < worlds.Count; i++)
+            {
+                var alive = worlds[i].UpdateTurn();
+                if (!alive)
+                {
+                    //print(fitnessCalculator.CalculateFitness(worlds[i].History));
+                    Destroy(worlds[i].gameObject);
+                    rabbitIterator.RemoveList(worlds[i].rabbitList);
+                    grassIterator.RemoveList(worlds[i].grassList);
+                    worlds.RemoveAt(i);
+                    i--;
+                }
+            }
+
+
+            return worlds.Count > 0;
+        }
+
+        private void UpdateAllWorlds()
+        {
+            World.deltaTime = Time.deltaTime;
+            //var anyWorldsLeft = UpdateBehaviourAllWorldsLinear();
+            var anyWorldsLeft = UpdateBehaviourAllWorldsParallel();
+            if (!anyWorldsLeft)
+            {
+                CreateAllWorlds();
+            }
+        }
+
+
+        public void HandleDeath(World world)
+        {
+            deadWorlds.Add(world);
+        }
+
+
+        private void FixedUpdate()
+        {
+            if (!Settings.Player.fastTrainingMode)
+            {
+                UpdateAllWorlds();
+            }
+        }
+
+        private void Update()
+        {
+            if (Settings.Player.fastTrainingMode)
+            {
+                UpdateAllWorlds();
+            }
+        }
+
+        private Vector2Int CalculateSize(int numOfWorlds)
+        {
+            for (int d = (int)Mathf.Sqrt(numOfWorlds); d > 1; d--)
+            {
+                if (d * (numOfWorlds / d) == numOfWorlds)
+                {
+                    return new Vector2Int(numOfWorlds / d, d);
+                }
+            }
+            return new Vector2Int(numOfWorlds, 1);
+        }
+
+        ///////////////////////////////////////////////////
+        /// Init world
         private void Start()
         {
             gapBetweenWorlds = 1;
+            deadWorlds = new ConcurrentBag<World>();
+            grassIterator = new MultiListIterator<Grass>();
             fitnessCalculator = fitnessFunction.GetCalculator();
             // Create field objects
             InitResources();
@@ -34,8 +124,10 @@ namespace World
             CreateAllWorlds();
         }
 
+
         private void CreateAllWorlds()
         {
+            rabbitIterator = new MultiListIterator<Rabbit>();
             float timeStart = Time.realtimeSinceStartup;
             Vector3 offset = Vector3.zero;  // offset to bottom-left corner
             int worldsOnX = 0;
@@ -44,7 +136,10 @@ namespace World
                 GameObject world = CreateWorld(ref offset, ref worldsOnX, i);
                 worldGameObjects.Add(world);
                 worlds.Add(world.GetComponent<World>());
+                rabbitIterator.AddList(world.GetComponent<World>().rabbitList);
+                grassIterator.AddList(world.GetComponent<World>().grassList);
             }
+
             Debug.Log("CreateAllWorlds time: " + (Time.realtimeSinceStartup - timeStart));
         }
 
@@ -96,83 +191,6 @@ namespace World
             }
 
             size = CalculateSize(numberOfWorldsToCreate);
-        }
-
-        private bool UpdateBehaviourAllWorldsLinear()
-        {
-            for (int i=0; i<worlds.Count; i++)
-            {
-                var alive = worlds[i].UpdateTurn();
-                if (!alive)
-                {
-                    //print(fitnessCalculator.CalculateFitness(worlds[i].History));
-                    Destroy(worlds[i].gameObject);
-                    worlds.RemoveAt(i);
-                    i--;
-                }
-            }
-            return worlds.Count > 0;
-        }
-
-        private bool UpdateBehaviourAllWorldsParallel()
-        {
-            Parallel.ForEach(worlds, word =>
-            {
-                word.UpdateTurn();
-            });
-            worlds.RemoveAll(word => !word.IsAlive);
-            
-            if(worlds.Count == 0)
-            {
-                foreach(Transform child in transform)
-                {
-                    if(child.name.StartsWith("World_"))
-                    {
-                        Destroy(child.gameObject);
-                    }
-                }
-            }
-
-            return worlds.Count > 0;
-        }
-
-        private void UpdateAllWorlds()
-        {
-            World.deltaTime = Time.deltaTime;
-            var anyWorldsLeft = UpdateBehaviourAllWorldsLinear();
-            //var anyWorldsLeft = UpdateBehaviourAllWorldsParallel();
-            if (!anyWorldsLeft)
-            {
-                CreateAllWorlds();
-            }
-        }
-
-        private void FixedUpdate()
-        {
-            if (!Settings.Player.fastTrainingMode)
-            {
-                UpdateAllWorlds();
-            }
-        }
-
-        private void Update()
-        {
-            if (Settings.Player.fastTrainingMode)
-            {
-                UpdateAllWorlds();
-            }
-        }
-
-        private Vector2Int CalculateSize(int numOfWorlds)
-        {
-            for (int d = (int)Mathf.Sqrt(numOfWorlds); d > 1; d--)
-            {
-                if (d * (numOfWorlds / d) == numOfWorlds)
-                {
-                    return new Vector2Int(numOfWorlds / d, d);
-                }
-            }
-            return new Vector2Int(numOfWorlds, 1);
         }
     }
 

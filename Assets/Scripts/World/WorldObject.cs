@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class WorldObject : MonoBehaviour, INeuralNetInputProvider
+public abstract class WorldObject : MonoBehaviour
 {
-    public abstract float GetInputValue();
-
     protected Vector3 position;
     public Vector3 Position { get { return position; } }
 

@@ -37,6 +37,21 @@ namespace World
             grassColliders = new Collider[200];
         }
 
+        protected override void CollectInfoAboutSurroundings()
+        {
+            //throw new System.NotImplementedException();
+        }
+
+        protected override float[] CreateNetInputs()
+        {
+            return new float[1];
+        }
+
+        protected override void HandleDeath()
+        {
+            world.HandleDeath(this);
+        }
+
         public float FoodAmount
         {
             get { return Settings.World.foodInRabbits; }

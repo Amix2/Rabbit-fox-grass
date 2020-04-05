@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -9,12 +10,10 @@ namespace World
     {
         public Vector2Int worldSize;
         public LayerMask feedOnLayer;
-        private Collider[] neighbourColliders;
-        public List<INeuralNetInputProvider> prayList;
-        public List<INeuralNetInputProvider> predatorList;
 
         protected Vector3 velocity = Vector3.zero;
         protected IBigBrain brain;
+        public World world;
         public IBigBrain Brain { set { brain = value; } }
 
         protected abstract float MaxVelocity { get; }
@@ -23,26 +22,39 @@ namespace World
         public bool IsAlive => Health > 0f;
 
         abstract protected void ConsumeFood();
- 
-        public bool UpdateTurn() 
+
+        abstract protected void CollectInfoAboutSurroundings();
+
+        abstract protected float[] CreateNetInputs();
+
+        abstract protected void HandleDeath();
+
+        /// <summary>
+        /// Parallel update, sets velocity
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateTurn()
         {
-            //Physics.OverlapSphereNonAlloc(transform.position, Settings.World.animalViewRange, neighbourColliders);
+            if (!IsAlive) throw new Exception("Update on dead animal");
 
-            if (!IsAlive) return false;
-
+            // Handle hunger
             Health -= HungerRate * Settings.World.simulationDeltaTime;
             if (Health <= 0f)
             {
-                velocity = Vector3.zero;
+                HandleDeath();
                 return false;
             }
 
+            // Get info about surroundings
+            CollectInfoAboutSurroundings();
+
+            // Consume food
             ConsumeFood();
 
-            float[] inputs = null;
-            Vector3 decision = brain.GetDecision(inputs);
+            // Get decision from net
+            Vector3 decision = brain.GetDecision(CreateNetInputs());
 
-
+            // Set velocity based on mode
             if (Settings.Player.fastTrainingMode)
             {
                 velocity = decision * Settings.World.simulationDeltaTime / World.deltaTime;
@@ -51,25 +63,8 @@ namespace World
             {
                 velocity = decision;
             }
-
-            //Profiler.BeginSample("overlap");
-            //var colliders = Physics.OverlapSphere(transform.position, Settings.World.animalViewRange);
-            //Profiler.EndSample();
-            //int num = 0;
-            //foreach (var collider in colliders)
-            //{
-            //    if (collider.gameObject.transform == transform || collider.gameObject.transform.parent != transform.parent) continue;
-
-            //    num++;
-            //}
-            prayList = null;
-            predatorList = null;
+ 
             return true;
-        }
-
-        public override float GetInputValue()
-        {
-            throw new System.NotImplementedException();
         }
 
         private void Update()
@@ -85,10 +80,10 @@ namespace World
             position = newPosition;
         }
 
-        private new void Start()
+        protected new void Start()
         {
             base.Start();
-            neighbourColliders = new Collider[(int)(Settings.World.animalViewRange * Settings.World.animalViewRange)];
+            world = transform.parent.GetComponent<World>();
         }
     }
 }

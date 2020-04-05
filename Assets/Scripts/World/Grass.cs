@@ -9,15 +9,15 @@ namespace World
             get { return Settings.World.foodInGrass; }
         }
 
+        private bool healthChange = false;
         private float health;
-
         public float Health
         {
             get { return health; }
             set
             {
                 health = value;
-                
+                healthChange = true;
             }
         }
 
@@ -62,14 +62,10 @@ namespace World
             Health = 1f;
         }
 
-        public override float GetInputValue()
-        {
-            throw new System.NotImplementedException();
-        }
-
         private void Update()
         {
-            if (modelTransform == null) return;
+            if(Settings.Player.renderOptions == RenderOptions.None || !healthChange) return;
+            healthChange = false;
             modelTransform.localScale = new Vector3(health, health, health);
             foreach (var mesh in meshRenderers)
             {
