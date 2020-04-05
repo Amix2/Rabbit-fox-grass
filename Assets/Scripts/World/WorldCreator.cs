@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace World
 {
@@ -34,6 +36,7 @@ namespace World
 
         private void CreateAllWorlds()
         {
+            float timeStart = Time.realtimeSinceStartup;
             Vector3 offset = Vector3.zero;  // offset to bottom-left corner
             int worldsOnX = 0;
             for (int i = 0; i < numberOfWorldsToCreate; i++)
@@ -42,6 +45,7 @@ namespace World
                 worldGameObjects.Add(world);
                 worlds.Add(world.GetComponent<World>());
             }
+            Debug.Log("CreateAllWorlds time: " + (Time.realtimeSinceStartup - timeStart));
         }
 
         private GameObject CreateWorld(ref Vector3 offset, ref int worldsOnX, int index)
@@ -94,14 +98,14 @@ namespace World
             size = CalculateSize(numberOfWorldsToCreate);
         }
 
-        private bool UpdateBehaviourAllWorlds()
+        private bool UpdateBehaviourAllWorldsLinear()
         {
             for (int i=0; i<worlds.Count; i++)
             {
                 var alive = worlds[i].UpdateTurn();
                 if (!alive)
                 {
-                    print(fitnessCalculator.CalculateFitness(worlds[i].History));
+                    //print(fitnessCalculator.CalculateFitness(worlds[i].History));
                     Destroy(worlds[i].gameObject);
                     worlds.RemoveAt(i);
                     i--;
@@ -110,10 +114,34 @@ namespace World
             return worlds.Count > 0;
         }
 
+        private bool UpdateBehaviourAllWorldsParallel()
+        {
+            Parallel.ForEach(worlds, word =>
+            {
+                word.UpdateTurn();
+            });
+            worlds.RemoveAll(word => !word.IsAlive);
+            
+            if(worlds.Count == 0)
+            {
+                foreach(Transform child in transform)
+                {
+                    if(child.name.StartsWith("World_"))
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+            }
+
+            return worlds.Count > 0;
+        }
+
         private void UpdateAllWorlds()
         {
-            var anyWorldsLeft = UpdateBehaviourAllWorlds();
-            if(!anyWorldsLeft)
+            World.deltaTime = Time.deltaTime;
+            var anyWorldsLeft = UpdateBehaviourAllWorldsLinear();
+            //var anyWorldsLeft = UpdateBehaviourAllWorldsParallel();
+            if (!anyWorldsLeft)
             {
                 CreateAllWorlds();
             }

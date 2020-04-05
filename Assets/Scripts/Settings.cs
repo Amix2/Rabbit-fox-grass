@@ -22,6 +22,7 @@ public class Settings : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        instance.world.simulationDeltaTime = Time.fixedDeltaTime;
     }
 
     //public static float SimulationDeltaTime { get
@@ -57,6 +58,7 @@ public class WorldSettings
     public float rabbitMaxVelocity = 2f;   // per sec
     public float rabbitHungerRate = 0.5f;   // per sec
     public float rabbitEatingSpeed = 1f;   // per sec
+    public float simulationDeltaTime;
 }
 
 public enum RenderOptions

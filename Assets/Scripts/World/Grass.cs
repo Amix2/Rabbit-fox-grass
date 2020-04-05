@@ -2,14 +2,14 @@
 
 namespace World
 {
-    public class Grass : MonoBehaviour, IEdible, IAlive, IUpdatable
+    public class Grass : WorldObject, IEdible, IAlive, IUpdatable
     {
         public float FoodAmount
         {
             get { return Settings.World.foodInGrass; }
         }
 
-        private float health = 1f;
+        private float health;
 
         public float Health
         {
@@ -17,15 +17,20 @@ namespace World
             set
             {
                 health = value;
-                modelTransform.localScale = new Vector3(health, health, health);
+                
             }
         }
+
+        public Color deadColor;
+        public Color middleColor;
+        public Color fullColor;
 
         public float HungerRate { get { return 0f; } }
 
         public bool IsAlive => Health > 0f;
 
         private Transform modelTransform = null;
+        private MeshRenderer[] meshRenderers;
 
         public float Consumed(float amount = 1)
         {
@@ -36,19 +41,46 @@ namespace World
 
         public bool UpdateTurn()
         {
-            Health += Settings.World.grassGrowthRate * Time.fixedDeltaTime;
+            Health += Settings.World.grassGrowthRate * Settings.World.simulationDeltaTime;
 
             if (Health > 1f) Health = 1f;
             return true;
         }
 
-        private void Awake()
+        private new void Start()
         {
             foreach (Transform eachChild in transform)
             {
                 if (eachChild.name == "Model")
                 {
                     modelTransform = eachChild;
+                }
+            }
+            base.Start();
+            position = transform.position;
+            meshRenderers = modelTransform.GetComponentsInChildren<MeshRenderer>();
+            Health = 1f;
+        }
+
+        public override float GetInputValue()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void Update()
+        {
+            if (modelTransform == null) return;
+            modelTransform.localScale = new Vector3(health, health, health);
+            foreach (var mesh in meshRenderers)
+            {
+                if (health < 0.5f)
+                {
+                    mesh.material.color = Color.Lerp(deadColor, middleColor, health * 2);
+                }
+                else
+
+                {
+                    mesh.material.color = Color.Lerp(middleColor, fullColor, (health - 0.5f) * 2);
                 }
             }
         }

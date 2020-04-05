@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.Profiling;
+
 namespace World
 {
 
@@ -13,25 +15,26 @@ namespace World
 
         protected override void ConsumeFood()
         {
-            int numOfCollidersFound = Physics.OverlapSphereNonAlloc(transform.position, 0.1f, grassColliders, feedOnLayer);
-            GameObject closestGrassGO = null;
+            //int numOfCollidersFound = Physics.OverlapSphereNonAlloc(transform.position, 0.1f, grassColliders, feedOnLayer);
+            //GameObject closestGrassGO = null;
 
-            for (int i = 0; i < numOfCollidersFound; i++)
-            {
-                if (grassColliders[i].gameObject.transform == transform || grassColliders[i].gameObject.transform.parent != transform.parent) continue;
-                closestGrassGO = grassColliders[i].gameObject;
-            }
+            //for (int i = 0; i < numOfCollidersFound; i++)
+            //{
+            //    if (grassColliders[i].gameObject.transform == transform || grassColliders[i].gameObject.transform.parent != transform.parent) continue;
+            //    closestGrassGO = grassColliders[i].gameObject;
+            //}
 
-            if (closestGrassGO != null)
-            {
-                float food = closestGrassGO.GetComponent<Grass>().Consumed(Settings.World.rabbitEatingSpeed * Time.fixedDeltaTime);
-                Health += food;
-            }
+            //if (closestGrassGO != null)
+            //{
+            //    float food = closestGrassGO.GetComponent<Grass>().Consumed(Settings.World.rabbitEatingSpeed * Time.fixedDeltaTime);
+            //    Health += food;
+            //}
         }
 
-        private void Start()
+        private new void Start()
         {
-            grassColliders = new Collider[9];
+            base.Start();
+            grassColliders = new Collider[200];
         }
 
         public float FoodAmount

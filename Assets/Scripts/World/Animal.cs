@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace World
 {
-    public abstract class Animal : MonoBehaviour, IAlive, IUpdatable
+    public abstract class Animal : WorldObject, IAlive, IUpdatable
     {
         public Vector2Int worldSize;
         public LayerMask feedOnLayer;
+        private Collider[] neighbourColliders;
+        public List<INeuralNetInputProvider> prayList;
+        public List<INeuralNetInputProvider> predatorList;
 
         protected Vector3 velocity = Vector3.zero;
         protected IBigBrain brain;
@@ -18,12 +23,14 @@ namespace World
         public bool IsAlive => Health > 0f;
 
         abstract protected void ConsumeFood();
-
-        public bool UpdateTurn()
+ 
+        public bool UpdateTurn() 
         {
+            //Physics.OverlapSphereNonAlloc(transform.position, Settings.World.animalViewRange, neighbourColliders);
+
             if (!IsAlive) return false;
 
-            Health -= HungerRate * Time.fixedDeltaTime;
+            Health -= HungerRate * Settings.World.simulationDeltaTime;
             if (Health <= 0f)
             {
                 velocity = Vector3.zero;
@@ -34,24 +41,35 @@ namespace World
 
             float[] inputs = null;
             Vector3 decision = brain.GetDecision(inputs);
+
+
             if (Settings.Player.fastTrainingMode)
             {
-                velocity = decision * Time.fixedDeltaTime / Time.deltaTime;
+                velocity = decision * Settings.World.simulationDeltaTime / World.deltaTime;
             }
             else
             {
                 velocity = decision;
             }
 
-            var colliders = Physics.OverlapSphere(transform.position, Settings.World.animalViewRange);
-            int num = 0;
-            foreach (var collider in colliders)
-            {
-                if (collider.gameObject.transform == transform || collider.gameObject.transform.parent != transform.parent) continue;
+            //Profiler.BeginSample("overlap");
+            //var colliders = Physics.OverlapSphere(transform.position, Settings.World.animalViewRange);
+            //Profiler.EndSample();
+            //int num = 0;
+            //foreach (var collider in colliders)
+            //{
+            //    if (collider.gameObject.transform == transform || collider.gameObject.transform.parent != transform.parent) continue;
 
-                num++;
-            }
+            //    num++;
+            //}
+            prayList = null;
+            predatorList = null;
             return true;
+        }
+
+        public override float GetInputValue()
+        {
+            throw new System.NotImplementedException();
         }
 
         private void Update()
@@ -64,8 +82,13 @@ namespace World
             if (velocity.sqrMagnitude > 0) transform.forward = velocity.normalized;
 
             transform.localPosition = newPosition;
+            position = newPosition;
         }
 
- 
+        private new void Start()
+        {
+            base.Start();
+            neighbourColliders = new Collider[(int)(Settings.World.animalViewRange * Settings.World.animalViewRange)];
+        }
     }
 }

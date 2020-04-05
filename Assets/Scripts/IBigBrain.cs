@@ -5,4 +5,5 @@ using UnityEngine;
 public interface IBigBrain
 {
     Vector3 GetDecision(float[] inputs);
+    float Fitness { get; set; }
 }
