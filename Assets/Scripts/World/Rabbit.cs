@@ -1,13 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.Profiling;
-
-namespace World
+﻿namespace World
 {
-
     public class Rabbit : Animal, IEdible
     {
-        private Collider[] grassColliders;
-
         public float Consumed(float amount = 1)
         {
             throw new System.NotImplementedException();
@@ -31,15 +25,8 @@ namespace World
             //}
         }
 
-        private new void Start()
-        {
-            base.Start();
-            grassColliders = new Collider[200];
-        }
-
         protected override void CollectInfoAboutSurroundings()
         {
-            //throw new System.NotImplementedException();
         }
 
         protected override float[] CreateNetInputs()
@@ -63,5 +50,10 @@ namespace World
         }
 
         public override float HungerRate { get { return Settings.World.rabbitHungerRate; } }
+
+        private new void Start()
+        {
+            base.Start();
+        }
     }
 }

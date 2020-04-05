@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace World
 {
@@ -63,7 +60,7 @@ namespace World
             {
                 velocity = decision;
             }
- 
+
             return true;
         }
 

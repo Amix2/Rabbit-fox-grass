@@ -698,8 +698,8 @@ MonoBehaviour:
     prefab: {fileID: 7695852279255118766, guid: dece207615384e146a4ecd312b4bdf3e,
       type: 3}
   worldDefinitionFile: {fileID: 4900000, guid: 3b86f657692996945a8651c011c79376, type: 3}
-  numberOfWorldsToCreate: 1
-  fitnessFunction: 0
+  numberOfWorldsToCreate: 100
+  rabbitFitnessFunction: 1
 --- !u!4 &758577819
 Transform:
   m_ObjectHideFlags: 0
@@ -872,8 +872,8 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 0
-    renderOptions: 0
+    fastTrainingMode: 1
+    renderOptions: 2
   world:
     animalViewRange: 10
     allowedObjectNames:

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -13,7 +12,7 @@ namespace World
         public SimulationObjectPrefab[] objectPrefabs;
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
-        public FitnessCalculatorOptions fitnessFunction;
+        public FitnessCalculatorOptions rabbitFitnessFunction;
 
         private IBigBrain bigBrain;
         private List<WorldBuilder> worldOptions;
@@ -22,21 +21,23 @@ namespace World
         private Dictionary<string, GameObject> prefabs;
         private Vector2Int size;
         private float gapBetweenWorlds;
-        private IFitnessCalculator fitnessCalculator;
+        private IFitnessCalculator rabbitFitnessCalculator;
 
         private MultiListIterator<Rabbit> rabbitIterator;
         private MultiListIterator<Grass> grassIterator;
 
-        private ConcurrentBag<World> deadWorlds;
-
-
-        private bool UpdateBehaviourAllWorldsParallel()
+        private bool UpdateBehaviourAllWorlds()
         {
+                    Profiler.BeginSample("rabbits");
+
             Parallel.ForEach(rabbitIterator, rabbit =>
             {
                 rabbit.UpdateTurn();
             });
             rabbitIterator.Reset();
+
+                    Profiler.EndSample();
+                    Profiler.BeginSample("grass");
 
             Parallel.ForEach(grassIterator, grass =>
             {
@@ -44,20 +45,22 @@ namespace World
             });
             grassIterator.Reset();
 
-            for (int i = 0; i < worlds.Count; i++)
+                    Profiler.EndSample();
+                    Profiler.BeginSample("worlds");
+
+            for (int i = worlds.Count - 1; i >= 0; i--)
             {
                 var alive = worlds[i].UpdateTurn();
                 if (!alive)
                 {
-                    //print(fitnessCalculator.CalculateFitness(worlds[i].History));
+                    //print(rabbitFitnessCalculator.CalculateFitness(worlds[i].History));
                     Destroy(worlds[i].gameObject);
                     rabbitIterator.RemoveList(worlds[i].rabbitList);
                     grassIterator.RemoveList(worlds[i].grassList);
                     worlds.RemoveAt(i);
-                    i--;
                 }
             }
-
+                    Profiler.EndSample();
 
             return worlds.Count > 0;
         }
@@ -65,20 +68,12 @@ namespace World
         private void UpdateAllWorlds()
         {
             World.deltaTime = Time.deltaTime;
-            //var anyWorldsLeft = UpdateBehaviourAllWorldsLinear();
-            var anyWorldsLeft = UpdateBehaviourAllWorldsParallel();
+            var anyWorldsLeft = UpdateBehaviourAllWorlds();
             if (!anyWorldsLeft)
             {
                 CreateAllWorlds();
             }
         }
-
-
-        public void HandleDeath(World world)
-        {
-            deadWorlds.Add(world);
-        }
-
 
         private void FixedUpdate()
         {
@@ -113,9 +108,8 @@ namespace World
         private void Start()
         {
             gapBetweenWorlds = 1;
-            deadWorlds = new ConcurrentBag<World>();
             grassIterator = new MultiListIterator<Grass>();
-            fitnessCalculator = fitnessFunction.GetCalculator();
+            rabbitFitnessCalculator = rabbitFitnessFunction.GetCalculator();
             // Create field objects
             InitResources();
             // Fill List<WorldBuilder> worldOptions from input file (TextAsset worldDefinitionFile)
@@ -123,7 +117,6 @@ namespace World
             // Create worlds based on int numberOfWorldsToCreate
             CreateAllWorlds();
         }
-
 
         private void CreateAllWorlds()
         {
@@ -150,7 +143,7 @@ namespace World
             GameObject world = Instantiate(worldPrefab, this.transform);
             world.name = "World_" + index;
             world.GetComponent<World>().bigBrain = bigBrain;
-            var lastSize = builder.CreateWorld(world, offset, null, prefabs);   // Apply setup from file to giver world
+            var lastSize = builder.CreateWorld(world, offset, null, prefabs);   // Apply setup from file to given world
             worldsOnX++;
             offset.x += gapBetweenWorlds + lastSize.x;
             if (worldsOnX >= size.x)    // Start new row
