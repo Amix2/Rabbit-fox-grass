@@ -31,5 +31,4 @@ public class Player
     public bool fastTrainingMode = false;
     public string[] allowedObjectNames;
     public int[] neuralNetworkLayers = new[] {2, 10, 10, 2};
-    public float healthLosePerTick = 0.001f;
 }
