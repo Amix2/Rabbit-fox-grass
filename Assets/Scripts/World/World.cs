@@ -1,11 +1,6 @@
-﻿﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-﻿using System;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace World
 {
@@ -21,6 +16,8 @@ namespace World
         private ConcurrentBag<Rabbit> deadRabbits;
 
         private WorldHistory history;
+        internal IBigBrain bigBrain;
+
         public WorldHistory History
         {
             get { return history; }
@@ -50,7 +47,7 @@ namespace World
             history.lifeTime++;
             if (rabbitList.Count == deadRabbits.Count) return false;
 
-            while(deadRabbits.TryTake(out Rabbit deadRabbit))
+            while (deadRabbits.TryTake(out Rabbit deadRabbit))
             {
                 history.RabbitDeath(deadRabbit.Position);
                 Destroy(deadRabbit.gameObject);
@@ -58,7 +55,6 @@ namespace World
             }
 
             return true;
-
         }
 
         private void Start()

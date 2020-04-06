@@ -36,6 +36,7 @@ public class PlayerSettings
     public float cameraRotateSensitivity = 500f;
     public bool fastTrainingMode = false;
     public RenderOptions renderOptions = RenderOptions.Full;
+    public int[] neuralNetworkLayers = new[] { 2, 10, 10, 2 };
 }
 
 [System.Serializable]

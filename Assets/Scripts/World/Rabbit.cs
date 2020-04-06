@@ -31,7 +31,7 @@
 
         protected override float[] CreateNetInputs()
         {
-            return new float[1];
+            return new float[75];
         }
 
         protected override void HandleDeath()

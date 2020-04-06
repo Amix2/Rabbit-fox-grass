@@ -48,6 +48,13 @@ public class NeuralNetwork : IBigBrain
 
         var decision = new Vector3(Convert.ToSingle((double) prevNeurons[0]), 0.0f,
             Convert.ToSingle((double) prevNeurons[1]));
+        decision.x -= 0.5f;
+        decision.z -= 0.5f;
+        decision *= 2f;
+        if (decision.sqrMagnitude > 1)
+        {
+            return decision.normalized;
+        }
         return decision;
     }
 

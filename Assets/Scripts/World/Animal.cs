@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace World
 {
@@ -49,7 +50,9 @@ namespace World
             ConsumeFood();
 
             // Get decision from net
+            Profiler.BeginSample("run NeuralNet");
             Vector3 decision = brain.GetDecision(CreateNetInputs());
+            Profiler.EndSample();
 
             // Set velocity based on mode
             if (Settings.Player.fastTrainingMode)
