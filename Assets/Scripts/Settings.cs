@@ -19,21 +19,12 @@ public class Settings : MonoBehaviour
 
 
     private static Settings instance;
+
     private void Awake()
     {
         instance = this;
         instance.world.simulationDeltaTime = Time.fixedDeltaTime;
     }
-
-    //public static float SimulationDeltaTime { get
-    //    {
-    //        if (instance.player.fastTrainingMode)
-    //            return Time.fixedDeltaTime / Time.deltaTime;
-    //        else
-    //            return Time.fixedDeltaTime;
-    //    } 
-    //}
-
 }
 
 [System.Serializable]

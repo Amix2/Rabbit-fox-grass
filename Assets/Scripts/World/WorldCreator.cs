@@ -172,7 +172,6 @@ namespace World
 
         private void InitResources()
         {
-            bigBrain = new TempBigBrain();
             worldGameObjects = new List<GameObject>();
             worlds = new List<World>();
             prefabs = new Dictionary<string, GameObject>();

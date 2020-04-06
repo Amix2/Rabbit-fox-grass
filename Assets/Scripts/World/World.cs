@@ -1,7 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -9,7 +11,6 @@ namespace World
 {
     public class World : MonoBehaviour, IUpdatable
     {
-        public IBigBrain bigBrain;
         public Vector2Int size;
 
         public static float deltaTime;
@@ -89,7 +90,8 @@ namespace World
             var rabbitGO = AddGameObject(prefab, position);
             rabbitGO.name = "Rabbit_" + rabbitList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = size;
-            rabbitGO.GetComponent<Rabbit>().Brain = bigBrain;
+            rabbitGO.GetComponent<Rabbit>().Brain = new NeuralNetwork(Settings.Player.neuralNetworkLayers);
+            new Vector3(transform.position.x, transform.position.y, transform.position.z);
             rabbitList.Add(rabbitGO.GetComponent<Rabbit>());
             history.RabbitBirth(position);
         }
