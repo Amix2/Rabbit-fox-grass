@@ -7,7 +7,7 @@ public abstract class WorldObject : MonoBehaviour
     public Vector3 Position { get { return position; } }
 
     // Use this for initialization
-    protected void Start()
+    protected void Awake()
     {
         if(Settings.Player.renderOptions == RenderOptions.None)
         {

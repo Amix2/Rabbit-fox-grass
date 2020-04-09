@@ -9,6 +9,7 @@ namespace World
         public Vector2Int worldSize;
         public LayerMask feedOnLayer;
 
+
         protected Vector3 velocity = Vector3.zero;
         protected IBigBrain brain;
         public World world;
@@ -18,6 +19,9 @@ namespace World
         public abstract float HungerRate { get; }
         public float Health { get; set; } = 1f;
         public bool IsAlive => Health > 0f;
+
+        protected Vector3 forward;
+        public Vector3 Forward { get { return forward; } }
 
         abstract protected void ConsumeFood();
 
@@ -52,6 +56,7 @@ namespace World
             // Get decision from net
             Profiler.BeginSample("run NeuralNet");
             Vector3 decision = brain.GetDecision(CreateNetInputs());
+            //print(decision);
             Profiler.EndSample();
 
             // Set velocity based on mode
@@ -78,11 +83,12 @@ namespace World
 
             transform.localPosition = newPosition;
             position = newPosition;
+            forward = transform.forward;
         }
 
-        protected new void Start()
+        protected new void Awake()
         {
-            base.Start();
+            base.Awake();
             world = transform.parent.GetComponent<World>();
         }
     }

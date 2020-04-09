@@ -27,14 +27,14 @@ namespace World
 
         public float HungerRate { get { return 0f; } }
 
-        public bool IsAlive => Health > 0f;
+        public bool IsAlive => Health > 0.5f;
 
         private Transform modelTransform = null;
         private MeshRenderer[] meshRenderers;
 
         public float Consumed(float amount = 1)
         {
-            if (!IsAlive) return 0f;
+            if (Health < 0.1f) return 0f;
             Health = Mathf.Clamp01(Health - amount);
             return FoodAmount * amount;
         }
@@ -47,7 +47,7 @@ namespace World
             return true;
         }
 
-        private new void Start()
+        private new void Awake()
         {
             foreach (Transform eachChild in transform)
             {
@@ -56,10 +56,14 @@ namespace World
                     modelTransform = eachChild;
                 }
             }
-            base.Start();
-            position = transform.position;
+            base.Awake();
             meshRenderers = modelTransform.GetComponentsInChildren<MeshRenderer>();
             Health = 1f;
+        }
+
+        private void Start()
+        {
+            position = transform.localPosition;
         }
 
         private void Update()

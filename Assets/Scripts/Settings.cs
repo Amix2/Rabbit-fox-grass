@@ -17,6 +17,12 @@ public class Settings : MonoBehaviour
         get { return instance.world; }
     }
 
+    public NeuralNetworkSettings neuralNetwork;
+    public static NeuralNetworkSettings NeuralNetwork
+    {
+        get { return instance.neuralNetwork; }
+    }
+
 
     private static Settings instance;
 
@@ -47,10 +53,19 @@ public class WorldSettings
     public float foodInGrass = 0.5f;
     public float grassGrowthRate = 0.5f;   // per sec
     public float foodInRabbits = 1f;
+    public float rabbitEatingDistance = 1.3f;
     public float rabbitMaxVelocity = 2f;   // per sec
     public float rabbitHungerRate = 0.5f;   // per sec
     public float rabbitEatingSpeed = 1f;   // per sec
     public float simulationDeltaTime;
+}
+
+[System.Serializable]
+public class NeuralNetworkSettings
+{
+    public int rabbitFistLayerSize = 11;
+    public int[] rabbitNetworkHiddenLayers;
+    public int outputLayerSize = 2;
 }
 
 public enum RenderOptions

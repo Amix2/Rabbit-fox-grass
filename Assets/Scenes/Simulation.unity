@@ -158,7 +158,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh13968
+  m_Name: pb_Mesh14072
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -825,7 +825,7 @@ MonoBehaviour:
     cameraRotateSensitivity: 500
     fastTrainingMode: 1
     renderOptions: 2
-    neuralNetworkLayers: 4b0000004b0000004b00000002000000
+    neuralNetworkLayers: 3f0000000b00000002000000
   world:
     animalViewRange: 10
     allowedObjectNames:
@@ -835,10 +835,15 @@ MonoBehaviour:
     foodInGrass: 1
     grassGrowthRate: 0.2
     foodInRabbits: 1
+    rabbitEatingDistance: 0.3
     rabbitMaxVelocity: 1
     rabbitHungerRate: 0.1
     rabbitEatingSpeed: 1
     simulationDeltaTime: 0
+  neuralNetwork:
+    rabbitFistLayerSize: 63
+    rabbitNetworkHiddenLayers: 
+    outputLayerSize: 2
 --- !u!4 &1148534420
 Transform:
   m_ObjectHideFlags: 0

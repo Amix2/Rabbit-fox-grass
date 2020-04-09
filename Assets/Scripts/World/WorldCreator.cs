@@ -68,6 +68,7 @@ namespace World
         private void UpdateAllWorlds()
         {
             World.deltaTime = Time.deltaTime;
+            //print(World.deltaTime);
             var anyWorldsLeft = UpdateBehaviourAllWorlds();
             if (!anyWorldsLeft)
             {
@@ -93,7 +94,7 @@ namespace World
 
         private Vector2Int CalculateSize(int numOfWorlds)
         {
-            for (int d = (int)Mathf.Sqrt(numOfWorlds); d > 1; d--)
+            for (int d = (int) Mathf.Sqrt(numOfWorlds); d > 1; d--)
             {
                 if (d * (numOfWorlds / d) == numOfWorlds)
                 {

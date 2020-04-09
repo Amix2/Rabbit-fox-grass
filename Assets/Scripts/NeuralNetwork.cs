@@ -45,7 +45,6 @@ public class NeuralNetwork : IBigBrain
             NormalizeVector(res);
             prevNeurons = res;
         }
-
         var decision = new Vector3(Convert.ToSingle((double) prevNeurons[0]), 0.0f,
             Convert.ToSingle((double) prevNeurons[1]));
         decision.x -= 0.5f;

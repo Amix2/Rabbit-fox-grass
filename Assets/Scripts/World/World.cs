@@ -87,8 +87,8 @@ namespace World
             rabbitGO.name = "Rabbit_" + rabbitList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = size;
             rabbitGO.GetComponent<Rabbit>().Brain = new NeuralNetwork(Settings.Player.neuralNetworkLayers);
-            new Vector3(transform.position.x, transform.position.y, transform.position.z);
             rabbitList.Add(rabbitGO.GetComponent<Rabbit>());
+            rabbitGO.GetComponent<Rabbit>().world = this;
             history.RabbitBirth(position);
         }
 
