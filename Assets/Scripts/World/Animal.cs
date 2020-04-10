@@ -74,7 +74,7 @@ namespace World
             world.WorldEvents.Invoke(this, HistoryEventType.DEATH, Position);
         }
 
-        private void Update()
+        public void UpdatePosition()
         {
             var newPosition = transform.localPosition + (MaxVelocity * velocity * Time.deltaTime);
             newPosition.x = Mathf.Clamp(newPosition.x, 0.5f, worldSize.x - 0.5f);

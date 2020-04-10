@@ -15,6 +15,7 @@ namespace World
         public int numberOfWorldsToCreate;
         public FitnessCalculatorOptions rabbitFitnessFunction;
         public float BestFitnessScore { get; private set; } = 0f;
+        public bool RunSimulation { get; set; } = true;
         public Action OnRecreateWorlds;
 
         private IBigBrain bigBrain;
@@ -83,7 +84,7 @@ namespace World
 
         private void FixedUpdate()
         {
-            if (!Settings.Player.fastTrainingMode)
+            if (!Settings.Player.fastTrainingMode && RunSimulation)
             {
                 UpdateAllWorlds();
             }
@@ -91,9 +92,17 @@ namespace World
 
         private void Update()
         {
-            if (Settings.Player.fastTrainingMode)
+            if (Settings.Player.fastTrainingMode && RunSimulation)
             {
                 UpdateAllWorlds();
+            }
+            if(RunSimulation)
+            {
+                foreach(Rabbit rabbit in  rabbitIterator)
+                {
+                    rabbit.UpdatePosition();
+                }
+                rabbitIterator.Reset();
             }
         }
 
