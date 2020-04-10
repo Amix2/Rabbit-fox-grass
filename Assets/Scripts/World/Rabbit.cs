@@ -17,7 +17,7 @@ namespace World
             {
                 float food = closestGrass.Consumed(Settings.World.rabbitEatingSpeed * Settings.World.simulationDeltaTime);
                 Health += food;
-                world.History.RabbitEat(this, food);
+                world.WorldEvents.Invoke(this, HistoryEventType.EAT, food);
             }
         }
 
@@ -87,11 +87,6 @@ namespace World
                 netInputs[i] /= sqrAnimalViewRange;
             }
             return netInputs;
-        }
-
-        protected override void HandleDeath()
-        {
-            world.HandleDeath(this);
         }
 
         public float FoodAmount

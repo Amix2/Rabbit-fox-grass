@@ -9,7 +9,6 @@ namespace World
         public Vector2Int worldSize;
         public LayerMask feedOnLayer;
 
-
         protected Vector3 velocity = Vector3.zero;
         protected IBigBrain brain;
         public World world;
@@ -30,8 +29,6 @@ namespace World
         abstract protected void CollectInfoAboutSurroundings();
 
         abstract protected float[] CreateNetInputs();
-
-        abstract protected void HandleDeath();
 
         /// <summary>
         /// Parallel update, sets velocity
@@ -66,14 +63,15 @@ namespace World
             {
                 decision = decision * Settings.World.simulationDeltaTime / World.deltaTime;
             }
-            else
-            {
-                decision = decision;
-            }
 
             //velocity = Forward * decision.x + Right * decision.y;
             velocity = decision;
             return true;
+        }
+
+        private void HandleDeath()
+        {
+            world.WorldEvents.Invoke(this, HistoryEventType.DEATH, Position);
         }
 
         private void Update()

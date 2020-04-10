@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -28,7 +27,7 @@ namespace World
 
         private bool UpdateBehaviourAllWorlds()
         {
-                    Profiler.BeginSample("rabbits");
+            Profiler.BeginSample("rabbits");
 
             Parallel.ForEach(rabbitIterator, rabbit =>
             {
@@ -36,8 +35,8 @@ namespace World
             });
             rabbitIterator.Reset();
 
-                    Profiler.EndSample();
-                    Profiler.BeginSample("grass");
+            Profiler.EndSample();
+            Profiler.BeginSample("grass");
 
             Parallel.ForEach(grassIterator, grass =>
             {
@@ -45,22 +44,22 @@ namespace World
             });
             grassIterator.Reset();
 
-                    Profiler.EndSample();
-                    Profiler.BeginSample("worlds");
+            Profiler.EndSample();
+            Profiler.BeginSample("worlds");
 
             for (int i = worlds.Count - 1; i >= 0; i--)
             {
                 var alive = worlds[i].UpdateTurn();
                 if (!alive)
                 {
-                    print("score: " + rabbitFitnessCalculator.CalculateFitness(worlds[i].History));
+                    //print("score: " + rabbitFitnessCalculator.CalculateFitness(worlds[i].History));
                     Destroy(worlds[i].gameObject);
                     rabbitIterator.RemoveList(worlds[i].rabbitList);
                     grassIterator.RemoveList(worlds[i].grassList);
                     worlds.RemoveAt(i);
                 }
             }
-                    Profiler.EndSample();
+            Profiler.EndSample();
 
             return worlds.Count > 0;
         }
@@ -68,7 +67,6 @@ namespace World
         private void UpdateAllWorlds()
         {
             World.deltaTime = Time.deltaTime;
-            //print(World.deltaTime);
             var anyWorldsLeft = UpdateBehaviourAllWorlds();
             if (!anyWorldsLeft)
             {
@@ -94,7 +92,7 @@ namespace World
 
         private Vector2Int CalculateSize(int numOfWorlds)
         {
-            for (int d = (int) Mathf.Sqrt(numOfWorlds); d > 1; d--)
+            for (int d = (int)Mathf.Sqrt(numOfWorlds); d > 1; d--)
             {
                 if (d * (numOfWorlds / d) == numOfWorlds)
                 {

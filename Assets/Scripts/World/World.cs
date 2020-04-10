@@ -14,14 +14,7 @@ namespace World
         public List<Grass> grassList;
 
         private ConcurrentBag<Rabbit> deadRabbits;
-
-        private WorldHistory history;
         internal IBigBrain bigBrain;
-
-        public WorldHistory History
-        {
-            get { return history; }
-        }
 
         public bool IsAlive { get => rabbitList.Count > 0; }
 
@@ -30,15 +23,20 @@ namespace World
             get => size; set
             {
                 size = value;
-                history.worldSize = size;
+                History.worldSize = size;
             }
         }
 
+        public WorldHistory History { get; private set; }
+        public MultiTypeEventHandler<float, int, Vector3> WorldEvents { get; private set; }
+
         private void Awake()
         {
+            WorldEvents = new MultiTypeEventHandler<float, int, Vector3>();
+            WorldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 posiiton) => HandleDeath(sender));
             rabbitList = new List<Rabbit>();
             grassList = new List<Grass>();
-            history = new WorldHistory();
+            History = new WorldHistory(WorldEvents);
             deadRabbits = new ConcurrentBag<Rabbit>();
             if (Settings.Player.renderOptions == RenderOptions.None)
             {
@@ -52,9 +50,9 @@ namespace World
             }
         }
 
-        public void HandleDeath(Rabbit rabbit)
+        public void HandleDeath(object obj)
         {
-            deadRabbits.Add(rabbit);
+            if (typeof(Rabbit).IsInstanceOfType(obj)) deadRabbits.Add(obj as Rabbit);
         }
 
         /// <summary>
@@ -63,11 +61,10 @@ namespace World
         /// <returns></returns>
         public bool UpdateTurn()
         {
-            history.lifeTime++;
-
+            History.lifeTime++;
+            WorldEvents.Invoke(this, HistoryEventType.TURN_UPDATE, 1);
             while (deadRabbits.TryTake(out Rabbit deadRabbit))
             {
-                history.RabbitDeath(deadRabbit, deadRabbit.Position);
                 Destroy(deadRabbit.gameObject);
                 rabbitList.Remove(deadRabbit);
             }
@@ -77,7 +74,6 @@ namespace World
 
         //////////////////////////////////////////
         /// Setup
-
         public void Apply()
         {
             Transform planeTransform = transform.GetChild(0);
@@ -93,7 +89,7 @@ namespace World
             rabbitGO.GetComponent<Rabbit>().Brain = new NeuralNetwork(Settings.Player.neuralNetworkLayers);
             rabbitList.Add(rabbitGO.GetComponent<Rabbit>());
             rabbitGO.GetComponent<Rabbit>().world = this;
-            history.RabbitBirth(rabbitGO.GetComponent<Rabbit>(), position);
+            WorldEvents.Invoke(rabbitGO.GetComponent<Rabbit>(), HistoryEventType.BIRTH, position);
         }
 
         public void AddGrass(GameObject prefab, Vector3 position)
@@ -101,7 +97,7 @@ namespace World
             var grassGO = AddGameObject(prefab, position);
             grassGO.name = "Grass_" + grassList.Count;
             grassList.Add(grassGO.GetComponent<Grass>());
-            history.Grass(position);
+            WorldEvents.Invoke(grassGO.GetComponent<Grass>(), HistoryEventType.BIRTH, position);
         }
 
         private GameObject AddGameObject(GameObject prefab, Vector3 position)
