@@ -6,17 +6,32 @@ public abstract class WorldObject : MonoBehaviour
     protected Vector3 position;
     public Vector3 Position { get { return position; } }
 
-    // Use this for initialization
     protected void Awake()
     {
-        if(Settings.Player.renderOptions == RenderOptions.None)
+        //if(Settings.Player.renderOptions == RenderOptions.None)
+        //{
+        //    this.DisableModel();
+        //}
+    }
+
+    public void DisableModel()
+    {
+        foreach (Transform eachChild in transform)
         {
-            foreach (Transform eachChild in transform)
+            if (eachChild.name == "Model")
             {
-                if (eachChild.name == "Model")
-                {
-                    eachChild.gameObject.SetActive(false);
-                }
+                eachChild.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    public void EnableModel()
+    {
+        foreach (Transform eachChild in transform)
+        {
+            if (eachChild.name == "Model")
+            {
+                eachChild.gameObject.SetActive(true);
             }
         }
     }

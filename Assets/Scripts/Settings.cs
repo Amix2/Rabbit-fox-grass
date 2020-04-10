@@ -73,5 +73,6 @@ public enum RenderOptions
 {
     Full,
     Reduced,
+    OnlyBest,
     None
 }

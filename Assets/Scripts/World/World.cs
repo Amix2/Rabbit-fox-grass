@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace World
 {
-    public class World : MonoBehaviour, IUpdatable
+    public class World : WorldObject, IUpdatable
     {
         private Vector2Int size;
 
@@ -28,26 +28,28 @@ namespace World
         }
 
         public WorldHistory History { get; private set; }
+        private bool render;
+        public bool Render { get
+            {
+                return render;
+            }
+            set
+            {
+                render = value;
+                if(!value) DisableModel();
+            }
+        }
         public MultiTypeEventHandler<float, int, Vector3> WorldEvents { get; private set; }
 
-        private void Awake()
+        private new void Awake()
         {
+            base.Awake();
             WorldEvents = new MultiTypeEventHandler<float, int, Vector3>();
             WorldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 posiiton) => HandleDeath(sender));
             rabbitList = new List<Rabbit>();
             grassList = new List<Grass>();
             History = new WorldHistory(WorldEvents);
             deadRabbits = new ConcurrentBag<Rabbit>();
-            if (Settings.Player.renderOptions == RenderOptions.None)
-            {
-                foreach (Transform eachChild in transform)
-                {
-                    if (eachChild.name == "Model")
-                    {
-                        eachChild.gameObject.SetActive(false);
-                    }
-                }
-            }
         }
 
         public void HandleDeath(object obj)
@@ -86,7 +88,8 @@ namespace World
             var rabbitGO = AddGameObject(prefab, position);
             rabbitGO.name = "Rabbit_" + rabbitList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = Size;
-            rabbitGO.GetComponent<Rabbit>().Brain = new NeuralNetwork(Settings.Player.neuralNetworkLayers);
+            rabbitGO.GetComponent<Rabbit>().Brain = bigBrain;
+            if (!Render) rabbitGO.GetComponent<Rabbit>().DisableModel();
             rabbitList.Add(rabbitGO.GetComponent<Rabbit>());
             rabbitGO.GetComponent<Rabbit>().world = this;
             WorldEvents.Invoke(rabbitGO.GetComponent<Rabbit>(), HistoryEventType.BIRTH, position);
@@ -96,6 +99,7 @@ namespace World
         {
             var grassGO = AddGameObject(prefab, position);
             grassGO.name = "Grass_" + grassList.Count;
+            if (!Render) grassGO.GetComponent<Grass>().DisableModel();
             grassList.Add(grassGO.GetComponent<Grass>());
             WorldEvents.Invoke(grassGO.GetComponent<Grass>(), HistoryEventType.BIRTH, position);
         }

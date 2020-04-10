@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -12,6 +14,8 @@ namespace World
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
         public FitnessCalculatorOptions rabbitFitnessFunction;
+        public float BestFitnessScore { get; private set; } = 0f;
+        public Action OnRecreateWorlds;
 
         private IBigBrain bigBrain;
         private List<WorldBuilder> worldOptions;
@@ -24,6 +28,7 @@ namespace World
 
         private MultiListIterator<Rabbit> rabbitIterator;
         private MultiListIterator<Grass> grassIterator;
+        private SortedList<float, IBigBrain> sortedBrainList;
 
         private bool UpdateBehaviourAllWorlds()
         {
@@ -52,7 +57,8 @@ namespace World
                 var alive = worlds[i].UpdateTurn();
                 if (!alive)
                 {
-                    //print("score: " + rabbitFitnessCalculator.CalculateFitness(worlds[i].History));
+                    sortedBrainList.RemoveAt(sortedBrainList.IndexOfValue(worlds[i].bigBrain));
+                    sortedBrainList.Add(rabbitFitnessCalculator.CalculateFitness(worlds[i].History), worlds[i].bigBrain);
                     Destroy(worlds[i].gameObject);
                     rabbitIterator.RemoveList(worlds[i].rabbitList);
                     grassIterator.RemoveList(worlds[i].grassList);
@@ -70,6 +76,7 @@ namespace World
             var anyWorldsLeft = UpdateBehaviourAllWorlds();
             if (!anyWorldsLeft)
             {
+                BestFitnessScore = sortedBrainList.Keys[0];
                 CreateAllWorlds();
             }
         }
@@ -107,7 +114,7 @@ namespace World
         private void Start()
         {
             gapBetweenWorlds = 1;
-            grassIterator = new MultiListIterator<Grass>();
+            sortedBrainList = new SortedList<float, IBigBrain>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             rabbitFitnessCalculator = rabbitFitnessFunction.GetCalculator();
             // Create field objects
             InitResources();
@@ -117,12 +124,32 @@ namespace World
             CreateAllWorlds();
         }
 
+        public void ResetWorlds()
+        {
+            for(int i=worlds.Count-1; i>=0; i--)
+            {
+                Destroy(worlds[i].gameObject);
+                worlds.RemoveAt(i);
+            }
+            BestFitnessScore = 0f;
+            sortedBrainList = new SortedList<float, IBigBrain>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            CreateAllWorlds();
+        }
+
         private void CreateAllWorlds()
         {
             rabbitIterator = new MultiListIterator<Rabbit>();
+            grassIterator = new MultiListIterator<Grass>();
             float timeStart = Time.realtimeSinceStartup;
             Vector3 offset = Vector3.zero;  // offset to bottom-left corner
             int worldsOnX = 0;
+
+            for(int i = sortedBrainList.Count; i<numberOfWorldsToCreate; i++)
+            {
+                sortedBrainList.Add(-1f, new NeuralNetwork(Settings.Player.neuralNetworkLayers));
+            }
+            
+            
             for (int i = 0; i < numberOfWorldsToCreate; i++)
             {
                 GameObject world = CreateWorld(ref offset, ref worldsOnX, i);
@@ -131,17 +158,20 @@ namespace World
                 rabbitIterator.AddList(world.GetComponent<World>().rabbitList);
                 grassIterator.AddList(world.GetComponent<World>().grassList);
             }
-
+            OnRecreateWorlds?.Invoke();
             Debug.Log("CreateAllWorlds time: " + (Time.realtimeSinceStartup - timeStart));
         }
 
         private GameObject CreateWorld(ref Vector3 offset, ref int worldsOnX, int index)
         {
-            int builderIndex = Random.Range(0, worldOptions.Count);
+            int builderIndex = UnityEngine.Random.Range(0, worldOptions.Count);
             WorldBuilder builder = worldOptions[builderIndex];
             GameObject world = Instantiate(worldPrefab, this.transform);
             world.name = "World_" + index;
-            world.GetComponent<World>().bigBrain = bigBrain;
+            world.GetComponent<World>().Render = Settings.Player.renderOptions == RenderOptions.Reduced 
+                || Settings.Player.renderOptions == RenderOptions.Full 
+                || index == 0 && Settings.Player.renderOptions == RenderOptions.OnlyBest;
+            world.GetComponent<World>().bigBrain = sortedBrainList.Values[index];
             var lastSize = builder.CreateWorld(world, offset, null, prefabs);   // Apply setup from file to given world
             worldsOnX++;
             offset.x += gapBetweenWorlds + lastSize.x;
