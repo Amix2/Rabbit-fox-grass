@@ -5,45 +5,62 @@ namespace World
 {
     public class WorldHistory
     {
-        public List<Vector3> rabbitsDeath;
-        public List<Vector3> rabbitsBirth;
-        public List<Vector3> foxesDeath;
-        public List<Vector3> foxesBirth;
-        public List<Vector3> grassPositions;
+        private readonly Dictionary<Rabbit, RabbitHistory> aliveRabbits;
+        public readonly List<Vector3> grassPositions;
+        public readonly List<RabbitHistory> rabbits;
         public int lifeTime = 0;
+        public Vector2Int worldSize;
 
         public WorldHistory()
         {
-            rabbitsDeath = new List<Vector3>();
-            rabbitsBirth = new List<Vector3>();
-            foxesDeath = new List<Vector3>();
-            foxesBirth = new List<Vector3>();
             grassPositions = new List<Vector3>();
+            aliveRabbits = new Dictionary<Rabbit, RabbitHistory>();
+            rabbits = new List<RabbitHistory>();
         }
 
-        public void RabbitDeath(Vector3 pos)
+        public void RabbitDeath(Rabbit rabbit, Vector3 pos)
         {
-            rabbitsDeath.Add(pos);
+            if (!aliveRabbits.ContainsKey(rabbit))
+            {
+                throw new System.Exception("Rabbit has not yet been born");
+            }
+            RabbitHistory hist = aliveRabbits[rabbit];
+            hist.deathPosition = pos;
+            hist.lifeTime = lifeTime - hist.lifeTime;
+            aliveRabbits.Remove(rabbit);
+            rabbits.Add(hist);
         }
 
-        public void RabbitBirth(Vector3 pos)
+        public void RabbitBirth(Rabbit rabbit, Vector3 pos)
         {
-            rabbitsBirth.Add(pos);
+            if(aliveRabbits.ContainsKey(rabbit))
+            {
+                throw new System.Exception("Rabbit is a Jezus, he was reborned");
+            }
+            aliveRabbits.Add(rabbit, new RabbitHistory { birthPosition = pos, deathPosition = Vector3.zero, foodEaten = 0f, lifeTime = lifeTime });
         }
 
-        public void FoxDeath(Vector3 pos)
+        public void RabbitEat(Rabbit rabbit, float food)
         {
-            foxesDeath.Add(pos);
-        }
-
-        public void FoxBirth(Vector3 pos)
-        {
-            foxesBirth.Add(pos);
+            if (!aliveRabbits.ContainsKey(rabbit))
+            {
+                throw new System.Exception("Rabbit has not yet been born");
+            }
+            var hist = aliveRabbits[rabbit];
+            hist.foodEaten += food;
+            aliveRabbits[rabbit] = hist;
         }
 
         public void Grass(Vector3 pos)
         {
             grassPositions.Add(pos);
+        }
+
+        public struct RabbitHistory
+        {
+            public Vector3 birthPosition, deathPosition;
+            public int lifeTime;
+            public float foodEaten;
         }
     }
 }

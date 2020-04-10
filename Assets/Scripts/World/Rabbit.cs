@@ -17,6 +17,7 @@ namespace World
             {
                 float food = closestGrass.Consumed(Settings.World.rabbitEatingSpeed * Settings.World.simulationDeltaTime);
                 Health += food;
+                world.History.RabbitEat(this, food);
             }
         }
 
@@ -64,8 +65,8 @@ namespace World
         private int GetSector(Vector3 grassOffset)
         {
             if (grassOffset.sqrMagnitude == 0f) return 0;
-            Vector3 cross = Vector3.Cross(-forward, grassOffset);
-            float angle = Vector3.Angle(-forward, grassOffset);
+            Vector3 cross = Vector3.Cross(Vector3.forward, grassOffset);
+            float angle = Vector3.Angle(Vector3.forward, grassOffset);
             if (cross.y > 0.001f)
             {
                 angle = 360f - angle;
@@ -125,7 +126,7 @@ namespace World
             float angle = 360f / numOfSectors;
             for (int i = 0; i < numOfSectors; i++)    // clear data for grass
             {
-                Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle, Vector3.up) * -forward * Settings.World.animalViewRange + transform.parent.position);
+                Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle, Vector3.up) * Vector3.forward * Settings.World.animalViewRange + transform.parent.position);
             }
             Gizmos.color = Color.red;
             foreach (Grass grass in closestGrassInSectors)

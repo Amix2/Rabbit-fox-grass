@@ -1,76 +1,50 @@
 ﻿using UnityEngine;
-using System.Collections;
+
 namespace World
 {
-
     public enum FitnessCalculatorOptions
     {
-        Time_RabbitToClosestGrass,
-        Time_RabbitToAverageGrass
+        RabitAvg_TimeFoodAndDistanceToClosestGrass,
     }
 
-    static class FitnessCalculatorOptionsExtension
+    internal static class FitnessCalculatorOptionsExtension
     {
         public static IFitnessCalculator GetCalculator(this FitnessCalculatorOptions option)
         {
             switch (option)
             {
-                case FitnessCalculatorOptions.Time_RabbitToClosestGrass: return new Time_RabbitToClosestGrass();
-                case FitnessCalculatorOptions.Time_RabbitToAverageGrass: return new Time_RabbitToAverageGrass();
+                case FitnessCalculatorOptions.RabitAvg_TimeFoodAndDistanceToClosestGrass: return new RabitAvg_TimeFoodAndDistanceToClosestGrass();
             }
             return new DefaultCalculator();
         }
     }
 
-    public class Time_RabbitToClosestGrass : IFitnessCalculator
+    public class RabitAvg_TimeFoodAndDistanceToClosestGrass : IFitnessCalculator
     {
-        // lifeTime +  sum( distance( rabbit, closest grass )^2 ) 
-        public float CalculateFitness(WorldHistory worldHistory)
-        {
-            float sqrDistanceSum = 0f;
-            foreach(Vector3 rabbitPos in worldHistory.rabbitsDeath)
-            {
-                float sqrDistanceToClosest = float.MaxValue;
-                foreach(Vector3 grassPos in worldHistory.grassPositions)
-                {
-                    float sqrMagnitude = (grassPos - rabbitPos).sqrMagnitude;
-                    if(sqrDistanceToClosest > sqrMagnitude)
-                    {
-                        sqrDistanceToClosest = sqrMagnitude;
-                    }
-                }
-                sqrDistanceSum += sqrDistanceToClosest;
-            }
-            return worldHistory.lifeTime + sqrDistanceSum;
-        }
-    }
+        // AVG ( time * (food+1) + k / distToClosestGrass )
 
-    public class Time_RabbitToAverageGrass : IFitnessCalculator
-    {
-        // lifeTime +  sum( distance( rabbit, closest grass )^2 ) 
-        public float CalculateFitness(WorldHistory worldHistory)
+        public override float CalculateFitness(WorldHistory worldHistory)
         {
-            float sqrDistanceSum = 0f;
-            foreach (Vector3 rabbitPos in worldHistory.rabbitsDeath)
+            if (worldHistory.rabbits.Count == 0) return 0f;
+            float scoreSum = 0f;
+            foreach (var rabbitHist in worldHistory.rabbits)
             {
-                float sqrDistance = 0;
-                foreach (Vector3 grassPos in worldHistory.grassPositions)
-                {
-                    sqrDistance += (grassPos - rabbitPos).sqrMagnitude;
-                }
-                sqrDistanceSum += sqrDistance / worldHistory.grassPositions.Count;
+                Vector3 rabbitPos = rabbitHist.deathPosition;
+                float sqrDistanceToClosest = SqrDistaceToClosestGrass(worldHistory.grassPositions, rabbitPos);
+                scoreSum += rabbitHist.lifeTime * (rabbitHist.foodEaten + 1f) + worldHistory.worldSize.sqrMagnitude / sqrDistanceToClosest;
             }
-            return worldHistory.lifeTime + sqrDistanceSum;
+            float scoreAvg = scoreSum / worldHistory.rabbits.Count;
+
+            return scoreAvg;
         }
     }
 
     public class DefaultCalculator : IFitnessCalculator
     {
-        public float CalculateFitness(WorldHistory worldHistory)
+        public override float CalculateFitness(WorldHistory worldHistory)
         {
-            throw new System.Exception("Fitness Calculator not set");
+            Debug.LogError("Fitness Calculator not set");
+            return -1f;
         }
     }
 }
-
-

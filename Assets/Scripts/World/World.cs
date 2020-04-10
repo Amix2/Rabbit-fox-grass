@@ -6,7 +6,7 @@ namespace World
 {
     public class World : MonoBehaviour, IUpdatable
     {
-        public Vector2Int size;
+        private Vector2Int size;
 
         public static float deltaTime;
 
@@ -25,12 +25,31 @@ namespace World
 
         public bool IsAlive { get => rabbitList.Count > 0; }
 
+        public Vector2Int Size
+        {
+            get => size; set
+            {
+                size = value;
+                history.worldSize = size;
+            }
+        }
+
         private void Awake()
         {
             rabbitList = new List<Rabbit>();
             grassList = new List<Grass>();
             history = new WorldHistory();
             deadRabbits = new ConcurrentBag<Rabbit>();
+            if (Settings.Player.renderOptions == RenderOptions.None)
+            {
+                foreach (Transform eachChild in transform)
+                {
+                    if (eachChild.name == "Model")
+                    {
+                        eachChild.gameObject.SetActive(false);
+                    }
+                }
+            }
         }
 
         public void HandleDeath(Rabbit rabbit)
@@ -45,30 +64,15 @@ namespace World
         public bool UpdateTurn()
         {
             history.lifeTime++;
-            if (rabbitList.Count == deadRabbits.Count) return false;
 
             while (deadRabbits.TryTake(out Rabbit deadRabbit))
             {
-                history.RabbitDeath(deadRabbit.Position);
+                history.RabbitDeath(deadRabbit, deadRabbit.Position);
                 Destroy(deadRabbit.gameObject);
                 rabbitList.Remove(deadRabbit);
             }
 
-            return true;
-        }
-
-        private void Start()
-        {
-            if (Settings.Player.renderOptions == RenderOptions.None)
-            {
-                foreach (Transform eachChild in transform)
-                {
-                    if (eachChild.name == "Model")
-                    {
-                        eachChild.gameObject.SetActive(false);
-                    }
-                }
-            }
+            return rabbitList.Count > 0;
         }
 
         //////////////////////////////////////////
@@ -77,19 +81,19 @@ namespace World
         public void Apply()
         {
             Transform planeTransform = transform.GetChild(0);
-            planeTransform.Translate(new Vector3(size.x * 0.5f, 0f, size.y * 0.5f));
-            planeTransform.localScale = new Vector3(size.x, 0.1f, size.y);
+            planeTransform.Translate(new Vector3(Size.x * 0.5f, 0f, Size.y * 0.5f));
+            planeTransform.localScale = new Vector3(Size.x, 0.1f, Size.y);
         }
 
         public void AddRabbit(GameObject prefab, Vector3 position)
         {
             var rabbitGO = AddGameObject(prefab, position);
             rabbitGO.name = "Rabbit_" + rabbitList.Count;
-            rabbitGO.GetComponent<Rabbit>().worldSize = size;
+            rabbitGO.GetComponent<Rabbit>().worldSize = Size;
             rabbitGO.GetComponent<Rabbit>().Brain = new NeuralNetwork(Settings.Player.neuralNetworkLayers);
             rabbitList.Add(rabbitGO.GetComponent<Rabbit>());
             rabbitGO.GetComponent<Rabbit>().world = this;
-            history.RabbitBirth(position);
+            history.RabbitBirth(rabbitGO.GetComponent<Rabbit>(), position);
         }
 
         public void AddGrass(GameObject prefab, Vector3 position)

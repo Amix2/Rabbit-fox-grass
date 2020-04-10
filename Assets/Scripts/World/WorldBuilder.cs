@@ -58,7 +58,7 @@ namespace World
         {
             World world = worldGO.GetComponent<World>();
 
-            world.size = size;
+            world.Size = size;
             world.transform.Translate(position);
             for (int i = 0; i < objectsNames.Count; i++)
             {

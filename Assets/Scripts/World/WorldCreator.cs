@@ -53,7 +53,7 @@ namespace World
                 var alive = worlds[i].UpdateTurn();
                 if (!alive)
                 {
-                    //print(rabbitFitnessCalculator.CalculateFitness(worlds[i].History));
+                    print("score: " + rabbitFitnessCalculator.CalculateFitness(worlds[i].History));
                     Destroy(worlds[i].gameObject);
                     rabbitIterator.RemoveList(worlds[i].rabbitList);
                     grassIterator.RemoveList(worlds[i].grassList);

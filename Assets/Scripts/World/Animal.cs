@@ -23,6 +23,8 @@ namespace World
         protected Vector3 forward;
         public Vector3 Forward { get { return forward; } }
 
+        public Vector3 Right { get; private set; }
+
         abstract protected void ConsumeFood();
 
         abstract protected void CollectInfoAboutSurroundings();
@@ -62,13 +64,15 @@ namespace World
             // Set velocity based on mode
             if (Settings.Player.fastTrainingMode)
             {
-                velocity = decision * Settings.World.simulationDeltaTime / World.deltaTime;
+                decision = decision * Settings.World.simulationDeltaTime / World.deltaTime;
             }
             else
             {
-                velocity = decision;
+                decision = decision;
             }
 
+            //velocity = Forward * decision.x + Right * decision.y;
+            velocity = decision;
             return true;
         }
 
@@ -84,6 +88,7 @@ namespace World
             transform.localPosition = newPosition;
             position = newPosition;
             forward = transform.forward;
+            Right = transform.right;
         }
 
         protected new void Awake()

@@ -57,6 +57,7 @@ public class WorldSettings
     public float rabbitMaxVelocity = 2f;   // per sec
     public float rabbitHungerRate = 0.5f;   // per sec
     public float rabbitEatingSpeed = 1f;   // per sec
+    public bool collectHistory = true;
     public float simulationDeltaTime;
 }
 
