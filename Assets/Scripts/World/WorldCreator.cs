@@ -18,7 +18,6 @@ namespace World
         public bool RunSimulation { get; set; } = true;
         public Action OnRecreateWorlds;
 
-        private IBigBrain bigBrain;
         private List<WorldBuilder> worldOptions;
         private List<GameObject> worldGameObjects;
         private List<World> worlds;
