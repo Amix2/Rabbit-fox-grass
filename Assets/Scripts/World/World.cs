@@ -39,12 +39,12 @@ namespace World
                 if(!value) DisableModel();
             }
         }
-        public MultiTypeEventHandler<float, int, Vector3> WorldEvents { get; private set; }
+        public MultiTypeEventHandler<HistoryEventType, float, int, Vector3> WorldEvents { get; private set; }
 
         private new void Awake()
         {
             base.Awake();
-            WorldEvents = new MultiTypeEventHandler<float, int, Vector3>();
+            WorldEvents = new MultiTypeEventHandler<HistoryEventType, float, int, Vector3>();
             WorldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 posiiton) => HandleDeath(sender));
             rabbitList = new List<Rabbit>();
             grassList = new List<Grass>();

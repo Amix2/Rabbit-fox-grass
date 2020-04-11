@@ -11,7 +11,7 @@ namespace World
         public int lifeTime = 0;
         public Vector2Int worldSize;
 
-        public WorldHistory(MultiTypeEventHandler<float, int, Vector3> worldEvents)
+        public WorldHistory(MultiTypeEventHandler<HistoryEventType, float, int, Vector3> worldEvents)
         {
             grassPositions = new List<Vector3>();
             aliveRabbits = new Dictionary<Rabbit, RabbitHistory>();
