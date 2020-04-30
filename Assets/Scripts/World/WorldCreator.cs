@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -80,6 +81,16 @@ namespace World
             }
         }
 
+        public void SaveBestBrainToFile(string filePath)
+        {
+            print("Save:  " + filePath);
+        }
+
+        public void LoadBrainFromFile(string filePath)
+        {
+            print("Load:  " + filePath);
+        }
+
         private void FixedUpdate()
         {
             if (!Settings.Player.fastTrainingMode && RunSimulation)
@@ -120,6 +131,10 @@ namespace World
         /// Init world
         private void Start()
         {
+           
+
+
+
             gapBetweenWorlds = 1;
             sortedBrainList = new SortedList<float, IBigBrain>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             rabbitFitnessCalculator = rabbitFitnessFunction.GetCalculator();
