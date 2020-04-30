@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using World;
 
 public class StartStopButton : MonoBehaviour
 {
     public WorldCreator worldCreator;
-    private TextMeshProUGUI text;
+    private Text text;
     
     public void OnClickStartStop()
     {
@@ -24,7 +25,7 @@ public class StartStopButton : MonoBehaviour
 
     private void Start()
     {
-        text = GetComponentInChildren<TextMeshProUGUI>();
+        text = GetComponentInChildren<Text>();
         if (worldCreator.RunSimulation)
         {
             text.text = "Stop";

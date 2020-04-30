@@ -14,8 +14,9 @@ namespace World
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
         public FitnessCalculatorOptions rabbitFitnessFunction;
-        public float BestFitnessScore { get; private set; } = 0f;
+        public float BestFitnessScore { get { return sortedBrainList.Count > 0 ? sortedBrainList.Keys[0] : -1; } }
         public bool RunSimulation { get; set; } = true;
+        public SortedList<float, IBigBrain> sortedBrainList;
         public Action OnRecreateWorlds;
 
         private List<WorldBuilder> worldOptions;
@@ -28,7 +29,6 @@ namespace World
 
         private MultiListIterator<Rabbit> rabbitIterator;
         private MultiListIterator<Grass> grassIterator;
-        private SortedList<float, IBigBrain> sortedBrainList;
 
         private bool UpdateBehaviourAllWorlds()
         {
@@ -76,7 +76,6 @@ namespace World
             var anyWorldsLeft = UpdateBehaviourAllWorlds();
             if (!anyWorldsLeft)
             {
-                BestFitnessScore = sortedBrainList.Keys[0];
                 CreateAllWorlds();
             }
         }
@@ -139,7 +138,6 @@ namespace World
                 Destroy(worlds[i].gameObject);
                 worlds.RemoveAt(i);
             }
-            BestFitnessScore = 0f;
             sortedBrainList = new SortedList<float, IBigBrain>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             CreateAllWorlds();
         }

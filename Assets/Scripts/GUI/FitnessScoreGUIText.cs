@@ -3,20 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using World;
 
 public class FitnessScoreGUIText : MonoBehaviour
 {
     public WorldCreator worldCreator;
 
-    TextMeshProUGUI textComponent;
+    Text textComponent;
     int recentScoreStorageSize = 10;
     List<float> recentScoreStorage;
 
     // Start is called before the first frame update
     void Start()
     {
-        textComponent = GetComponent<TextMeshProUGUI>();
+        textComponent = GetComponent<Text>();
         recentScoreStorage = new List<float>();
         worldCreator.OnRecreateWorlds += UpdateGUI;
     }
@@ -46,7 +47,7 @@ public class FitnessScoreGUIText : MonoBehaviour
 
     public void Reset()
     {
-        textComponent = GetComponent<TextMeshProUGUI>();
+        textComponent = GetComponent<Text>();
         recentScoreStorage = new List<float>();
     }
 }
