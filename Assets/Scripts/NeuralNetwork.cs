@@ -39,10 +39,9 @@ public class NeuralNetwork : IBigBrain
 
     public Vector3 GetDecision(float[] input)
     {
+        var prevNeurons = PreprocessInput(input);
         // if input is not in range (0,1) we have to do normalization
         // NormalizeVector(input);
-
-        var prevNeurons = PreprocessInput(input);
 
         for (var i = 0; i < _layers.Length - 1; i++)
         {
@@ -56,20 +55,16 @@ public class NeuralNetwork : IBigBrain
         decision.y = 0f;
         decision.z -= Convert.ToSingle((double) prevNeurons[1,0]);
         
-        if (decision.sqrMagnitude > 1)
-        {
-            return decision.normalized;
-        }
-        return decision;
+        return decision.sqrMagnitude > 1 ? decision.normalized : decision;
     }
     
-    public static NeuralNetwork ReadFromFile(int fitness, String filePath)
+    public static NeuralNetwork ReadFromFile(int fitness, string filePath)
     {
         //TODO implement reading from file
         return new NeuralNetwork(Settings.Player.neuralNetworkLayers);
     }
 
-    public void SaveToFile(int fitness, String filePath)
+    public void SaveToFile(int fitness, string filePath)
     {
         var stringBuilder = new StringBuilder(fitness.ToString()).AppendLine(",");
 
@@ -81,7 +76,6 @@ public class NeuralNetwork : IBigBrain
         Debug.Log(stringBuilder.ToString());
 
         System.IO.File.WriteAllText(filePath, stringBuilder.ToString());
-        //System.IO.File.WriteAllText(Environment.CurrentDirectory+"\\"+filePath, stringBuilder.ToString());
     }
 
     private static void CheckLayers(int[] layers)
