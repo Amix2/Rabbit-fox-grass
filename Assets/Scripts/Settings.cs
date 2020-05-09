@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Settings : MonoBehaviour
 {
@@ -21,6 +21,13 @@ public class Settings : MonoBehaviour
     public static NeuralNetworkSettings NeuralNetwork
     {
         get { return instance.neuralNetwork; }
+    }
+
+
+    public NeuralMutationSettings neuralMutation;
+    public static NeuralMutationSettings NeuralMutationSettings
+    {
+        get { return instance.neuralMutation; }
     }
 
 
@@ -67,6 +74,13 @@ public class NeuralNetworkSettings
     public int rabbitFistLayerSize = 11;
     public int[] rabbitNetworkHiddenLayers;
     public int outputLayerSize = 2;
+}
+
+[System.Serializable]
+public class NeuralMutationSettings
+{
+    public double mutationProbability = 0.01;
+    [FormerlySerializedAs("mutationStrategy")] public MutationStrategyEnum mutationStrategyEnum = MutationStrategyEnum.Random;
 }
 
 public enum RenderOptions
