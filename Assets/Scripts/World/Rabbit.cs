@@ -81,6 +81,7 @@ namespace World
 
         protected override float[] CreateNetInputs()
         {
+            
             netInputs[0] = Health;
             for (int i = 1; i < 2 * numOfSectors; i++)    // normalize data
             {

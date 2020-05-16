@@ -1,7 +1,7 @@
-﻿using NumSharp;
+﻿using MathNet.Numerics.LinearAlgebra;
 using UnityEngine;
 
 public interface IBigBrain
 {
-    Vector3 GetDecision(NDArray inputs);
+    Vector3 GetDecision(float[] inputs);
 }
