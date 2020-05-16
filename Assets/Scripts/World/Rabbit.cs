@@ -104,10 +104,10 @@ namespace World
 
         private new void Awake()
         {
-            numOfSectors = Settings.NeuralNetwork.rabbitFistLayerSize / 2;
+            numOfSectors = Settings.Player.neuralNetworkLayers[0] / 2;
             base.Awake();
             closestGrassInSectors = new Grass[numOfSectors];
-            netInputs = new float[Settings.NeuralNetwork.rabbitFistLayerSize];
+            netInputs = new float[Settings.Player.neuralNetworkLayers[0]];
             sqrRabbitEatingDistance = Settings.World.rabbitEatingDistance * Settings.World.rabbitEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
         }

@@ -1,4 +1,5 @@
-﻿using DefaultNamespace;
+﻿using Boo.Lang;
+using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -71,9 +72,9 @@ public class WorldSettings
 [System.Serializable]
 public class NeuralNetworkSettings
 {
-    public int rabbitFistLayerSize = 11;
-    public int[] rabbitNetworkHiddenLayers;
-    public int outputLayerSize = 2;
+    //public int rabbitFistLayerSize = 11;
+   // public int[] rabbitNetworkHiddenLayers;
+   // public int outputLayerSize = 2;
 }
 
 [System.Serializable]
@@ -81,6 +82,7 @@ public class NeuralMutationSettings
 {
     public double mutationProbability = 0.01;
     [FormerlySerializedAs("mutationStrategy")] public MutationStrategyEnum mutationStrategyEnum = MutationStrategyEnum.Random;
+    [SerializeField] public ListMutationQuantity[] listMutationQuantity;
 }
 
 public enum RenderOptions
@@ -89,4 +91,11 @@ public enum RenderOptions
     Reduced,
     OnlyBest,
     None
+}
+
+[System.Serializable]
+public class ListMutationQuantity
+{
+    public int count;
+    public int quantity;
 }

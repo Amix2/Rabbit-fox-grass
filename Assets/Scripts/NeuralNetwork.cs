@@ -7,7 +7,7 @@ using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.Random;
 using UnityEngine;
 
-public class NeuralNetwork : IBigBrain
+public class NeuralNetwork
 {
     public Matrix<float>[] Weights => _weights;
     public Matrix<float>[] Biases => _biases;
@@ -39,6 +39,10 @@ public class NeuralNetwork : IBigBrain
 
     public Vector3 GetDecision(float[] input)
     {
+        for(int i=1; i<input.Length; i++)
+        {
+            //if(input[i]< 1) Debug.Log(input[i]);
+        }
         var prevNeurons = PreprocessInput(input);
         // if input is not in range (0,1) we have to do normalization
         // NormalizeVector(input);

@@ -10,9 +10,9 @@ namespace World
         public LayerMask feedOnLayer;
 
         protected Vector3 velocity = Vector3.zero;
-        protected IBigBrain brain;
+        protected NeuralNetwork brain;
         public World world;
-        public IBigBrain Brain { set { brain = value; } }
+        public NeuralNetwork Brain { set { brain = value; } }
 
         protected abstract float MaxVelocity { get; }
         public abstract float HungerRate { get; }

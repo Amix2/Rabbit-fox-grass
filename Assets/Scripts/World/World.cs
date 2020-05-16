@@ -14,7 +14,7 @@ namespace World
         public List<Grass> grassList;
 
         private ConcurrentBag<Rabbit> deadRabbits;
-        internal IBigBrain bigBrain;
+        internal NeuralNetwork bigBrain;
 
         public bool IsAlive { get => rabbitList.Count > 0; }
 

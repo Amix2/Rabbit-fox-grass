@@ -425,7 +425,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14084
+  m_Name: pb_Mesh14108
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1202,8 +1202,8 @@ MonoBehaviour:
   - name: grass
     prefab: {fileID: 7695852279255118766, guid: dece207615384e146a4ecd312b4bdf3e,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: 3b86f657692996945a8651c011c79376, type: 3}
-  numberOfWorldsToCreate: 50
+  worldDefinitionFile: {fileID: 4900000, guid: 5097480d0e4012641adf3a6fd42f1eb1, type: 3}
+  numberOfWorldsToCreate: 2
   rabbitFitnessFunction: 0
 --- !u!4 &758577819
 Transform:
@@ -1471,8 +1471,8 @@ MonoBehaviour:
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
     fastTrainingMode: 1
-    renderOptions: 2
-    neuralNetworkLayers: 3f00000002000000
+    renderOptions: 1
+    neuralNetworkLayers: 3f0000003f00000002000000
   world:
     animalViewRange: 10
     allowedObjectNames:
@@ -1488,13 +1488,12 @@ MonoBehaviour:
     rabbitEatingSpeed: 1
     collectHistory: 1
     simulationDeltaTime: 0
-  neuralNetwork:
-    rabbitFistLayerSize: 63
-    rabbitNetworkHiddenLayers: 
-    outputLayerSize: 2
   neuralMutation:
     mutationProbability: 0.01
     mutationStrategyEnum: 0
+    listMutationQuantity:
+    - count: 1
+      quantity: 2
 --- !u!4 &1148534420
 Transform:
   m_ObjectHideFlags: 0
