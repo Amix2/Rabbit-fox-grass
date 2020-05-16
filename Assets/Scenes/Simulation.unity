@@ -339,7 +339,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 107477881}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 174ba09d14538304ba375b8ade7c42d0, type: 3}
+  m_Script: {fileID: 11500000, guid: 8539c92368ef66b44b9caa5e118ec317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   worldCreator: {fileID: 758577818}
@@ -369,7 +369,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 109056419}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84899e359a003434f8f4f06b4a4847ec, type: 3}
+  m_Script: {fileID: 11500000, guid: ccac29c01ab2295408fa7cabbc00a74d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   showPlot: 1
@@ -1308,7 +1308,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 859780887}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00b2662c7a0ab014bb1abde69075b7d9, type: 3}
+  m_Script: {fileID: 11500000, guid: db5ea60bee39cc34e8f8e4b782444acf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   worldCreator: {fileID: 758577818}
@@ -1492,6 +1492,9 @@ MonoBehaviour:
     rabbitFistLayerSize: 63
     rabbitNetworkHiddenLayers: 
     outputLayerSize: 2
+  neuralMutation:
+    mutationProbability: 0.01
+    mutationStrategyEnum: 0
 --- !u!4 &1148534420
 Transform:
   m_ObjectHideFlags: 0
