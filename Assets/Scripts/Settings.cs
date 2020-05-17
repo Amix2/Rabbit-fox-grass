@@ -1,6 +1,7 @@
 ﻿using Boo.Lang;
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 
 public class Settings : MonoBehaviour
@@ -38,6 +39,7 @@ public class Settings : MonoBehaviour
     {
         instance = this;
         instance.world.simulationDeltaTime = Time.fixedDeltaTime;
+        Profiler.enabled = false;
     }
 }
 
@@ -51,6 +53,8 @@ public class PlayerSettings
     public bool fastTrainingMode = false;
     public RenderOptions renderOptions = RenderOptions.Full;
     public int[] neuralNetworkLayers = new[] { 2, 10, 10, 2 };
+    public double[] neuralNetworkWeightsRange = new[] { -4.0, 4.0 };
+    public double[] neuralNetworkBiasRange = new[] { -4.0, 4.0 };
 }
 
 [System.Serializable]
@@ -67,6 +71,7 @@ public class WorldSettings
     public float rabbitEatingSpeed = 1f;   // per sec
     public bool collectHistory = true;
     public float simulationDeltaTime;
+    public float maxAnimalLifetime;
 }
 
 [System.Serializable]

@@ -1,1 +1,1 @@
-7,7 | rabbit : 1 : position : 3,3 | grass : 1 : position : 5,3
+21,21 | rabbit : 1 : position : 11,6 | grass : 1 : position : 11,11

@@ -78,6 +78,7 @@ namespace World
             var anyWorldsLeft = UpdateBehaviourAllWorlds();
             if (!anyWorldsLeft)
             {
+                OnRecreateWorlds?.Invoke();
                 MutateListOfBrains();
                 CreateAllWorlds();
             }
@@ -94,10 +95,13 @@ namespace World
                 for(int i = 0; i<mutationQuantity.count; i++)
                 {
                     int currentBrainIndex = baseListOffset + i;
-                    newBrainList.Add(brainListFitness[currentBrainIndex], brainListBrains[currentBrainIndex]);
-                    for(int quantity = 1; quantity < mutationQuantity.quantity; quantity++)
+                    if(currentBrainIndex < brainListFitness.Count)
                     {
-                        newBrainList.Add(-1, NeuralNetworkMutator.Mutate(brainListBrains[currentBrainIndex]));
+                        newBrainList.Add(brainListFitness[currentBrainIndex], brainListBrains[currentBrainIndex]);
+                        for(int quantity = 1; quantity < mutationQuantity.quantity; quantity++)
+                        {
+                            newBrainList.Add(-1, NeuralNetworkMutator.Mutate(brainListBrains[currentBrainIndex]));
+                        }
                     }
                     baseListOffset++;
                 }
@@ -199,7 +203,6 @@ namespace World
                 rabbitIterator.AddList(world.GetComponent<World>().rabbitList);
                 grassIterator.AddList(world.GetComponent<World>().grassList);
             }
-            OnRecreateWorlds?.Invoke();
             Debug.Log("CreateAllWorlds time: " + (Time.realtimeSinceStartup - timeStart));
         }
 
@@ -236,6 +239,7 @@ namespace World
                 catch (System.Exception e)
                 {
                     Debug.LogError(e);
+                    Debug.LogError(e.StackTrace);
                 }
             }
         }

@@ -35,6 +35,7 @@ namespace World
         public float Consumed(float amount = 1)
         {
             if (Health < 0.1f) return 0f;
+            amount = Mathf.Min(amount, Health);
             Health = Mathf.Clamp01(Health - amount);
             return FoodAmount * amount;
         }

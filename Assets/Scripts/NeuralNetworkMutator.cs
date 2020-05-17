@@ -26,6 +26,8 @@ namespace DefaultNamespace
         private static NeuralNetwork WithRandomStrategy(int[] layers, Matrix<float>[]layersWeights,Matrix<float>[] layersBiases)
         {
             var random = new MersenneTwister();
+            double weightsRange = Settings.Player.neuralNetworkWeightsRange[1] - Settings.Player.neuralNetworkWeightsRange[0];
+            double biasRange = Settings.Player.neuralNetworkBiasRange[1] - Settings.Player.neuralNetworkBiasRange[0];
 
             for (var i = 0; i < layers.Length - 1; i++)
             {
@@ -35,7 +37,7 @@ namespace DefaultNamespace
                     {
                         if (random.NextDouble() < Settings.NeuralMutationSettings.mutationProbability)
                         {
-                            layersWeights[i][j, k] = Convert.ToSingle(random.NextDouble());
+                            layersWeights[i][j, k] = Convert.ToSingle(random.NextDouble() * weightsRange + Settings.Player.neuralNetworkWeightsRange[0]);
                         }
                     }
                 }
@@ -43,7 +45,7 @@ namespace DefaultNamespace
                 {
                     if (random.NextDouble() < Settings.NeuralMutationSettings.mutationProbability)
                     {
-                        layersBiases[i][j, 0] = Convert.ToSingle(random.NextDouble());
+                        layersBiases[i][j, 0] = Convert.ToSingle(random.NextDouble() * biasRange + Settings.Player.neuralNetworkBiasRange[0]);
                     }
                 }
             }

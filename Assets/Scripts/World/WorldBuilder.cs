@@ -38,7 +38,7 @@ namespace World
         }
 
         private void ParseOneOption(string[] optionsArr, int i)
-        {
+        { 
             string[] option = optionsArr[i].Split(':');
 
             // check if object name is allowed (set allowed in Settings)
@@ -49,7 +49,9 @@ namespace World
             objectsCount.Add(int.Parse(option[1]));
 
             if (option[2].Trim() == "position")
-                objectsPositions.Add(PositionSelector.FromList(option[3]));
+                objectsPositions.Add(PositionSelector.FromPointList(option[3]));
+            else if (option[2].Trim() == "circle")
+                objectsPositions.Add(PositionSelector.FromCircleData(option[3]));
             else
                 throw new System.Exception(option[2] + " is not valid input type");
         }
@@ -90,10 +92,9 @@ namespace World
 
 internal class PositionSelector
 {
-    private Vector2[] positions;
-    private int ind = 0;
+    private List<Vector2> positions;
 
-    public static PositionSelector FromList(string list)
+    public static PositionSelector FromPointList(string list)
     {
         PositionSelector selector = new PositionSelector(list.Split('-').Length);
         foreach (string values in list.Split('-'))
@@ -104,20 +105,43 @@ internal class PositionSelector
         return selector;
     }
 
+    // centerX,centerY - radius
+    public static PositionSelector FromCircleData(string circleData)
+    {
+        PositionSelector selector = new PositionSelector();
+        string[] values = circleData.Split('-');
+        string[] centerValues = values[0].Split(',');
+        Vector2 center = new Vector2(float.Parse(centerValues[0]), float.Parse(centerValues[1]));
+        float radius = float.Parse(values[1]);
+        for(float angle = 0; angle < 360; angle += 1)
+        {
+            Vector2 newPoint = new Vector2(Mathf.Round(center.x + Mathf.Sin(angle) * radius), Mathf.Round(center.y + Mathf.Cos(angle) * radius));
+            if(!selector.positions.Contains(newPoint))
+            {
+                selector.positions.Add(newPoint);
+            }
+        }
+        return selector;
+    }
+
     private PositionSelector(int size)
     {
-        positions = new Vector2[size];
+        positions = new List<Vector2>(size);
+    }
+
+    private PositionSelector()
+    {
+        positions = new List<Vector2>();
     }
 
     public Vector3 GetRandomPosition()
     {
-        var retPos = positions[Random.Range(0, positions.Length)];
+        var retPos = positions[Random.Range(0, positions.Count)];
         return new Vector3(retPos.x, 0f, retPos.y);
     }
 
     private void AddPosition(Vector2 pos)
     {
-        positions[ind] = pos;
-        ind++;
+        positions.Add(pos);
     }
 }

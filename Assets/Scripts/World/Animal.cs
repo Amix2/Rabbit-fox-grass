@@ -11,6 +11,8 @@ namespace World
 
         protected Vector3 velocity = Vector3.zero;
         protected NeuralNetwork brain;
+        protected int deadAtTurn;
+        protected int currentTurn = 0;
         public World world;
         public NeuralNetwork Brain { set { brain = value; } }
 
@@ -38,6 +40,13 @@ namespace World
         {
             if (!IsAlive) throw new Exception("Update on dead animal");
 
+            currentTurn++;
+            if(currentTurn > deadAtTurn)
+            {
+                Debug.Log("Immortal animal " + currentTurn);
+                Health = -1;
+            }
+            
             // Handle hunger
             Health -= HungerRate * Settings.World.simulationDeltaTime;
             if (Health <= 0f)
@@ -55,7 +64,6 @@ namespace World
             // Get decision from net
             Profiler.BeginSample("run NeuralNet");
             Vector3 decision = brain.GetDecision(CreateNetInputs());
-            //print(decision);
             Profiler.EndSample();
 
             // Set velocity based on mode
@@ -92,6 +100,7 @@ namespace World
         protected new void Awake()
         {
             base.Awake();
+            deadAtTurn = (int) (Settings.World.maxAnimalLifetime / Settings.World.simulationDeltaTime);
             world = transform.parent.GetComponent<World>();
         }
     }

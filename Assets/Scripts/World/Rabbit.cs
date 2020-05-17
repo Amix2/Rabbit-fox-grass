@@ -17,10 +17,12 @@ namespace World
             {
                 float food = closestGrass.Consumed(Settings.World.rabbitEatingSpeed * Settings.World.simulationDeltaTime);
                 Health += food;
+                Health = Mathf.Clamp01(Health);
                 world.WorldEvents.Invoke(this, HistoryEventType.EAT, food);
             }
         }
 
+        // fill netInputs with suqre distance to nearest objects
         protected override void CollectInfoAboutSurroundings()
         {
             // clear data from previous runs
@@ -85,6 +87,7 @@ namespace World
             netInputs[0] = Health;
             for (int i = 1; i < 2 * numOfSectors; i++)    // normalize data
             {
+                netInputs[i] = sqrAnimalViewRange - netInputs[i];
                 netInputs[i] /= sqrAnimalViewRange;
             }
             return netInputs;

@@ -11,9 +11,10 @@ public class FitnessGraph : MonoBehaviour
     public WorldCreator worldCreator;
     public float plotRefreshTime = 1;
 
-    private string plotPath => Application.dataPath + "/Plots/";
+    private string plotDataPath => Application.dataPath + "/../Plots/";
+    private string plotScriptPath => Application.dataPath + "/Plots/";
     private string sessionFileName;
-    private string fullFilePath => plotPath + sessionFileName;
+    private string fullFilePath => plotDataPath + sessionFileName;
 
     private string pythonScriptName = "runPlot.bat";
     private Process cmd;
@@ -39,8 +40,8 @@ public class FitnessGraph : MonoBehaviour
             }
 
             cmd = new Process();
-            cmd.StartInfo.FileName = plotPath + pythonScriptName;
-            cmd.StartInfo.Arguments = string.Format("{0} {1} {2}", plotPath, plotRefreshTime, fullFilePath);
+            cmd.StartInfo.FileName = plotScriptPath + pythonScriptName;
+            cmd.StartInfo.Arguments = string.Format("{0} {1} {2}", plotScriptPath, plotRefreshTime, fullFilePath);
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = true;
             cmd.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
@@ -65,7 +66,7 @@ public class FitnessGraph : MonoBehaviour
         }
         using (StreamWriter writer = File.AppendText(fullFilePath))
         {
-            writer.WriteLine(fitnessList[0] + ";" + (avg / fitnessList.Count) + ";" + fitnessList[fitnessList.Count - 1]);
+            writer.WriteLine(fitnessList[0] +";" + (avg / fitnessList.Count) + ";" + fitnessList[fitnessList.Count - 1]);
             writer.Close();
         }
     }

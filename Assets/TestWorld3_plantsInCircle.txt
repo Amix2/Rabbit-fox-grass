@@ -1,0 +1,1 @@
+21,21 | rabbit : 1 : position : 11,11 | grass : 1 : circle : 11,11 - 2

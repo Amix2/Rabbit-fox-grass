@@ -49,15 +49,20 @@ public class NeuralNetwork
 
         for (var i = 0; i < _layers.Length - 1; i++)
         {
-            var res = _weights[i]* prevNeurons + _biases[i];
+            var res = _weights[i] * prevNeurons + _biases[i];
+            //Debug.Log(_weights[i]);
+            //Debug.Log(_biases[i]);
+            //Debug.Log(res);
+
             NormalizeVector(res);
+           // Debug.Log(res);
+
             prevNeurons = res;
         }
-        
         var decision = new Vector3();
-        decision.x -= Convert.ToSingle((double) prevNeurons[0,0]);
+        decision.x = 2*prevNeurons[0,0] - 1f;
         decision.y = 0f;
-        decision.z -= Convert.ToSingle((double) prevNeurons[1,0]);
+        decision.z = 2*prevNeurons[1,0] - 1f;
         
         return decision.sqrMagnitude > 1 ? decision.normalized : decision;
     }
@@ -145,17 +150,19 @@ public class NeuralNetwork
             Matrix<float> layerBiases = DenseMatrix.Create(_layers[i], 1, 0.0f);
             var random = new MersenneTwister();
             
+            double weightsRange = Settings.Player.neuralNetworkWeightsRange[1] - Settings.Player.neuralNetworkWeightsRange[0];
+            double biasRange = Settings.Player.neuralNetworkBiasRange[1] - Settings.Player.neuralNetworkBiasRange[0];
             for (var j = 0; j < layerWeights.RowCount; j++)
             {
                 for(var k=0; k<layerWeights.ColumnCount; k++)
                 {
-                    layerWeights[j,k] = Convert.ToSingle(random.NextDouble());
+                    layerWeights[j, k] = Convert.ToSingle(random.NextDouble() * weightsRange + Settings.Player.neuralNetworkWeightsRange[0]);
                 }
             }
 
             for (var j = 0; j < layerBiases.RowCount; j++)
             {
-                layerBiases[j,0] = Convert.ToSingle(random.NextDouble());
+                layerBiases[j,0] = Convert.ToSingle(random.NextDouble() * biasRange + Settings.Player.neuralNetworkBiasRange[0]);
             }
             
             weights.Add(layerWeights);
