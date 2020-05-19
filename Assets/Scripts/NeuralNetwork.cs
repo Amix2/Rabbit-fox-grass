@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.Random;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class NeuralNetwork
@@ -50,41 +52,53 @@ public class NeuralNetwork
         for (var i = 0; i < _layers.Length - 1; i++)
         {
             var res = _weights[i] * prevNeurons + _biases[i];
-            //Debug.Log(_weights[i]);
-            //Debug.Log(_biases[i]);
-            //Debug.Log(res);
-
             NormalizeVector(res);
            // Debug.Log(res);
 
             prevNeurons = res;
         }
+
         var decision = new Vector3();
-        decision.x = 2*prevNeurons[0,0] - 1f;
+        decision.x = 2 * Convert.ToSingle((double) prevNeurons[0, 0]) - 1f;
         decision.y = 0f;
-        decision.z = 2*prevNeurons[1,0] - 1f;
-        
+        decision.z = 2 * Convert.ToSingle((double) prevNeurons[1, 0]) - 1f;
+
         return decision.sqrMagnitude > 1 ? decision.normalized : decision;
     }
-    
-    public static NeuralNetwork ReadFromFile(int fitness, string filePath)
+
+    public static NeuralNetwork NetworkFromString(JToken network)
     {
-        //TODO implement reading from file
-        return new NeuralNetwork(Settings.Player.neuralNetworkLayers);
+        var layersWeights = new List<Matrix<float>>();
+        var layersBiases = new List<Matrix<float>>();
+
+        foreach (var matrixToken in network["weights"].Children().ToList())
+        {
+            layersWeights.Add(StringTo2DMatrix(matrixToken));
+        }
+
+        foreach (var matrixToken in network["biases"].Children().ToList())
+        {
+            layersBiases.Add(StringTo1DMatrix(matrixToken));
+        }
+
+        var layers = LayersFromToken(network["weights"]);
+        return new NeuralNetwork(layers, layersWeights.ToArray(), layersBiases.ToArray());
     }
 
-    public void SaveToFile(int fitness, string filePath)
+    public string ToString(int fitness)
     {
-        var stringBuilder = new StringBuilder(fitness.ToString()).AppendLine(",");
+        var stringBuilder = new StringBuilder().AppendLine("{");
 
-        stringBuilder.Append(MatrixArrayToString(_weights));
-        
+        stringBuilder.AppendLine("\"fitness\":" + fitness.ToString() + ",");
+
+        stringBuilder.Append("\"weights\":" + MatrixArrayToString(_weights));
+
         stringBuilder.AppendLine(",");
-        stringBuilder.Append(MatrixArrayToString(_biases));
-        
-        Debug.Log(stringBuilder.ToString());
+        stringBuilder.Append("\"biases\":" + MatrixArrayToString(_biases));
 
-        System.IO.File.WriteAllText(filePath, stringBuilder.ToString());
+        stringBuilder.Append("}");
+
+        return stringBuilder.ToString();
     }
 
     private static void CheckLayers(int[] layers)
@@ -105,8 +119,9 @@ public class NeuralNetwork
         {
             if (weights[i].RowCount != layers[i + 1]) throw new Exception("Wrong number of neurons in layer weights");
             if (weights[i].ColumnCount != layers[i])
-                throw new Exception("Wrong number of neurons from previous layer, layer size:"+layers[i + 1]+" actual num of columns in weights: "+weights[i].ColumnCount);
-            if (biases[i].RowCount!= layers[i + 1]) throw new Exception("Wrong number of neurons in layer biases");
+                throw new Exception("Wrong number of neurons from previous layer, layer size:" + layers[i + 1] +
+                                    " actual num of columns in weights: " + weights[i].ColumnCount);
+            if (biases[i].RowCount != layers[i + 1]) throw new Exception("Wrong number of neurons in layer biases");
         }
     }
 
@@ -114,10 +129,10 @@ public class NeuralNetwork
     {
         for (var i = 0; i < input.RowCount; i++)
         {
-            input[i,0] = Sigmoid(input[i,0]);
+            input[i, 0] = Sigmoid(input[i, 0]);
         }
     }
-    
+
     private static float Sigmoid(float value)
     {
         if (value >= 4f) return 1f;
@@ -128,7 +143,7 @@ public class NeuralNetwork
         tmp *= tmp;
         return 1f / (1f + tmp);
     }
-    
+
     private Matrix<float> PreprocessInput(float[] input)
     {
         Matrix<float> preprocessed = DenseMatrix.Create(input.Length, 1, 0.0f);
@@ -136,9 +151,10 @@ public class NeuralNetwork
         {
             preprocessed[i, 0] = input[i];
         }
+
         return preprocessed;
     }
-    
+
     private void GenerateRandomWeights()
     {
         var weights = new List<Matrix<float>>();
@@ -154,7 +170,7 @@ public class NeuralNetwork
             double biasRange = Settings.Player.neuralNetworkBiasRange[1] - Settings.Player.neuralNetworkBiasRange[0];
             for (var j = 0; j < layerWeights.RowCount; j++)
             {
-                for(var k=0; k<layerWeights.ColumnCount; k++)
+                for (var k = 0; k < layerWeights.ColumnCount; k++)
                 {
                     layerWeights[j, k] = Convert.ToSingle(random.NextDouble() * weightsRange + Settings.Player.neuralNetworkWeightsRange[0]);
                 }
@@ -162,9 +178,9 @@ public class NeuralNetwork
 
             for (var j = 0; j < layerBiases.RowCount; j++)
             {
-                layerBiases[j,0] = Convert.ToSingle(random.NextDouble() * biasRange + Settings.Player.neuralNetworkBiasRange[0]);
+                layerBiases[j, 0] = Convert.ToSingle(random.NextDouble() * biasRange + Settings.Player.neuralNetworkBiasRange[0]);
             }
-            
+
             weights.Add(layerWeights);
             biases.Add(layerBiases);
         }
@@ -175,14 +191,15 @@ public class NeuralNetwork
 
     private static string MatrixArrayToString(Matrix<float>[] array)
     {
-        var stringBuilder= new StringBuilder();
+        var stringBuilder = new StringBuilder();
         stringBuilder.AppendLine("[");
-        
+
         for (var i = 0; i < array.Length; i++)
         {
             stringBuilder.Append(MatrixToString(array[i]));
-            if(i<array.Length-1) stringBuilder.AppendLine(",");
+            if (i < array.Length - 1) stringBuilder.AppendLine(",");
         }
+
         stringBuilder.AppendLine();
         stringBuilder.Append("]");
 
@@ -191,35 +208,79 @@ public class NeuralNetwork
 
     private static string MatrixToString(Matrix<float> matrix)
     {
-        var stringBuilder= new StringBuilder();
+        var stringBuilder = new StringBuilder();
         var hasMoreThanOneCol = matrix.ColumnCount > 1;
-        
+
         stringBuilder.AppendLine("[");
         for (var i = 0; i < matrix.RowCount; i++)
         {
-            stringBuilder.Append(RowToString(matrix, i,hasMoreThanOneCol));
-            if(i< matrix.RowCount-1  && hasMoreThanOneCol)stringBuilder.AppendLine(",");
-            if(i< matrix.RowCount-1  && !hasMoreThanOneCol)stringBuilder.Append(",");
+            stringBuilder.Append(RowToString(matrix, i, hasMoreThanOneCol));
+            if (i < matrix.RowCount - 1 && hasMoreThanOneCol) stringBuilder.AppendLine(",");
+            if (i < matrix.RowCount - 1 && !hasMoreThanOneCol) stringBuilder.Append(",");
         }
+
         stringBuilder.AppendLine();
         stringBuilder.Append("]");
-        
+
         return stringBuilder.ToString();
     }
 
     private static string RowToString(Matrix<float> matrix, int rowIndex, bool hasMoreThanOneCol)
     {
-        var stringBuilder= new StringBuilder();
-        
-        if(hasMoreThanOneCol)stringBuilder.Append("[");
+        var stringBuilder = new StringBuilder();
+
+        if (hasMoreThanOneCol) stringBuilder.Append("[");
         for (var j = 0; j < matrix.ColumnCount; j++)
         {
             stringBuilder.Append(matrix[rowIndex, j].ToString(CultureInfo.InvariantCulture));
-            if( j < matrix.ColumnCount - 1)stringBuilder.Append(","); 
-        }            
-        if(hasMoreThanOneCol)stringBuilder.Append("]");
+            if (j < matrix.ColumnCount - 1) stringBuilder.Append(",");
+        }
+
+        if (hasMoreThanOneCol) stringBuilder.Append("]");
 
         return stringBuilder.ToString();
     }
 
+    private static Matrix<float> StringTo2DMatrix(JToken token)
+    {
+        var rowsNum = token.Children().Count();
+        var colNum = token[0].Children().Count();
+        var matrix = DenseMatrix.Create(rowsNum, colNum, 0f);
+
+        for (var i = 0; i < rowsNum; i++)
+        {
+            for (var j = 0; j < colNum; j++)
+            {
+                matrix[i, j] = token[i].Children().ToArray()[j].Value<float>();
+            }
+        }
+
+        return matrix;
+    }
+
+    private static Matrix<float> StringTo1DMatrix(JToken token)
+    {
+        var rowsNum = token.Children().Count();
+        var matrix = DenseMatrix.Create(rowsNum, 1, 0f);
+
+        for (var i = 0; i < rowsNum; i++)
+        {
+            matrix[i, 0] = token[i].Value<float>();
+        }
+
+        return matrix;
+    }
+
+    private static int[] LayersFromToken(JToken token)
+    {
+        var layers = new List<int>();
+
+        foreach (var child in token.Children())
+        {
+            layers.Add(child[0].Children().Count());
+        }
+
+        layers.Add(token[token.Count() - 1].Children().Count());
+        return layers.ToArray();
+    }
 }
