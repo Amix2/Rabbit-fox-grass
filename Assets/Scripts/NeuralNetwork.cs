@@ -8,7 +8,6 @@ using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.Random;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 
 public class NeuralNetwork : IBigBrain
 {
@@ -61,39 +60,26 @@ public class NeuralNetwork : IBigBrain
         return decision.sqrMagnitude > 1 ? decision.normalized : decision;
     }
 
-    public static NeuralNetwork ReadFromFile(string filePath)
+    public static NeuralNetwork NetworkFromString(JToken network)
     {
         var layersWeights = new List<Matrix<float>>();
         var layersBiases = new List<Matrix<float>>();
 
-        var fileContent = System.IO.File.ReadAllText(filePath);
-        var networkObject = JObject.Parse(fileContent);
-
-        foreach (var matrixToken in networkObject["weights"].Children().ToList())
+        foreach (var matrixToken in network["weights"].Children().ToList())
         {
             layersWeights.Add(StringTo2DMatrix(matrixToken));
         }
 
-        foreach (var matrixToken in networkObject["biases"].Children().ToList())
+        foreach (var matrixToken in network["biases"].Children().ToList())
         {
             layersBiases.Add(StringTo1DMatrix(matrixToken));
         }
 
-        var layers = LayersFromToken(networkObject["weights"]);
-
-        for (var i = 0; i < layers.Length - 1; i++)
-        {
-            Debug.Log("layers[" + i.ToString() + "]: " + layers[i]);
-            Debug.Log("layersWeights[" + i.ToString() + "]: " + layersWeights[i]);
-            Debug.Log("layersBiases[" + i.ToString() + "]: " + layersBiases[i]);
-        }
-
-        Debug.Log("layers[" + (layers.Length - 1) + "]: " + layers[layers.Length - 1]);
-
+        var layers = LayersFromToken(network["weights"]);
         return new NeuralNetwork(layers, layersWeights.ToArray(), layersBiases.ToArray());
     }
 
-    public void SaveToFile(int fitness, string filePath)
+    public string ToString(int fitness)
     {
         var stringBuilder = new StringBuilder().AppendLine("{");
 
@@ -104,10 +90,9 @@ public class NeuralNetwork : IBigBrain
         stringBuilder.AppendLine(",");
         stringBuilder.Append("\"biases\":" + MatrixArrayToString(_biases));
 
-        stringBuilder.AppendLine("}");
-        Debug.Log("SaveToFile: " + stringBuilder);
+        stringBuilder.Append("}");
 
-        System.IO.File.WriteAllText(filePath, stringBuilder.ToString());
+        return stringBuilder.ToString();
     }
 
     private static void CheckLayers(int[] layers)
