@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.Random;
@@ -14,7 +15,7 @@ namespace DefaultNamespace
             Matrix<float>[] layersWeights = copiedMatrices.Item1;
             Matrix<float>[] layersBiases = copiedMatrices.Item2;
 
-            switch(Settings.NeuralMutationSettings.mutationStrategyEnum)
+            switch (Settings.NeuralMutationSettings.mutationStrategyEnum)
             {
                 case MutationStrategyEnum.Random:
                     return WithRandomStrategy(network.Layers, layersWeights, layersBiases);
@@ -23,15 +24,51 @@ namespace DefaultNamespace
             throw new Exception("Selected mutation strategy is incorrect or not available yet");
         }
 
-        private static NeuralNetwork WithRandomStrategy(int[] layers, Matrix<float>[]layersWeights,Matrix<float>[] layersBiases)
+        public static NeuralNetwork Mutate(NeuralNetwork network1, NeuralNetwork network2)
+        {
+            var random = new MersenneTwister();
+
+            var copiedMatrices = CopyMatrices(network1);
+            Matrix<float>[] layersWeights = copiedMatrices.Item1;
+            Matrix<float>[] layersBiases = copiedMatrices.Item2;
+
+            Matrix<float>[] secondNetworkWeights = network2.Weights;
+            Matrix<float>[] secondNetworkBiases = network2.Biases;
+
+            for (var l = 0; l < layersWeights.Length; l++)
+            {
+                for (var i = 0; i < layersWeights[l].ColumnCount; i++)
+                {
+                    for (var j = 0; j < layersWeights[l].ColumnCount; j++)
+                    {
+                        if (random.NextDouble() > 0.5)
+                            layersWeights[l][i, j] = secondNetworkWeights[l][i, j];
+                    }
+                }
+            }
+
+            for (var l = 0; l < layersBiases.Length; l++)
+            {
+                for (var i = 0; i < layersBiases[l].ColumnCount; i++)
+                {
+                    if (random.NextDouble() > 0.5)
+                        layersBiases[l][i, 0] = secondNetworkBiases[l][i, 0];
+                }
+            }
+
+            return new NeuralNetwork(network1.Layers, layersWeights, layersBiases);
+        }
+
+        private static NeuralNetwork WithRandomStrategy(int[] layers, Matrix<float>[] layersWeights,
+            Matrix<float>[] layersBiases)
         {
             var random = new MersenneTwister();
 
             for (var i = 0; i < layers.Length - 1; i++)
             {
-                for (var j = 0; j < layersWeights[i].RowCount;j++)
+                for (var j = 0; j < layersWeights[i].RowCount; j++)
                 {
-                    for (var k = 0; k < layersWeights[i].ColumnCount;k++)
+                    for (var k = 0; k < layersWeights[i].ColumnCount; k++)
                     {
                         if (random.NextDouble() < Settings.NeuralMutationSettings.mutationProbability)
                         {
@@ -39,7 +76,8 @@ namespace DefaultNamespace
                         }
                     }
                 }
-                for (var j = 0; j < layersBiases[i].RowCount;j++)
+
+                for (var j = 0; j < layersBiases[i].RowCount; j++)
                 {
                     if (random.NextDouble() < Settings.NeuralMutationSettings.mutationProbability)
                     {
@@ -47,7 +85,7 @@ namespace DefaultNamespace
                     }
                 }
             }
-            
+
             return new NeuralNetwork(layers, layersWeights, layersBiases);
         }
 
@@ -60,13 +98,13 @@ namespace DefaultNamespace
             {
                 layersWeights.Add(CreateCopyOfMatrix(network.Weights[i]));
             }
-            
+
             for (var i = 0; i < network.Biases.Length; i++)
             {
                 layersBiases.Add(CreateCopyOfMatrix(network.Biases[i]));
             }
-            
-            return Tuple.Create(layersWeights.ToArray(),layersBiases.ToArray());
+
+            return Tuple.Create(layersWeights.ToArray(), layersBiases.ToArray());
         }
 
         private static Matrix<float> CreateCopyOfMatrix(Matrix<float> toCopy)
