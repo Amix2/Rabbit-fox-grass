@@ -85,7 +85,7 @@ public class NeuralNetwork
         return new NeuralNetwork(layers, layersWeights.ToArray(), layersBiases.ToArray());
     }
 
-    public string ToString(int fitness)
+    public string ToString(float fitness)
     {
         var stringBuilder = new StringBuilder().AppendLine("{");
 

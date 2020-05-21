@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -112,11 +113,20 @@ namespace World
         public void SaveBestBrainToFile(string filePath)
         {
             print("Save:  " + filePath);
+            NeuralNetworkStorage.SaveToFile(filePath, sortedBrainList.Values.ToArray(), sortedBrainList.Keys.ToArray());
         }
 
         public void LoadBrainFromFile(string filePath)
         {
             print("Load:  " + filePath);
+            DestroyAllWorlds();
+            sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            NeuralNetwork[] brainList = NeuralNetworkStorage.ReadFromFile(filePath);
+            foreach(var brain in brainList)
+            {
+                sortedBrainList.Add(-1f, brain);
+            }
+            CreateAllWorlds();
         }
 
         private void FixedUpdate()
@@ -172,13 +182,18 @@ namespace World
 
         public void ResetWorlds()
         {
-            for(int i=worlds.Count-1; i>=0; i--)
+            DestroyAllWorlds();
+            sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            CreateAllWorlds();
+        }
+
+        private void DestroyAllWorlds()
+        {
+            for (int i = worlds.Count - 1; i >= 0; i--)
             {
                 Destroy(worlds[i].gameObject);
                 worlds.RemoveAt(i);
             }
-            sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
-            CreateAllWorlds();
         }
 
         private void CreateAllWorlds()

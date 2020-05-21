@@ -5,6 +5,7 @@ public class CameraConroller : MonoBehaviour
     public Transform root;
     public Vector3 defaultOffsetDir = new Vector3(0f, 1f, 1f);
     public float offsetLength = 15f;
+    public float maxCameraFrameMove = 1f;
 
     const float minCameraDistance = 1f;
 
@@ -28,6 +29,8 @@ public class CameraConroller : MonoBehaviour
         {
             // move root based on mouse movement, camera is a child of root so it will move automatically
             Vector3 mouseMove = new Vector3(Input.GetAxis("Mouse X"), 0f, Input.GetAxis("Mouse Y"));
+            Vector3 cameraRootMove = mouseMove * offsetLength * Settings.Player.cameraMoveSensitivity * Time.deltaTime;
+            if (cameraRootMove.sqrMagnitude > maxCameraFrameMove * maxCameraFrameMove) cameraRootMove = cameraRootMove.normalized * maxCameraFrameMove;
             root.Translate(mouseMove * offsetLength * Settings.Player.cameraMoveSensitivity * Time.deltaTime);
         }
     }

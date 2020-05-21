@@ -39,13 +39,7 @@ public class FitnessGraph : MonoBehaviour
                 writer.Close();
             }
 
-            cmd = new Process();
-            cmd.StartInfo.FileName = plotScriptPath + pythonScriptName;
-            cmd.StartInfo.Arguments = string.Format("{0} {1} {2}", plotScriptPath, plotRefreshTime, fullFilePath);
-            cmd.StartInfo.CreateNoWindow = true;
-            cmd.StartInfo.UseShellExecute = true;
-            cmd.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-            cmd.Start();
+            StartGraphProcess();
         }
         catch (Exception e)
         {
@@ -54,6 +48,17 @@ public class FitnessGraph : MonoBehaviour
             return;
         }
         worldCreator.OnRecreateWorlds += SafeDataToFile;
+    }
+
+    private void StartGraphProcess()
+    {
+        cmd = new Process();
+        cmd.StartInfo.FileName = plotScriptPath + pythonScriptName;
+        cmd.StartInfo.Arguments = string.Format("{0} {1} {2}", plotScriptPath, plotRefreshTime, fullFilePath);
+        cmd.StartInfo.CreateNoWindow = true;
+        cmd.StartInfo.UseShellExecute = true;
+        cmd.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+        cmd.Start();
     }
 
     private void SafeDataToFile()
@@ -74,6 +79,10 @@ public class FitnessGraph : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if(showPlot && cmd.HasExited)
+        {
+            StartGraphProcess();
+        }
     }
 
     private void OnDestroy()

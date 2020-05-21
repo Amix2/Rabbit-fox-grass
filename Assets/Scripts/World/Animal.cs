@@ -70,7 +70,7 @@ namespace World
             }
             if(UseLocalViewSpace)
             {
-                velocity = Forward * decision.x + Right * decision.y;
+                velocity = Forward * decision.x + Right * decision.z;
             } else
             {
                 velocity = decision;

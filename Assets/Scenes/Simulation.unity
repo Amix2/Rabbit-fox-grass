@@ -1039,7 +1039,7 @@ MonoBehaviour:
   - name: grass
     prefab: {fileID: 7695852279255118766, guid: dece207615384e146a4ecd312b4bdf3e,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: 8f32c275b02d6d9478fc9f0adb5252f9, type: 3}
+  worldDefinitionFile: {fileID: 4900000, guid: 149341d2208dfb4488ba5381aeba91e4, type: 3}
   numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 0
 --- !u!4 &758577819
@@ -1323,15 +1323,15 @@ MonoBehaviour:
     - rabbit
     - fox
     foodInGrass: 1
-    grassGrowthRate: 0.2
+    grassGrowthRate: 0.05
     foodInRabbits: 1
     rabbitEatingDistance: 0.3
-    rabbitMaxVelocity: 1
+    rabbitMaxVelocity: 4
     rabbitHungerRate: 0.1
     rabbitEatingSpeed: 1
     collectHistory: 1
     simulationDeltaTime: 0
-    maxAnimalLifetime: 300
+    maxAnimalLifetime: 200
   neuralMutation:
     mutationProbability: 0.02
     mutationStrategyEnum: 0
@@ -1462,7 +1462,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14110
+  m_Name: pb_Mesh14132
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1924,6 +1924,7 @@ MonoBehaviour:
   root: {fileID: 1083890490}
   defaultOffsetDir: {x: 0, y: 0.5, z: -1}
   offsetLength: 15
+  maxCameraFrameMove: 1
 --- !u!1 &1678976661
 GameObject:
   m_ObjectHideFlags: 0

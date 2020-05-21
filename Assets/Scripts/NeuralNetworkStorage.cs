@@ -6,7 +6,7 @@ namespace DefaultNamespace
 {
     public class NeuralNetworkStorage
     {
-        public static void SaveToFile(string filePath, NeuralNetwork[] networks, int[] fitnesses)
+        public static void SaveToFile(string filePath, NeuralNetwork[] networks, float[] fitnesses)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("{ \"networks\":");
