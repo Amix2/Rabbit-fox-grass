@@ -1039,7 +1039,7 @@ MonoBehaviour:
   - name: grass
     prefab: {fileID: 7695852279255118766, guid: dece207615384e146a4ecd312b4bdf3e,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: 149341d2208dfb4488ba5381aeba91e4, type: 3}
+  worldDefinitionFile: {fileID: 4900000, guid: 8f32c275b02d6d9478fc9f0adb5252f9, type: 3}
   numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 0
 --- !u!4 &758577819
@@ -1309,7 +1309,7 @@ MonoBehaviour:
     cameraRotateSensitivity: 500
     fastTrainingMode: 1
     renderOptions: 2
-    neuralNetworkLayers: 3f00000002000000
+    neuralNetworkLayers: 210000002100000002000000
     neuralNetworkWeightsRange:
     - -4
     - 4
@@ -1323,11 +1323,11 @@ MonoBehaviour:
     - rabbit
     - fox
     foodInGrass: 1
-    grassGrowthRate: 0.1
+    grassGrowthRate: 0.2
     foodInRabbits: 1
     rabbitEatingDistance: 0.3
     rabbitMaxVelocity: 1
-    rabbitHungerRate: 0.12
+    rabbitHungerRate: 0.1
     rabbitEatingSpeed: 1
     collectHistory: 1
     simulationDeltaTime: 0

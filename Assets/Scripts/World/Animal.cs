@@ -8,6 +8,8 @@ namespace World
     {
         public Vector2Int worldSize;
         public LayerMask feedOnLayer;
+        public bool UseLocalViewSpace;
+
 
         protected Vector3 velocity = Vector3.zero;
         protected NeuralNetwork brain;
@@ -20,11 +22,6 @@ namespace World
         public abstract float HungerRate { get; }
         public float Health { get; set; } = 1f;
         public bool IsAlive => Health > 0f;
-
-        protected Vector3 forward;
-        public Vector3 Forward { get { return forward; } }
-
-        public Vector3 Right { get; private set; }
 
         abstract protected void ConsumeFood();
 
@@ -71,9 +68,13 @@ namespace World
             {
                 decision = decision * Settings.World.simulationDeltaTime / World.deltaTime;
             }
-
-            //velocity = Forward * decision.x + Right * decision.y;
-            velocity = decision;
+            if(UseLocalViewSpace)
+            {
+                velocity = Forward * decision.x + Right * decision.y;
+            } else
+            {
+                velocity = decision;
+            }
             return true;
         }
 

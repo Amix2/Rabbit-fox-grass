@@ -4,12 +4,16 @@ namespace World
 {
     public class Rabbit : Animal, IEdible
     {
+
         private int numOfSectors;
         private Grass closestGrass;
         private Grass[] closestGrassInSectors;
         private float[] netInputs;
         private float sqrRabbitEatingDistance;
         private float sqrAnimalViewRange;
+
+        private Vector3 ViewForward => UseLocalViewSpace ? Forward : Vector3.forward;
+        private float ViewAngleOffset => 180f / numOfSectors;
 
         protected override void ConsumeFood()
         {
@@ -67,8 +71,9 @@ namespace World
         private int GetSector(Vector3 grassOffset)
         {
             if (grassOffset.sqrMagnitude == 0f) return 0;
-            Vector3 cross = Vector3.Cross(Vector3.forward, grassOffset);
-            float angle = Vector3.Angle(Vector3.forward, grassOffset);
+            Vector3 cross = Vector3.Cross(ViewForward, grassOffset);
+            float angle = Vector3.Angle(ViewForward, grassOffset);
+            angle += ViewAngleOffset;
             if (cross.y > 0.001f)
             {
                 angle = 360f - angle;
@@ -123,9 +128,9 @@ namespace World
         private void OnDrawGizmosSelected()
         {
             float angle = 360f / numOfSectors;
-            for (int i = 0; i < numOfSectors; i++)    // clear data for grass
+            for (int i = 0; i < numOfSectors; i++)    
             {
-                Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle, Vector3.up) * Vector3.forward * Settings.World.animalViewRange + transform.parent.position);
+                Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle + ViewAngleOffset, Vector3.up) * ViewForward * Settings.World.animalViewRange + transform.parent.position);
             }
             Gizmos.color = Color.red;
             foreach (Grass grass in closestGrassInSectors)

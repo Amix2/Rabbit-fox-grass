@@ -51,6 +51,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   world: {fileID: 0}
+  UseLocalViewSpace: 1
 --- !u!135 &8000410394440426078
 SphereCollider:
   m_ObjectHideFlags: 0
