@@ -53,6 +53,8 @@ namespace World
                 objectsPositions.Add(PositionSelector.FromPointList(option[3]));
             else if (option[2].Trim() == "circle")
                 objectsPositions.Add(PositionSelector.FromCircleData(option[3]));
+            else if (option[2].Trim() == "rectangle")
+                objectsPositions.Add(PositionSelector.FromRectangleData(option[3]));
             else
                 throw new System.Exception(option[2] + " is not valid input type");
         }
@@ -139,6 +141,27 @@ internal class PositionSelector
                 selector.positions.Add(newPoint);
             }
         }
+        return selector;
+    }
+
+    // minX,minY - maxX,maxY
+    public static PositionSelector FromRectangleData(string list)
+    {
+        PositionSelector selector = new PositionSelector();
+        string[] twoPoints = list.Split('-');
+        int minX = int.Parse(twoPoints[0].Split(',')[0]);
+        int minY = int.Parse(twoPoints[0].Split(',')[1]);
+        int maxX = int.Parse(twoPoints[1].Split(',')[0]);
+        int maxY = int.Parse(twoPoints[1].Split(',')[1]);
+        Debug.Log(minX + " " + minY + " " + maxX + " " + maxY);
+        for(int x = minX; x < maxX; x++)
+        {
+            for(int y=minY; y < maxY; y++)
+            {
+                selector.AddPosition(new Vector2(x,y));
+            }
+        }
+
         return selector;
     }
 
