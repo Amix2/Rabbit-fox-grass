@@ -31,7 +31,7 @@ namespace World
             {
                 Vector3 rabbitPos = rabbitHist.deathPosition;
                 float sqrDistanceToClosest = SqrDistaceToClosestGrass(worldHistory.grassPositions, rabbitPos);
-                scoreSum += rabbitHist.lifeTime * Mathf.Exp(rabbitHist.foodEaten + 1f) + worldHistory.worldSize.sqrMagnitude / sqrDistanceToClosest;
+                scoreSum += (rabbitHist.foodEaten + 1f) * worldHistory.worldSize.sqrMagnitude / (worldHistory.worldSize.sqrMagnitude - sqrDistanceToClosest);
             }
             float scoreAvg = scoreSum / worldHistory.rabbits.Count;
 

@@ -208,11 +208,12 @@ namespace World
             {
                 sortedBrainList.Add(-1f, new NeuralNetwork(Settings.Player.neuralNetworkLayers));
             }
-            
-            
+
+            WorldBuilder builder = worldOptions[UnityEngine.Random.Range(0, worldOptions.Count)];
+            builder.StartNewBuild();
             for (int i = 0; i < numberOfWorldsToCreate; i++)
             {
-                GameObject world = CreateWorld(ref offset, ref worldsOnX, i);
+                GameObject world = CreateRandomWorld(builder, ref offset, ref worldsOnX, i);
                 worldGameObjects.Add(world);
                 worlds.Add(world.GetComponent<World>());
                 rabbitIterator.AddList(world.GetComponent<World>().rabbitList);
@@ -221,10 +222,8 @@ namespace World
             Debug.Log("CreateAllWorlds time: " + (Time.realtimeSinceStartup - timeStart));
         }
 
-        private GameObject CreateWorld(ref Vector3 offset, ref int worldsOnX, int index)
+        private GameObject CreateRandomWorld(WorldBuilder builder, ref Vector3 offset, ref int worldsOnX, int index)
         {
-            int builderIndex = UnityEngine.Random.Range(0, worldOptions.Count);
-            WorldBuilder builder = worldOptions[builderIndex];
             GameObject world = Instantiate(worldPrefab, this.transform);
             world.name = "World_" + index;
             world.GetComponent<World>().Render = Settings.Player.renderOptions == RenderOptions.Reduced 

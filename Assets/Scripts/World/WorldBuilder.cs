@@ -10,6 +10,7 @@ namespace World
         private readonly List<string> objectsNames;
         private readonly List<int> objectsCount;
         private readonly List<PositionSelector> objectsPositions;
+        private List<Vector3> spawnPositionHistory;
 
         public WorldBuilder(string options) // example options = " 7,7 | rabbit : 1 : position : 3,3 | grass : 1 : position : 2,2 - 3,2 - 4,2 - 4,3 - 4,4 - 3,4 - 2,4  - 2,3 "
         {
@@ -59,7 +60,8 @@ namespace World
         public Vector2 CreateWorld(GameObject worldGO, Vector3 position, Transform parent, Dictionary<string, GameObject> prefabs)
         {
             World world = worldGO.GetComponent<World>();
-
+            bool firstInGen = spawnPositionHistory.Count == 0;
+            int spawnPosIndex = 0;
             world.Size = size;
             world.transform.Translate(position);
             for (int i = 0; i < objectsNames.Count; i++)
@@ -68,19 +70,35 @@ namespace World
                 prefabs.TryGetValue(objectsNames[i], out prefab);
                 for (int c = 0; c < objectsCount[i]; c++)   // spawn required amount of objects in random position from given list
                 {
+                    Vector3 pos;
+                    if(firstInGen)
+                    {
+                        pos = objectsPositions[i].GetRandomPosition();
+                        spawnPositionHistory.Add(pos);
+                    }
+                    else
+                    {
+                        pos = spawnPositionHistory[spawnPosIndex];
+                        spawnPosIndex++;
+                    }
                     if (objectsNames[i] == "rabbit")
                     {
-                        world.AddRabbit(prefab, objectsPositions[i].GetRandomPosition() + new Vector3(0.5f, 0f, 0.5f));
+                        world.AddRabbit(prefab, pos + new Vector3(0.5f, 0f, 0.5f));
                     }
                     else if (objectsNames[i] == "grass")
                     {
-                        world.AddGrass(prefab, objectsPositions[i].GetRandomPosition() + new Vector3(0.5f, 0f, 0.5f));
+                        world.AddGrass(prefab, pos + new Vector3(0.5f, 0f, 0.5f));
                     }
                 }
             }
 
             world.Apply();
             return size;
+        }
+
+        public void StartNewBuild()
+        {
+            spawnPositionHistory = new List<Vector3>();
         }
 
         public Vector2 ResetWorld(GameObject world, Vector3 position, Transform parent, SimulationObjectPrefab[] prefabs)

@@ -1323,15 +1323,15 @@ MonoBehaviour:
     - rabbit
     - fox
     foodInGrass: 1
-    grassGrowthRate: 0.05
+    grassGrowthRate: 0.06
     foodInRabbits: 1
     rabbitEatingDistance: 0.3
-    rabbitMaxVelocity: 4
+    rabbitMaxVelocity: 2
     rabbitHungerRate: 0.1
     rabbitEatingSpeed: 1
     collectHistory: 1
     simulationDeltaTime: 0
-    maxAnimalLifetime: 200
+    maxAnimalLifetime: 100
   neuralMutation:
     mutationProbability: 0.02
     mutationStrategyEnum: 0

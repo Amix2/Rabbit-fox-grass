@@ -75,6 +75,7 @@ namespace World
             {
                 velocity = decision;
             }
+
             return true;
         }
 
@@ -89,7 +90,6 @@ namespace World
             newPosition.x = Mathf.Clamp(newPosition.x, 0.5f, worldSize.x - 0.5f);
             newPosition.z = Mathf.Clamp(newPosition.z, 0.5f, worldSize.y - 0.5f);
 
-            velocity = (newPosition - transform.localPosition) / Time.deltaTime;
             if (velocity.sqrMagnitude > 0) transform.forward = velocity.normalized;
 
             transform.localPosition = newPosition;
