@@ -344,7 +344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccac29c01ab2295408fa7cabbc00a74d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showPlot: 0
+  showPlot: 1
   worldCreator: {fileID: 758577818}
   plotRefreshTime: 5
 --- !u!4 &109056421
@@ -1141,9 +1141,9 @@ MonoBehaviour:
   - name: grass
     prefab: {fileID: 7695852279255118766, guid: dece207615384e146a4ecd312b4bdf3e,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: a89432755836acb4496acec7805372ca, type: 3}
-  numberOfWorldsToCreate: 1
-  rabbitFitnessFunction: 0
+  worldDefinitionFile: {fileID: 4900000, guid: 149341d2208dfb4488ba5381aeba91e4, type: 3}
+  numberOfWorldsToCreate: 100
+  rabbitFitnessFunction: 1
 --- !u!4 &758577819
 Transform:
   m_ObjectHideFlags: 0
@@ -1711,7 +1711,7 @@ MonoBehaviour:
     foodInRabbits: 1
     rabbitEatingDistance: 0.3
     rabbitMaxVelocity: 3.5
-    rabbitHungerRate: 1.05
+    rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
     collectHistory: 0
     simulationDeltaTime: 0
