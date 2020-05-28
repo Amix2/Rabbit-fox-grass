@@ -153,10 +153,10 @@ internal class PositionSelector
         int minY = int.Parse(twoPoints[0].Split(',')[1]);
         int maxX = int.Parse(twoPoints[1].Split(',')[0]);
         int maxY = int.Parse(twoPoints[1].Split(',')[1]);
-        Debug.Log(minX + " " + minY + " " + maxX + " " + maxY);
-        for(int x = minX; x < maxX; x++)
+
+        for(int x = minX; x <= maxX; x++)
         {
-            for(int y=minY; y < maxY; y++)
+            for(int y=minY; y <= maxY; y++)
             {
                 selector.AddPosition(new Vector2(x,y));
             }

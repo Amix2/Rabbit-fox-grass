@@ -4,7 +4,8 @@ namespace World
 {
     public enum FitnessCalculatorOptions
     {
-        RabitAvg_TimeFoodAndDistanceToClosestGrass,
+        RabitAvg_FoodAndDistanceToClosestGrass,
+        RabitAvg_FoodAndAvgDistanceToClosestGrass
     }
 
     internal static class FitnessCalculatorOptionsExtension
@@ -13,13 +14,14 @@ namespace World
         {
             switch (option)
             {
-                case FitnessCalculatorOptions.RabitAvg_TimeFoodAndDistanceToClosestGrass: return new RabitAvg_TimeFoodAndDistanceToClosestGrass();
+                case FitnessCalculatorOptions.RabitAvg_FoodAndDistanceToClosestGrass: return new RabitAvg_FoodAndDistanceToClosestGrass();
+                case FitnessCalculatorOptions.RabitAvg_FoodAndAvgDistanceToClosestGrass: return new RabitAvg_FoodAndAvgDistanceToClosestGrass();
             }
             return new DefaultCalculator();
         }
     }
 
-    public class RabitAvg_TimeFoodAndDistanceToClosestGrass : IFitnessCalculator
+    public class RabitAvg_FoodAndDistanceToClosestGrass : IFitnessCalculator
     {
         // AVG ( time * (food+1) + k / distToClosestGrass )
 
@@ -27,11 +29,29 @@ namespace World
         {
             if (worldHistory.rabbits.Count == 0) return 0f;
             float scoreSum = 0f;
-            foreach (var rabbitHist in worldHistory.rabbits)
+            foreach (WorldHistory.RabbitHistory rabbitHist in worldHistory.rabbits)
             {
-                Vector3 rabbitPos = rabbitHist.deathPosition;
-                float sqrDistanceToClosest = SqrDistaceToClosestGrass(worldHistory.grassPositions, rabbitPos);
-                scoreSum += (rabbitHist.foodEaten + 1f) * worldHistory.worldSize.sqrMagnitude / (worldHistory.worldSize.sqrMagnitude - sqrDistanceToClosest);
+                float sqrDistanceToClosest = SqrDistaceToClosestGrass(worldHistory.grassPositions, rabbitHist.positions);
+                scoreSum += (rabbitHist.foodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
+            }
+            float scoreAvg = scoreSum / worldHistory.rabbits.Count;
+
+            return scoreAvg;
+        }
+    }
+
+    public class RabitAvg_FoodAndAvgDistanceToClosestGrass : IFitnessCalculator
+    {
+        // AVG ( time * (food+1) + k / distToClosestGrass )
+
+        public override float CalculateFitness(WorldHistory worldHistory)
+        {
+            if (worldHistory.rabbits.Count == 0) return 0f;
+            float scoreSum = 0f;
+            foreach (WorldHistory.RabbitHistory rabbitHist in worldHistory.rabbits)
+            {
+                float sqrAvgDistanceToClosest = AvgSqrDistaceToClosestGrass(worldHistory.grassPositions, rabbitHist.positions);
+                scoreSum += (rabbitHist.foodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
             }
             float scoreAvg = scoreSum / worldHistory.rabbits.Count;
 

@@ -75,7 +75,7 @@ namespace World
             {
                 velocity = decision;
             }
-
+            world.WorldEvents.Invoke(this, HistoryEventType.POSITION, Position);
             return true;
         }
 

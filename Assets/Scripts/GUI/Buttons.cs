@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using World;
 
-public class LoadSaveButtons : MonoBehaviour
+public class Buttons : MonoBehaviour
 {
     public WorldCreator worldCreator;
 
@@ -26,5 +26,18 @@ public class LoadSaveButtons : MonoBehaviour
         {
             worldCreator.LoadBrainFromFile(path);
         }
+    }
+
+    public void OnQuitButton()
+    {
+        print("Quit");
+        worldCreator.GetComponent<WorldCreator>().DestroyAllWorlds();
+#if UNITY_EDITOR
+        // Application.Quit() does not work in the editor so
+        // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+         Application.Quit();
+#endif
     }
 }

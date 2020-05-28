@@ -20,6 +20,7 @@ namespace World
             worldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 position) => HandleDeathEvent(sender, position));
             worldEvents.Subscribe(HistoryEventType.BIRTH, (object sender, Vector3 position) => HandleBirthEvent(sender, position));
             worldEvents.Subscribe(HistoryEventType.EAT, (object sender, float amount) => HandleEatEvent(sender, amount));
+            worldEvents.Subscribe(HistoryEventType.POSITION, (object sender, Vector3 position) => HandlePositionEvent(sender, position));
         }
 
         private void UpdateTurnEvent(int amount)
@@ -59,6 +60,14 @@ namespace World
             }
         }
 
+        private void HandlePositionEvent(object obj, Vector3 position)
+        {
+            if (typeof(Rabbit).IsInstanceOfType(obj))
+            {
+                RabbitPosition(obj as Rabbit, position);
+            }
+        }
+
         private void RabbitDeath(Rabbit rabbit, Vector3 pos)
         {
             if (!aliveRabbits.ContainsKey(rabbit))
@@ -92,16 +101,28 @@ namespace World
             aliveRabbits[rabbit] = hist;
         }
 
+        private void RabbitPosition(Rabbit rabbit, Vector3 position)
+        {
+            if (!aliveRabbits.ContainsKey(rabbit))
+            {
+                throw new System.Exception("Rabbit has not yet been born");
+            }
+            var hist = aliveRabbits[rabbit];
+            hist.positions.Add(position);
+            aliveRabbits[rabbit] = hist;
+        }
+
         private void AddGrass(Vector3 pos)
         {
             grassPositions.Add(pos);
         }
 
-        public struct RabbitHistory
+        public class RabbitHistory
         {
             public Vector3 birthPosition, deathPosition;
             public int lifeTime;
             public float foodEaten;
+            public List<Vector3> positions = new List<Vector3>();
         }
     }
 }

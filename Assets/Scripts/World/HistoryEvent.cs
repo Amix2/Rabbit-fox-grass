@@ -3,5 +3,6 @@
     TURN_UPDATE,
     BIRTH,
     DEATH,
-    EAT
+    EAT,
+    POSITION
 }

@@ -32,7 +32,7 @@ namespace World
             // clear data from previous runs
             float sqrDistanceToClosestGrass = sqrRabbitEatingDistance;
             closestGrass = null;
-            for (int i = 1; i <= 2 * numOfSectors; i++)    // clear data for grass and for foxes
+            for (int i = 0; i < 2 * numOfSectors; i++)    // clear data for grass and for foxes
             {
                 netInputs[i] = sqrAnimalViewRange;
             }
@@ -59,9 +59,9 @@ namespace World
                     {
                         int sector = GetSector(grassOffset.normalized);
 
-                        if (grassDist < netInputs[1 + sector])
+                        if (grassDist < netInputs[sector])
                         {
-                            netInputs[1 + sector] = grassDist;
+                            netInputs[sector] = grassDist;
                         }
                     }
                 }
@@ -89,12 +89,12 @@ namespace World
         protected override float[] CreateNetInputs()
         {
             
-            netInputs[0] = Health;
-            for (int i = 1; i < 2 * numOfSectors; i++)    // normalize data
+            for (int i = 0; i < 2 * numOfSectors; i++)    // normalize data
             {
                 netInputs[i] = sqrAnimalViewRange - netInputs[i];
                 netInputs[i] /= sqrAnimalViewRange;
             }
+            if(Settings.World.rabbitHungerInNeuralNet) netInputs[Settings.Player.neuralNetworkLayers[0]-1] = Health;
             return netInputs;
         }
 
@@ -110,9 +110,15 @@ namespace World
 
         public override float HungerRate { get { return Settings.World.rabbitHungerRate; } }
 
+        static bool firstInit = true;
         private new void Awake()
         {
             numOfSectors = Settings.Player.neuralNetworkLayers[0] / 2;
+            if (firstInit)
+            {
+                firstInit = false;
+                Debug.LogFormat("Rabbit: sectors: {0}, net size: {1}, values filled by surroundings: {2}, hunger in net: {3}", numOfSectors, Settings.Player.neuralNetworkLayers[0], 2 * numOfSectors, Settings.World.rabbitHungerInNeuralNet);
+            }
             base.Awake();
             closestGrassInSectors = new Grass[numOfSectors];
             netInputs = new float[Settings.Player.neuralNetworkLayers[0]];

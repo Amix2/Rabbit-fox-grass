@@ -73,6 +73,7 @@ public class WorldSettings
     public bool collectHistory = true;
     public float simulationDeltaTime;
     public float maxAnimalLifetime;
+    public bool rabbitHungerInNeuralNet;
 }
 
 [System.Serializable]

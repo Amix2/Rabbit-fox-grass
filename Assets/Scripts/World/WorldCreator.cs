@@ -187,7 +187,7 @@ namespace World
             CreateAllWorlds();
         }
 
-        private void DestroyAllWorlds()
+        public void DestroyAllWorlds()
         {
             for (int i = worlds.Count - 1; i >= 0; i--)
             {
