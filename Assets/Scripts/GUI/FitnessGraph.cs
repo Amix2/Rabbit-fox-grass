@@ -54,7 +54,7 @@ public class FitnessGraph : MonoBehaviour
     {
         cmd = new Process();
         cmd.StartInfo.FileName = plotScriptPath + pythonScriptName;
-        cmd.StartInfo.Arguments = string.Format("{0} {1} {2}", plotScriptPath, plotRefreshTime, fullFilePath);
+        cmd.StartInfo.Arguments = string.Format("\"{0}\" {1} \"{2}\"", plotScriptPath, plotRefreshTime, fullFilePath);
         cmd.StartInfo.CreateNoWindow = true;
         cmd.StartInfo.UseShellExecute = true;
         cmd.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
