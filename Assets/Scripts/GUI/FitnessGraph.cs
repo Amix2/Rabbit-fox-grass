@@ -17,6 +17,7 @@ public class FitnessGraph : MonoBehaviour
     private string fullFilePath => plotDataPath + sessionFileName;
 
     private string pythonScriptName = "runPlot.bat";
+
     private Process cmd;
     // FileStream file;
 
@@ -28,9 +29,12 @@ public class FitnessGraph : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
+
         try
         {
-            sessionFileName = DateTime.Now.ToShortDateString().Replace("/", "-") + "-" + DateTime.Now.ToLongTimeString().Replace(":", "-") + ".txt";// DateTime.Now.ToShortDateString().Replace("/", ":") + "-" + DateTime.Now.ToLongTimeString()+".txt";
+            sessionFileName = DateTime.Now.ToShortDateString().Replace("/", "-") + "-" +
+                              DateTime.Now.ToLongTimeString().Replace(":", "-") +
+                              ".txt"; // DateTime.Now.ToShortDateString().Replace("/", ":") + "-" + DateTime.Now.ToLongTimeString()+".txt";
 
             File.Create(fullFilePath).Close();
             using (StreamWriter writer = File.AppendText(fullFilePath))
@@ -47,6 +51,7 @@ public class FitnessGraph : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
+
         worldCreator.OnRecreateWorlds += SafeDataToFile;
     }
 
@@ -69,9 +74,11 @@ public class FitnessGraph : MonoBehaviour
         {
             avg += val;
         }
+
         using (StreamWriter writer = File.AppendText(fullFilePath))
         {
-            writer.WriteLine(fitnessList[0] +";" + (avg / fitnessList.Count) + ";" + fitnessList[fitnessList.Count - 1]);
+            writer.WriteLine((fitnessList[0] + ";" + (avg / fitnessList.Count) + ";" +
+                              fitnessList[fitnessList.Count - 1]).Replace(',', '.'));
             writer.Close();
         }
     }
@@ -79,7 +86,7 @@ public class FitnessGraph : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if(showPlot && cmd.HasExited)
+        if (showPlot && cmd.HasExited)
         {
             StartGraphProcess();
         }
