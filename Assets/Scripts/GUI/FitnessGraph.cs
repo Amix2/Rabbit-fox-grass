@@ -77,8 +77,7 @@ public class FitnessGraph : MonoBehaviour
 
         using (StreamWriter writer = File.AppendText(fullFilePath))
         {
-            writer.WriteLine((fitnessList[0] + ";" + (avg / fitnessList.Count) + ";" +
-                              fitnessList[fitnessList.Count - 1]).Replace(',', '.'));
+            writer.WriteLine((fitnessList[0] +";" + (avg / fitnessList.Count) + ";" + fitnessList[fitnessList.Count - 1]).Replace(',','.'));
             writer.Close();
         }
     }

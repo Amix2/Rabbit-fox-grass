@@ -35,6 +35,8 @@ namespace World
 
         private bool UpdateBehaviourAllWorlds()
         {
+            SetAllObjectIterators();
+
             Profiler.BeginSample("rabbits");
 
             Parallel.ForEach(rabbitIterator, rabbit =>
@@ -145,7 +147,8 @@ namespace World
             }
             if(RunSimulation)
             {
-                foreach(Rabbit rabbit in  rabbitIterator)
+                SetMoveableObjectIterators();
+                foreach (Rabbit rabbit in  rabbitIterator)
                 {
                     rabbit.UpdatePosition();
                 }
@@ -198,8 +201,7 @@ namespace World
 
         private void CreateAllWorlds()
         {
-            rabbitIterator = new MultiListIterator<Rabbit>();
-            grassIterator = new MultiListIterator<Grass>();
+            
             float timeStart = Time.realtimeSinceStartup;
             Vector3 offset = Vector3.zero;  // offset to bottom-left corner
             int worldsOnX = 0;
@@ -216,10 +218,29 @@ namespace World
                 GameObject world = CreateRandomWorld(builder, ref offset, ref worldsOnX, i);
                 worldGameObjects.Add(world);
                 worlds.Add(world.GetComponent<World>());
-                rabbitIterator.AddList(world.GetComponent<World>().rabbitList);
-                grassIterator.AddList(world.GetComponent<World>().grassList);
             }
+           
             Debug.Log("CreateAllWorlds time: " + (Time.realtimeSinceStartup - timeStart));
+        }
+
+        private void SetAllObjectIterators()
+        {
+            rabbitIterator = new MultiListIterator<Rabbit>();
+            grassIterator = new MultiListIterator<Grass>();
+            foreach(World world in this.worlds)
+            {
+                rabbitIterator.AddList(world.rabbitList);
+                grassIterator.AddList(world.grassList);
+            }
+        }
+
+        private void SetMoveableObjectIterators()
+        {
+            rabbitIterator = new MultiListIterator<Rabbit>();
+            foreach (World world in this.worlds)
+            {
+                rabbitIterator.AddList(world.rabbitList);
+            }
         }
 
         private GameObject CreateRandomWorld(WorldBuilder builder, ref Vector3 offset, ref int worldsOnX, int index)
