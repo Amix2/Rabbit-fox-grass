@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,11 +13,13 @@ namespace World
 
         public List<Rabbit> rabbitList;
         public List<Grass> grassList;
+        public List<Fox> foxList;
 
         private ConcurrentBag<Rabbit> deadRabbits;
+        private ConcurrentBag<Rabbit> deadFoxes;
         internal NeuralNetwork bigBrain;
 
-        public bool IsAlive { get => rabbitList.Count > 0; }
+        public bool IsAlive { get => rabbitList.Count > 0 || foxList.Count > 0; }
 
         public Vector2Int Size
         {
@@ -48,8 +51,10 @@ namespace World
             WorldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 posiiton) => HandleDeath(sender));
             rabbitList = new List<Rabbit>();
             grassList = new List<Grass>();
+            foxList = new List<Fox>();
             History = new WorldHistory(WorldEvents);
             deadRabbits = new ConcurrentBag<Rabbit>();
+            deadFoxes = new ConcurrentBag<Rabbit>();
         }
 
         public void HandleDeath(object obj)
@@ -71,7 +76,7 @@ namespace World
                 rabbitList.Remove(deadRabbit);
             }
 
-            return rabbitList.Count > 0;
+            return IsAlive;
         }
 
         //////////////////////////////////////////
@@ -102,6 +107,17 @@ namespace World
             if (!Render) grassGO.GetComponent<Grass>().DisableModel();
             grassList.Add(grassGO.GetComponent<Grass>());
             WorldEvents.Invoke(grassGO.GetComponent<Grass>(), HistoryEventType.BIRTH, position);
+        }
+
+        internal void AddFox(GameObject prefab, Vector3 position)
+        {
+            var foxGO = AddGameObject(prefab, position);
+            foxGO.name = "Fox_" + foxList.Count;
+            foxGO.GetComponent<Fox>().worldSize = Size;
+            foxGO.GetComponent<Fox>().Brain = bigBrain;
+            if (!Render) foxGO.GetComponent<Fox>().DisableModel();
+            foxList.Add(foxGO.GetComponent<Fox>());
+            WorldEvents.Invoke(foxGO.GetComponent<Fox>(), HistoryEventType.BIRTH, position);
         }
 
         private GameObject AddGameObject(GameObject prefab, Vector3 position)

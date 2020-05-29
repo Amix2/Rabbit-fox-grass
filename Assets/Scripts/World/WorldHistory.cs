@@ -14,14 +14,17 @@ namespace World
 
         public WorldHistory(MultiTypeEventHandler<HistoryEventType, float, int, Vector3> worldEvents)
         {
-            grassPositions = new List<Vector3>();
-            aliveRabbits = new ConcurrentDictionary<Rabbit, RabbitHistory>();
-            rabbits = new ConcurrentBag<RabbitHistory>();
-            worldEvents.Subscribe(HistoryEventType.TURN_UPDATE, (object sender, int amount) => UpdateTurnEvent(amount));
-            worldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 position) => HandleDeathEvent(sender, position));
-            worldEvents.Subscribe(HistoryEventType.BIRTH, (object sender, Vector3 position) => HandleBirthEvent(sender, position));
-            worldEvents.Subscribe(HistoryEventType.EAT, (object sender, float amount) => HandleEatEvent(sender, amount));
-            worldEvents.Subscribe(HistoryEventType.POSITION, (object sender, Vector3 position) => HandlePositionEvent(sender, position));
+            if(Settings.World.collectHistory)
+            {
+                grassPositions = new List<Vector3>();
+                aliveRabbits = new ConcurrentDictionary<Rabbit, RabbitHistory>();
+                rabbits = new ConcurrentBag<RabbitHistory>();
+                worldEvents.Subscribe(HistoryEventType.TURN_UPDATE, (object sender, int amount) => UpdateTurnEvent(amount));
+                worldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 position) => HandleDeathEvent(sender, position));
+                worldEvents.Subscribe(HistoryEventType.BIRTH, (object sender, Vector3 position) => HandleBirthEvent(sender, position));
+                worldEvents.Subscribe(HistoryEventType.EAT, (object sender, float amount) => HandleEatEvent(sender, amount));
+                worldEvents.Subscribe(HistoryEventType.POSITION, (object sender, Vector3 position) => HandlePositionEvent(sender, position));
+            }
         }
 
         private void UpdateTurnEvent(int amount)
@@ -39,6 +42,7 @@ namespace World
             {
                 RabbitDeath(obj as Rabbit, position);
             }
+            else throw new System.Exception("Unhandeled event sender");
         }
 
         private void HandleBirthEvent(object obj, Vector3 position)
@@ -51,6 +55,7 @@ namespace World
             {
                 RabbitBirth(obj as Rabbit, position);
             }
+            else throw new System.Exception("Unhandeled event sender");
         }
 
         private void HandleEatEvent(object obj, float amount)
@@ -59,6 +64,7 @@ namespace World
             {
                 RabbitEat(obj as Rabbit, amount);
             }
+            else throw new System.Exception("Unhandeled event sender");
         }
 
         private void HandlePositionEvent(object obj, Vector3 position)
@@ -67,6 +73,7 @@ namespace World
             {
                 RabbitPosition(obj as Rabbit, position);
             }
+            else throw new System.Exception("Unhandeled event sender");
         }
 
         private void RabbitDeath(Rabbit rabbit, Vector3 pos)

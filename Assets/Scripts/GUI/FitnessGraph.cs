@@ -24,7 +24,7 @@ public class FitnessGraph : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        if (!showPlot)
+        if (!showPlot || !Settings.World.collectHistory)
         {
             Destroy(this.gameObject);
             return;

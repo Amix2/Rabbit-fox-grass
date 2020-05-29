@@ -7,7 +7,6 @@ namespace World
     public abstract class Animal : WorldObject, IAlive, IUpdatable
     {
         public Vector2Int worldSize;
-        public LayerMask feedOnLayer;
         public bool UseLocalViewSpace;
 
 

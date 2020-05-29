@@ -30,7 +30,7 @@ namespace World
         private float gapBetweenWorlds;
         private IFitnessCalculator rabbitFitnessCalculator;
 
-        private MultiListIterator<Rabbit> rabbitIterator;
+        private MultiListIterator<Animal> animalIterator;
         private MultiListIterator<Grass> grassIterator;
 
         private bool UpdateBehaviourAllWorlds()
@@ -39,11 +39,11 @@ namespace World
 
             Profiler.BeginSample("rabbits");
 
-            Parallel.ForEach(rabbitIterator, rabbit =>
+            Parallel.ForEach(animalIterator, animal =>
             {
-                rabbit.UpdateTurn();
+                animal.UpdateTurn();
             });
-            rabbitIterator.Reset();
+            animalIterator.Reset();
 
             Profiler.EndSample();
             Profiler.BeginSample("grass");
@@ -65,7 +65,8 @@ namespace World
                     sortedBrainList.RemoveAt(sortedBrainList.IndexOfValue(worlds[i].bigBrain));
                     sortedBrainList.Add(rabbitFitnessCalculator.CalculateFitness(worlds[i].History), worlds[i].bigBrain);
                     Destroy(worlds[i].gameObject);
-                    rabbitIterator.RemoveList(worlds[i].rabbitList);
+                    animalIterator.RemoveList(worlds[i].rabbitList.ConvertAll(r => r as Animal));
+                    animalIterator.RemoveList(worlds[i].foxList.ConvertAll(f => f as Animal));
                     grassIterator.RemoveList(worlds[i].grassList);
                     worlds.RemoveAt(i);
                 }
@@ -148,11 +149,11 @@ namespace World
             if(RunSimulation)
             {
                 SetMoveableObjectIterators();
-                foreach (Rabbit rabbit in  rabbitIterator)
+                foreach (Animal animal in  animalIterator)
                 {
-                    rabbit.UpdatePosition();
+                    animal.UpdatePosition();
                 }
-                rabbitIterator.Reset();
+                animalIterator.Reset();
             }
         }
 
@@ -225,21 +226,24 @@ namespace World
 
         private void SetAllObjectIterators()
         {
-            rabbitIterator = new MultiListIterator<Rabbit>();
+            animalIterator = new MultiListIterator<Animal>();
             grassIterator = new MultiListIterator<Grass>();
             foreach(World world in this.worlds)
             {
-                rabbitIterator.AddList(world.rabbitList);
+                animalIterator.AddList(world.rabbitList.ConvertAll(r => r as Animal));
+                animalIterator.AddList(world.foxList.ConvertAll(f => f as Animal));
                 grassIterator.AddList(world.grassList);
+
             }
         }
 
         private void SetMoveableObjectIterators()
         {
-            rabbitIterator = new MultiListIterator<Rabbit>();
+            animalIterator = new MultiListIterator<Animal>();
             foreach (World world in this.worlds)
             {
-                rabbitIterator.AddList(world.rabbitList);
+                animalIterator.AddList(world.rabbitList.ConvertAll(r => r as Animal));
+                animalIterator.AddList(world.foxList.ConvertAll(f => f as Animal));
             }
         }
 

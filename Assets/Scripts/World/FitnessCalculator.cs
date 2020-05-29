@@ -27,7 +27,7 @@ namespace World
 
         public override float CalculateFitness(WorldHistory worldHistory)
         {
-            if (worldHistory.rabbits.Count == 0) return 0f;
+            if (!Settings.World.collectHistory || worldHistory.rabbits.Count == 0) return 0f;
             float scoreSum = 0f;
             foreach (WorldHistory.RabbitHistory rabbitHist in worldHistory.rabbits)
             {
@@ -46,7 +46,7 @@ namespace World
 
         public override float CalculateFitness(WorldHistory worldHistory)
         {
-            if (worldHistory.rabbits.Count == 0) return 0f;
+            if (!Settings.World.collectHistory || worldHistory.rabbits.Count == 0) return 0f;
             float scoreSum = 0f;
             foreach (WorldHistory.RabbitHistory rabbitHist in worldHistory.rabbits)
             {
