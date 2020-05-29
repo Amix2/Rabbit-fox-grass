@@ -1141,7 +1141,7 @@ MonoBehaviour:
   - name: grass
     prefab: {fileID: 7695852279255118766, guid: dece207615384e146a4ecd312b4bdf3e,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: 149341d2208dfb4488ba5381aeba91e4, type: 3}
+  worldDefinitionFile: {fileID: 4900000, guid: a89432755836acb4496acec7805372ca, type: 3}
   numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 1
 --- !u!4 &758577819
@@ -1701,7 +1701,7 @@ MonoBehaviour:
     - -4
     - 4
   world:
-    animalViewRange: 10
+    animalViewRange: 15
     allowedObjectNames:
     - grass
     - rabbit
