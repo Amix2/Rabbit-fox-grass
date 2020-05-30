@@ -65,8 +65,7 @@ namespace World
                     sortedBrainList.RemoveAt(sortedBrainList.IndexOfValue(worlds[i].bigBrain));
                     sortedBrainList.Add(rabbitFitnessCalculator.CalculateFitness(worlds[i].History), worlds[i].bigBrain);
                     Destroy(worlds[i].gameObject);
-                    animalIterator.RemoveList(worlds[i].rabbitList.ConvertAll(r => r as Animal));
-                    animalIterator.RemoveList(worlds[i].foxList.ConvertAll(f => f as Animal));
+                    animalIterator.RemoveList(worlds[i].animalList.ConvertAll(r => r as Animal));
                     grassIterator.RemoveList(worlds[i].grassList);
                     worlds.RemoveAt(i);
                 }
@@ -230,8 +229,7 @@ namespace World
             grassIterator = new MultiListIterator<Grass>();
             foreach(World world in this.worlds)
             {
-                animalIterator.AddList(world.rabbitList.ConvertAll(r => r as Animal));
-                animalIterator.AddList(world.foxList.ConvertAll(f => f as Animal));
+                animalIterator.AddList(world.animalList.ConvertAll(r => r as Animal));
                 grassIterator.AddList(world.grassList);
 
             }
@@ -242,8 +240,7 @@ namespace World
             animalIterator = new MultiListIterator<Animal>();
             foreach (World world in this.worlds)
             {
-                animalIterator.AddList(world.rabbitList.ConvertAll(r => r as Animal));
-                animalIterator.AddList(world.foxList.ConvertAll(f => f as Animal));
+                animalIterator.AddList(world.animalList.ConvertAll(r => r as Animal));
             }
         }
 
