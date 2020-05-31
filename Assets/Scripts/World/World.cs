@@ -15,7 +15,6 @@ namespace World
         public List<Grass> grassList;
 
         private ConcurrentBag<Animal> deadAnimals;
-        internal NeuralNetwork bigBrain;
 
         public bool IsAlive { get => animalList.Count > 0; }
 
@@ -41,6 +40,8 @@ namespace World
             }
         }
         public MultiTypeEventHandler<HistoryEventType, float, int, Vector3> WorldEvents { get; private set; }
+        internal NeuralNetwork BigBrain { get; set; }
+        internal NeuralNetwork FoxBrain { get; set; }
 
         private new void Awake()
         {
@@ -89,7 +90,7 @@ namespace World
             var rabbitGO = AddGameObject(prefab, position);
             rabbitGO.name = "Rabbit_" + animalList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = Size;
-            rabbitGO.GetComponent<Rabbit>().Brain = bigBrain;
+            rabbitGO.GetComponent<Rabbit>().Brain = BigBrain;
             if (!Render) rabbitGO.GetComponent<Rabbit>().DisableModel();
             animalList.Add(rabbitGO.GetComponent<Rabbit>());
             rabbitGO.GetComponent<Rabbit>().world = this;
@@ -110,7 +111,7 @@ namespace World
             var foxGO = AddGameObject(prefab, position);
             foxGO.name = "Fox_" + animalList.Count;
             foxGO.GetComponent<Fox>().worldSize = Size;
-            foxGO.GetComponent<Fox>().Brain = bigBrain;
+            foxGO.GetComponent<Fox>().Brain = FoxBrain;
             if (!Render) foxGO.GetComponent<Fox>().DisableModel();
             animalList.Add(foxGO.GetComponent<Fox>());
             WorldEvents.Invoke(foxGO.GetComponent<Fox>(), HistoryEventType.BIRTH, position);

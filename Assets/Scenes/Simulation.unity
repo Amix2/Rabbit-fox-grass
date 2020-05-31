@@ -1144,8 +1144,8 @@ MonoBehaviour:
   - name: fox
     prefab: {fileID: 5469908333711757376, guid: a2af05269309dd94a8ba4f0542b11451,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: a89432755836acb4496acec7805372ca, type: 3}
-  numberOfWorldsToCreate: 5
+  worldDefinitionFile: {fileID: 4900000, guid: fd41a42b276ec094aa7929e761c43187, type: 3}
+  numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 1
 --- !u!4 &758577819
 Transform:
@@ -1694,7 +1694,7 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 0
+    fastTrainingMode: 1
     renderOptions: 2
     neuralNetworkLayers: 210000002100000002000000
     neuralNetworkWeightsRange:
@@ -1716,7 +1716,7 @@ MonoBehaviour:
     rabbitMaxVelocity: 3.5
     rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
-    collectHistory: 0
+    collectHistory: 1
     simulationDeltaTime: 0
     maxAnimalLifetime: 200
     rabbitHungerInNeuralNet: 1

@@ -117,7 +117,7 @@ namespace World
             if (firstInit)
             {
                 firstInit = false;
-                Debug.LogFormat("Rabbit: sectors: {0}, net size: {1}, values filled by surroundings: {2}, hunger in net: {3}", numOfSectors, Settings.Player.neuralNetworkLayers[0], 2 * numOfSectors, Settings.World.rabbitHungerInNeuralNet);
+                Debug.LogFormat("Fox: sectors: {0}, net size: {1}, values filled by surroundings: {2}, hunger in net: {3}", numOfSectors, Settings.Player.neuralNetworkLayers[0], 2 * numOfSectors, Settings.World.rabbitHungerInNeuralNet);
             }
             base.Awake();
             closestGrassInSectors = new Grass[numOfSectors];

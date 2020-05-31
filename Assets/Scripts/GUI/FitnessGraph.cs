@@ -11,10 +11,10 @@ public class FitnessGraph : MonoBehaviour
     public WorldCreator worldCreator;
     public float plotRefreshTime = 1;
 
-    private string plotDataPath => Application.dataPath + "/../Plots/";
-    private string plotScriptPath => Application.dataPath + "/Plots/";
+    private string PlotDataPath => Application.dataPath + "/../Plots/";
+    private string PlotScriptPath => Application.dataPath + "/Plots/";
     private string sessionFileName;
-    private string fullFilePath => plotDataPath + sessionFileName;
+    private string FullFilePath => PlotDataPath + sessionFileName;
 
     private string pythonScriptName = "runPlot.bat";
 
@@ -36,8 +36,8 @@ public class FitnessGraph : MonoBehaviour
                               DateTime.Now.ToLongTimeString().Replace(":", "-") +
                               ".txt"; // DateTime.Now.ToShortDateString().Replace("/", ":") + "-" + DateTime.Now.ToLongTimeString()+".txt";
 
-            File.Create(fullFilePath).Close();
-            using (StreamWriter writer = File.AppendText(fullFilePath))
+            File.Create(FullFilePath).Close();
+            using (StreamWriter writer = File.AppendText(FullFilePath))
             {
                 writer.WriteLine("Max;Avg;Min");
                 writer.Close();
@@ -58,8 +58,8 @@ public class FitnessGraph : MonoBehaviour
     private void StartGraphProcess()
     {
         cmd = new Process();
-        cmd.StartInfo.FileName = plotScriptPath + pythonScriptName;
-        cmd.StartInfo.Arguments = string.Format("\"{0}\" {1} \"{2}\"", plotScriptPath, plotRefreshTime, fullFilePath);
+        cmd.StartInfo.FileName = PlotScriptPath + pythonScriptName;
+        cmd.StartInfo.Arguments = string.Format("\"{0}\" {1} \"{2}\"", PlotScriptPath, plotRefreshTime, FullFilePath);
         cmd.StartInfo.CreateNoWindow = true;
         cmd.StartInfo.UseShellExecute = true;
         cmd.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
@@ -75,7 +75,7 @@ public class FitnessGraph : MonoBehaviour
             avg += val;
         }
 
-        using (StreamWriter writer = File.AppendText(fullFilePath))
+        using (StreamWriter writer = File.AppendText(FullFilePath))
         {
             writer.WriteLine((fitnessList[0] +";" + (avg / fitnessList.Count) + ";" + fitnessList[fitnessList.Count - 1]).Replace(',','.'));
             writer.Close();
