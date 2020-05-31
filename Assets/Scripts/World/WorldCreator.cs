@@ -90,23 +90,22 @@ namespace World
         private void MutateListOfBrains()
         {
             SortedList<float, NeuralNetwork> newBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
-            int baseListOffset = 0;
-            IList<float> brainListFitness = sortedBrainList.Keys;
-            IList<NeuralNetwork> brainListBrains = sortedBrainList.Values;
+            int currentBrainIndex = 0;
+            IList<float> rabbitBrainListFitness = sortedBrainList.Keys;
+            IList<NeuralNetwork> rabbitBrainListBrains = sortedBrainList.Values;
             foreach(ListMutationQuantity mutationQuantity in Settings.NeuralMutationSettings.listMutationQuantity)
             {
                 for(int i = 0; i<mutationQuantity.count; i++)
                 {
-                    int currentBrainIndex = baseListOffset + i;
-                    if(currentBrainIndex < brainListFitness.Count)
+                    if(currentBrainIndex < rabbitBrainListFitness.Count)
                     {
-                        newBrainList.Add(brainListFitness[currentBrainIndex], brainListBrains[currentBrainIndex]);
+                        newBrainList.Add(rabbitBrainListFitness[currentBrainIndex], rabbitBrainListBrains[currentBrainIndex]);
                         for(int quantity = 1; quantity < mutationQuantity.quantity; quantity++)
                         {
-                            newBrainList.Add(-1, NeuralNetworkMutator.Mutate(brainListBrains[currentBrainIndex]));
+                            newBrainList.Add(-1, NeuralNetworkMutator.Mutate(rabbitBrainListBrains[currentBrainIndex]));
                         }
                     }
-                    baseListOffset++;
+                    currentBrainIndex++;
                 }
             }
             sortedBrainList = newBrainList;
