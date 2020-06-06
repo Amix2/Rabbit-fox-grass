@@ -1,0 +1,2 @@
+Fox fitness
+Max;Avg;Min

@@ -11,14 +11,19 @@ public class FitnessGraph : MonoBehaviour
     public WorldCreator worldCreator;
     public float plotRefreshTime = 1;
 
-    private string PlotDataPath => Application.dataPath + "/../Plots/";
-    private string PlotScriptPath => Application.dataPath + "/Plots/";
-    private string sessionFileName;
-    private string FullFilePath => PlotDataPath + sessionFileName;
+    private string PlotDataDirPath => Application.dataPath + "/../Plots/";
+    private string PlotScriptDirPath => Application.dataPath + "/Plots/";
+    private string rabbitDataFilePath;
+    private string FullRabbitDataFilePath => PlotDataDirPath + rabbitDataFilePath;
+    private string foxDataFilePath;
+    private string FullFoxDataFilePath => PlotDataDirPath + foxDataFilePath;
 
-    private string pythonScriptName = "runPlot.bat";
+    private GraphScript rabbitGraphScript;
+    private GraphScript foxGraphScript;
 
-    private Process cmd;
+    private readonly string pythonScriptName = "runPlot.bat";
+
+    //private Process cmd;
     // FileStream file;
 
     // Start is called before the first frame update
@@ -32,18 +37,34 @@ public class FitnessGraph : MonoBehaviour
 
         try
         {
-            sessionFileName = DateTime.Now.ToShortDateString().Replace("/", "-") + "-" +
+            string sessionFileName = DateTime.Now.ToShortDateString().Replace("/", "-") + "-" +
                               DateTime.Now.ToLongTimeString().Replace(":", "-") +
-                              ".txt"; // DateTime.Now.ToShortDateString().Replace("/", ":") + "-" + DateTime.Now.ToLongTimeString()+".txt";
+                              ".txt";
 
-            File.Create(FullFilePath).Close();
-            using (StreamWriter writer = File.AppendText(FullFilePath))
-            {
+            rabbitDataFilePath = "rabbit_" + sessionFileName;
+            foxDataFilePath = "fox_" + sessionFileName;
+
+            File.Create(FullRabbitDataFilePath).Close();
+            using (StreamWriter writer = File.AppendText(FullRabbitDataFilePath))
+            { 
+                writer.WriteLine("Rabbit fitness");
                 writer.WriteLine("Max;Avg;Min");
                 writer.Close();
             }
+            rabbitGraphScript = new GraphScript(PlotScriptDirPath + pythonScriptName, FullRabbitDataFilePath, plotRefreshTime);
+            rabbitGraphScript.Run();
 
-            StartGraphProcess();
+            File.Create(FullFoxDataFilePath).Close();
+            using (StreamWriter writer = File.AppendText(FullFoxDataFilePath))
+            {
+                writer.WriteLine("Fox fitness");
+                writer.WriteLine("Max;Avg;Min");
+                writer.Close();
+            }
+            foxGraphScript = new GraphScript(PlotScriptDirPath + pythonScriptName, FullFoxDataFilePath, plotRefreshTime);
+            foxGraphScript.Run();
+
+            //StartGraphProcess(FullDataFilePath);
         }
         catch (Exception e)
         {
@@ -55,29 +76,23 @@ public class FitnessGraph : MonoBehaviour
         worldCreator.OnRecreateWorlds += SafeDataToFile;
     }
 
-    private void StartGraphProcess()
-    {
-        cmd = new Process();
-        cmd.StartInfo.FileName = PlotScriptPath + pythonScriptName;
-        cmd.StartInfo.Arguments = string.Format("\"{0}\" {1} \"{2}\"", PlotScriptPath, plotRefreshTime, FullFilePath);
-        cmd.StartInfo.CreateNoWindow = true;
-        cmd.StartInfo.UseShellExecute = true;
-        cmd.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-        cmd.Start();
-    }
-
     private void SafeDataToFile()
     {
-        IList<float> fitnessList = worldCreator.sortedBrainList.Keys;
+        SafeListDataToFile(worldCreator.sortedBrainList.Keys, FullRabbitDataFilePath);
+        SafeListDataToFile(worldCreator.sortedFoxesBrainList.Keys, FullFoxDataFilePath);
+    }
+
+    private void SafeListDataToFile(IList<float> fitnessList, string file)
+    {
         float avg = 0f;
         foreach (float val in fitnessList)
         {
             avg += val;
         }
 
-        using (StreamWriter writer = File.AppendText(FullFilePath))
+        using (StreamWriter writer = File.AppendText(file))
         {
-            writer.WriteLine((fitnessList[0] +";" + (avg / fitnessList.Count) + ";" + fitnessList[fitnessList.Count - 1]).Replace(',','.'));
+            writer.WriteLine((fitnessList[0] + ";" + (avg / fitnessList.Count) + ";" + fitnessList[fitnessList.Count - 1]).Replace(',', '.'));
             writer.Close();
         }
     }
@@ -85,14 +100,47 @@ public class FitnessGraph : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (showPlot && cmd.HasExited)
-        {
-            StartGraphProcess();
-        }
+        //if (showPlot)
+        //{
+        //    if(!rabbitGraphScript.IsRunning)
+        //    {
+        //        rabbitGraphScript.Run();
+        //    }
+        //    //StartGraphProcess(FullDataFilePath);
+        //}
     }
 
     private void OnDestroy()
     {
         //file.Close();
+    }
+}
+
+class GraphScript
+{
+    private readonly string scriptPath;
+    private readonly string dataFilePath;
+    private readonly float refreshInterval;
+
+    private Process process;
+
+    public bool IsRunning => !process.HasExited;
+
+    public GraphScript(string scriptPath, string dataFilePath, float refreshInterval)
+    {
+        this.scriptPath = scriptPath;
+        this.dataFilePath = dataFilePath;
+        this.refreshInterval = refreshInterval;
+    }
+
+    public void Run()
+    {
+        process = new Process();
+        process.StartInfo.FileName = scriptPath;
+        process.StartInfo.Arguments = string.Format("\"{0}\" {1} \"{2}\"", scriptPath.Substring(0, scriptPath.LastIndexOf("/")+1), refreshInterval, dataFilePath);
+        process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.UseShellExecute = true;
+        process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+        process.Start();
     }
 }

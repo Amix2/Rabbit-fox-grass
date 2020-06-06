@@ -1,0 +1,1 @@
+21,21 | fox : 1 : position : 11,11 | rabbit : 5: circle : 11,11 - 6

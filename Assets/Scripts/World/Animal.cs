@@ -39,7 +39,7 @@ namespace World
             currentTurn++;
             if(currentTurn > deadAtTurn)
             {
-                Debug.Log("Immortal animal " + currentTurn);
+                //Debug.Log("Immortal animal " + currentTurn);
                 Health = -1;
             }
             

@@ -1,0 +1,3 @@
+Rabbit fitness
+Max;Avg;Min
+2.26417;1.26962;0.9819875

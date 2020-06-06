@@ -6,9 +6,11 @@ namespace World
 {
     public class WorldHistory
     {
-        private readonly ConcurrentDictionary<Rabbit, RabbitHistory> aliveRabbits;
+        private readonly ConcurrentDictionary<Animal, AnimalHistory> aliveRabbits;
+        public readonly ConcurrentBag<AnimalHistory> rabbits;
+        private readonly ConcurrentDictionary<Animal, AnimalHistory> aliveFoxes;
+        public readonly ConcurrentBag<AnimalHistory> foxes;
         public readonly List<Vector3> grassPositions;
-        public readonly ConcurrentBag<RabbitHistory> rabbits;
         public int lifeTime = 0;
         public Vector2Int worldSize;
 
@@ -17,8 +19,10 @@ namespace World
             if(Settings.World.collectHistory)
             {
                 grassPositions = new List<Vector3>();
-                aliveRabbits = new ConcurrentDictionary<Rabbit, RabbitHistory>();
-                rabbits = new ConcurrentBag<RabbitHistory>();
+                aliveRabbits = new ConcurrentDictionary<Animal, AnimalHistory>();
+                rabbits = new ConcurrentBag<AnimalHistory>();
+                aliveFoxes = new ConcurrentDictionary<Animal, AnimalHistory>();
+                foxes = new ConcurrentBag<AnimalHistory>();
                 worldEvents.Subscribe(HistoryEventType.TURN_UPDATE, (object sender, int amount) => UpdateTurnEvent(amount));
                 worldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 position) => HandleDeathEvent(sender, position));
                 worldEvents.Subscribe(HistoryEventType.BIRTH, (object sender, Vector3 position) => HandleBirthEvent(sender, position));
@@ -40,7 +44,11 @@ namespace World
             }
             else if (typeof(Rabbit).IsInstanceOfType(obj))
             {
-                RabbitDeath(obj as Rabbit, position);
+                AnimalDeath(aliveRabbits, rabbits, obj as Rabbit, position);
+            }
+            else if (typeof(Fox).IsInstanceOfType(obj))
+            {
+                AnimalDeath(aliveFoxes, foxes, obj as Fox, position);
             }
             else throw new System.Exception("Unhandeled event sender");
         }
@@ -53,7 +61,11 @@ namespace World
             }
             else if (typeof(Rabbit).IsInstanceOfType(obj))
             {
-                RabbitBirth(obj as Rabbit, position);
+                AnimalBirth(aliveRabbits, obj as Rabbit, position);
+            }
+            else if (typeof(Fox).IsInstanceOfType(obj))
+            {
+                AnimalBirth(aliveFoxes, obj as Fox, position);
             }
             else throw new System.Exception("Unhandeled event sender");
         }
@@ -62,7 +74,11 @@ namespace World
         {
             if (typeof(Rabbit).IsInstanceOfType(obj))
             {
-                RabbitEat(obj as Rabbit, amount);
+                AnimalEat(aliveRabbits, obj as Rabbit, amount);
+            }
+            else if (typeof(Fox).IsInstanceOfType(obj))
+            {
+                AnimalEat(aliveFoxes, obj as Fox, amount);
             }
             else throw new System.Exception("Unhandeled event sender");
         }
@@ -71,53 +87,57 @@ namespace World
         {
             if (typeof(Rabbit).IsInstanceOfType(obj))
             {
-                RabbitPosition(obj as Rabbit, position);
+                AnimalPosition(aliveRabbits, obj as Rabbit, position);
             }
-            else throw new System.Exception("Unhandeled event sender");
+            else if (typeof(Fox).IsInstanceOfType(obj))
+            {
+                AnimalPosition(aliveFoxes, obj as Fox, position);
+            }
+            else throw new System.Exception("Unhandeled event sender : " + obj.GetType());
         }
 
-        private void RabbitDeath(Rabbit rabbit, Vector3 pos)
+        private void AnimalDeath(ConcurrentDictionary<Animal, AnimalHistory>  aliveAnimals, ConcurrentBag<AnimalHistory> deadAnimals, Animal animal, Vector3 pos)
         {
 
-            if (!aliveRabbits.ContainsKey(rabbit))
+            if (!aliveAnimals.ContainsKey(animal))
             {
-                throw new System.Exception("Rabbit has not yet been born");
+                throw new System.Exception("Animal has not yet been born");
             }
-            aliveRabbits.TryRemove(rabbit, out RabbitHistory hist);
+            aliveAnimals.TryRemove(animal, out AnimalHistory hist);
             hist.deathPosition = pos;
             hist.lifeTime = lifeTime - hist.lifeTime;
-            rabbits.Add(hist);
+            deadAnimals.Add(hist);
         }
 
-        private void RabbitBirth(Rabbit rabbit, Vector3 pos)
+        private void AnimalBirth(ConcurrentDictionary<Animal, AnimalHistory> aliveAnimals, Animal animal, Vector3 pos)
         {
-            if (aliveRabbits.ContainsKey(rabbit))
+            if (aliveAnimals.ContainsKey(animal))
             {
-                throw new System.Exception("Rabbit is a Jezus, he was reborned");
+                throw new System.Exception("Animal is a Jezus, he was reborned");
             }
-            aliveRabbits.TryAdd(rabbit, new RabbitHistory { birthPosition = pos, deathPosition = Vector3.zero, foodEaten = 0f, lifeTime = lifeTime });
+            aliveAnimals.TryAdd(animal, new AnimalHistory { birthPosition = pos, deathPosition = Vector3.zero, foodEaten = 0f, lifeTime = lifeTime });
         }
 
-        private void RabbitEat(Rabbit rabbit, float food)
+        private void AnimalEat(ConcurrentDictionary<Animal, AnimalHistory> aliveAnimals, Animal animal, float food)
         {
-            if (!aliveRabbits.ContainsKey(rabbit))
+            if (!aliveAnimals.ContainsKey(animal))
             {
                 throw new System.Exception("Rabbit has not yet been born");
             }
-            var hist = aliveRabbits[rabbit];
+            var hist = aliveAnimals[animal];
             hist.foodEaten += food;
-            aliveRabbits[rabbit] = hist;
+            aliveAnimals[animal] = hist;
         }
 
-        private void RabbitPosition(Rabbit rabbit, Vector3 position)
+        private void AnimalPosition(ConcurrentDictionary<Animal, AnimalHistory> aliveAnimals, Animal animal, Vector3 position)
         {
-            if (!aliveRabbits.ContainsKey(rabbit))
+            if (!aliveAnimals.ContainsKey(animal))
             {
                 throw new System.Exception("Rabbit has not yet been born");
             }
-            var hist = aliveRabbits[rabbit];
+            var hist = aliveAnimals[animal];
             hist.positions.Add(position);
-            aliveRabbits[rabbit] = hist;
+            aliveAnimals[animal] = hist;
         }
 
         private void AddGrass(Vector3 pos)
@@ -125,7 +145,7 @@ namespace World
             grassPositions.Add(pos);
         }
 
-        public class RabbitHistory
+        public class AnimalHistory
         {
             public Vector3 birthPosition, deathPosition;
             public int lifeTime;

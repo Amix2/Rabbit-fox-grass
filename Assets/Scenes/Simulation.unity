@@ -1144,9 +1144,10 @@ MonoBehaviour:
   - name: fox
     prefab: {fileID: 5469908333711757376, guid: a2af05269309dd94a8ba4f0542b11451,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: fd41a42b276ec094aa7929e761c43187, type: 3}
+  worldDefinitionFile: {fileID: 4900000, guid: a89432755836acb4496acec7805372ca, type: 3}
   numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 1
+  foxFitnessFunction: 0
 --- !u!4 &758577819
 Transform:
   m_ObjectHideFlags: 0

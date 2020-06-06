@@ -16,7 +16,8 @@ namespace World
         public SimulationObjectPrefab[] objectPrefabs;
         public TextAsset worldDefinitionFile;
         public int numberOfWorldsToCreate;
-        public FitnessCalculatorOptions rabbitFitnessFunction;
+        public RabbitFitnessCalculatorOptions rabbitFitnessFunction;
+        public FoxFitnessCalculatorOptions foxFitnessFunction;
         public float BestFitnessScore { get { return sortedBrainList.Count > 0 ? sortedBrainList.Keys[0] : -1; } }
         public bool RunSimulation { get; set; } = true;
         public SortedList<float, NeuralNetwork> sortedBrainList;
@@ -30,6 +31,7 @@ namespace World
         private Vector2Int size;
         private float gapBetweenWorlds;
         private IFitnessCalculator rabbitFitnessCalculator;
+        private IFitnessCalculator foxFitnessCalculator;
 
         private MultiListIterator<Animal> animalIterator;
         private MultiListIterator<Grass> grassIterator;
@@ -65,6 +67,10 @@ namespace World
                 {
                     sortedBrainList.RemoveAt(sortedBrainList.IndexOfValue(worlds[i].BigBrain));
                     sortedBrainList.Add(rabbitFitnessCalculator.CalculateFitness(worlds[i].History), worlds[i].BigBrain);
+
+                    sortedFoxesBrainList.RemoveAt(sortedFoxesBrainList.IndexOfValue(worlds[i].FoxBrain));
+                    sortedFoxesBrainList.Add(foxFitnessCalculator.CalculateFitness(worlds[i].History), worlds[i].FoxBrain);
+
                     Destroy(worlds[i].gameObject);
                     animalIterator.RemoveList(worlds[i].animalList);
                     grassIterator.RemoveList(worlds[i].grassList);
@@ -83,33 +89,40 @@ namespace World
             if (!anyWorldsLeft)
             {
                 OnRecreateWorlds?.Invoke();
-                MutateListOfBrains();
+                MutateBrains();
                 CreateAllWorlds();
             }
         }
 
-        private void MutateListOfBrains()
+        private void MutateBrains()
+        {
+            sortedBrainList = MutateListOfBrains(sortedBrainList);
+            sortedFoxesBrainList = MutateListOfBrains(sortedFoxesBrainList);
+        }
+
+        private SortedList<float, NeuralNetwork> MutateListOfBrains(SortedList<float, NeuralNetwork> sortedBrainList)
         {
             SortedList<float, NeuralNetwork> newBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             int currentBrainIndex = 0;
-            IList<float> rabbitBrainListFitness = sortedBrainList.Keys;
-            IList<NeuralNetwork> rabbitBrainListBrains = sortedBrainList.Values;
-            foreach(ListMutationQuantity mutationQuantity in Settings.NeuralMutationSettings.listMutationQuantity)
+            IList<float> brainListFitness = sortedBrainList.Keys;
+            IList<NeuralNetwork> brainListBrains = sortedBrainList.Values;
+            foreach (ListMutationQuantity mutationQuantity in Settings.NeuralMutationSettings.listMutationQuantity)
             {
-                for(int i = 0; i<mutationQuantity.count; i++)
+                for (int i = 0; i < mutationQuantity.count; i++)
                 {
-                    if(currentBrainIndex < rabbitBrainListFitness.Count)
+                    if (currentBrainIndex < brainListFitness.Count)
                     {
-                        newBrainList.Add(rabbitBrainListFitness[currentBrainIndex], rabbitBrainListBrains[currentBrainIndex]);
-                        for(int quantity = 1; quantity < mutationQuantity.quantity; quantity++)
+                        newBrainList.Add(brainListFitness[currentBrainIndex], brainListBrains[currentBrainIndex]);
+                        for (int quantity = 1; quantity < mutationQuantity.quantity; quantity++)
                         {
-                            newBrainList.Add(-1, NeuralNetworkMutator.Mutate(rabbitBrainListBrains[currentBrainIndex]));
+                            newBrainList.Add(-1, NeuralNetworkMutator.Mutate(brainListBrains[currentBrainIndex]));
                         }
                     }
                     currentBrainIndex++;
                 }
             }
-            sortedBrainList = newBrainList;
+
+            return newBrainList;
         }
 
         public void SaveBestBrainToFile(string filePath)
@@ -176,6 +189,7 @@ namespace World
             sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             rabbitFitnessCalculator = rabbitFitnessFunction.GetCalculator();
+            foxFitnessCalculator = foxFitnessFunction.GetCalculator();
             // Create field objects
             InitResources();
             // Fill List<WorldBuilder> worldOptions from input file (TextAsset worldDefinitionFile)

@@ -42,17 +42,17 @@ namespace World
             return sqrDistanceToClosest;
         }
 
-        protected static float AvgSqrDistaceToClosestGrass(List<Vector3> grassPositions, List<Vector3> rabbitPositions)
+        protected static float AvgSqrDistaceToClosestTarget(List<Vector3> targetPositions, List<Vector3> sourcePositions)
         {
-            if (rabbitPositions.Count == 0) return 0;
+            if (sourcePositions.Count == 0) return 0;
 
             float sqrSumPos = 0;
-            foreach (Vector3 rabbitPos in rabbitPositions)
+            foreach (Vector3 sourcePos in sourcePositions)
             {
                 float sqrDistanceToClosest = float.MaxValue;
-                foreach (Vector3 grassPos in grassPositions)
+                foreach (Vector3 targetPos in targetPositions)
                 {
-                    float sqrMagnitude = (grassPos - rabbitPos).sqrMagnitude;
+                    float sqrMagnitude = (targetPos - sourcePos).sqrMagnitude;
                     if (sqrDistanceToClosest > sqrMagnitude)
                     {
                         sqrDistanceToClosest = sqrMagnitude;
@@ -60,7 +60,7 @@ namespace World
                 }
                 sqrSumPos += sqrDistanceToClosest;
             }
-            return sqrSumPos / rabbitPositions.Count;
+            return sqrSumPos / sourcePositions.Count;
         }
     }
 }
