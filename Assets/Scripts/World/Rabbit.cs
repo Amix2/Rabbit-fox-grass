@@ -19,7 +19,7 @@ namespace World
         {
             if (closestGrass != null)
             {
-                float food = closestGrass.Consumed(Settings.World.rabbitEatingSpeed * Settings.World.simulationDeltaTime);
+                float food = closestGrass.Consumed(Settings.Rabbit.rabbitEatingSpeed * Settings.World.simulationDeltaTime);
                 Health += food;
                 Health = Mathf.Clamp01(Health);
                 world.WorldEvents.Invoke(this, HistoryEventType.EAT, food);
@@ -94,41 +94,44 @@ namespace World
                 netInputs[i] = sqrAnimalViewRange - netInputs[i];
                 netInputs[i] /= sqrAnimalViewRange;
             }
-            if(Settings.World.rabbitHungerInNeuralNet) netInputs[Settings.Player.neuralNetworkLayers[0]-1] = Health;
+            if(Settings.World.rabbitHungerInNeuralNet) netInputs[Settings.Rabbit.neuralNetworkLayers[0]-1] = Health;
             return netInputs;
         }
 
         public float FoodAmount
         {
-            get { return Settings.World.foodInRabbits; }
+            get { return Settings.Rabbit.foodInRabbits; }
         }
 
         protected override float MaxVelocity
         {
-            get { return Settings.World.rabbitMaxVelocity; }
+            get { return Settings.Rabbit.rabbitMaxVelocity; }
         }
 
-        public override float HungerRate { get { return Settings.World.rabbitHungerRate; } }
+        public override float HungerRate { get { return Settings.Rabbit.rabbitHungerRate; } }
 
         static bool firstInit = true;
         private new void Awake()
         {
-            numOfSectors = Settings.Player.neuralNetworkLayers[0] / 2;
+            numOfSectors = Settings.Rabbit.neuralNetworkLayers[0] / 2;
             if (firstInit)
             {
                 firstInit = false;
-                Debug.LogFormat("Rabbit: sectors: {0}, net size: {1}, values filled by surroundings: {2}, hunger in net: {3}", numOfSectors, Settings.Player.neuralNetworkLayers[0], 2 * numOfSectors, Settings.World.rabbitHungerInNeuralNet);
+                Debug.LogFormat("Rabbit: sectors: {0}, net size: {1}, values filled by surroundings: {2}, hunger in net: {3}", numOfSectors, Settings.Rabbit.neuralNetworkLayers[0], 2 * numOfSectors, Settings.World.rabbitHungerInNeuralNet);
             }
             base.Awake();
             closestGrassInSectors = new Grass[numOfSectors];
-            netInputs = new float[Settings.Player.neuralNetworkLayers[0]];
-            sqrRabbitEatingDistance = Settings.World.rabbitEatingDistance * Settings.World.rabbitEatingDistance;
+            netInputs = new float[Settings.Rabbit.neuralNetworkLayers[0]];
+            sqrRabbitEatingDistance = Settings.Rabbit.rabbitEatingDistance * Settings.Rabbit.rabbitEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
         }
 
         public float Consumed(float amount = 1)
         {
-            throw new System.NotImplementedException();
+            if (Health < 0.1f) return 0f;
+            amount = Mathf.Min(amount, Health);
+            Health = Mathf.Clamp01(Health - amount);
+            return FoodAmount * amount;
         }
 
         private void OnDrawGizmosSelected()

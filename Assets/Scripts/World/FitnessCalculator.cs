@@ -110,7 +110,6 @@ namespace World
                 scoreSum += (foxHistory.foodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
             }
             float scoreAvg = scoreSum / worldHistory.foxes.Count;
-
             return scoreAvg;
         }
 

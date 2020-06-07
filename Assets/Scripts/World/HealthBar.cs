@@ -24,10 +24,10 @@ namespace World
         // Start is called before the first frame update
         private void Start()
         {
-            if (Settings.Player.renderOptions != RenderOptions.Full)
-            {
-                Destroy(this.gameObject);
-            }
+            //if (Settings.Player.renderOptions != RenderOptions.Full)
+            //{
+            //    Destroy(this.gameObject);
+            //}
             material = GetComponent<MeshRenderer>().material;
             owner = GetComponentInParent<IAlive>();
         }

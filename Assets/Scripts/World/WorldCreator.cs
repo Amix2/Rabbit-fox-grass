@@ -224,12 +224,12 @@ namespace World
 
             for(int i = sortedBrainList.Count; i<numberOfWorldsToCreate; i++)
             {
-                sortedBrainList.Add(-1f, new NeuralNetwork(Settings.Player.neuralNetworkLayers));
+                sortedBrainList.Add(-1f, new NeuralNetwork(Settings.Rabbit.neuralNetworkLayers));
             }
 
             for (int i = sortedFoxesBrainList.Count; i < numberOfWorldsToCreate; i++)
             {
-                sortedFoxesBrainList.Add(-1f, new NeuralNetwork(Settings.Player.neuralNetworkLayers));
+                sortedFoxesBrainList.Add(-1f, new NeuralNetwork(Settings.Fox.neuralNetworkLayers));
             }
 
             WorldBuilder builder = worldOptions[UnityEngine.Random.Range(0, worldOptions.Count)];
