@@ -1,0 +1,4 @@
+Rabbit fitness
+Max;Avg;Min
+-Infinity;-Infinity;-Infinity
+-Infinity;-Infinity;-Infinity

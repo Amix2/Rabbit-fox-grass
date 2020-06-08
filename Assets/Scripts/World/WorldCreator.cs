@@ -125,21 +125,40 @@ namespace World
             return newBrainList;
         }
 
-        public void SaveBestBrainToFile(string filePath)
+        public void SaveRabbitBrainToFile(string filePath)
         {
-            print("Save:  " + filePath);
+            print("Save rabbit:  " + filePath);
             NeuralNetworkStorage.SaveToFile(filePath, sortedBrainList.Values.ToArray(), sortedBrainList.Keys.ToArray());
         }
 
-        public void LoadBrainFromFile(string filePath)
+        public void LoadRabbitBrainFromFile(string filePath)
         {
-            print("Load:  " + filePath);
+            print("Load rabbit:  " + filePath);
             DestroyAllWorlds();
             sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             NeuralNetwork[] brainList = NeuralNetworkStorage.ReadFromFile(filePath);
             foreach(var brain in brainList)
             {
                 sortedBrainList.Add(-1f, brain);
+            }
+            CreateAllWorlds();
+        }
+
+        public void SaveFoxBrainToFile(string filePath)
+        {
+            print("Save rabbit:  " + filePath);
+            NeuralNetworkStorage.SaveToFile(filePath, sortedFoxesBrainList.Values.ToArray(), sortedFoxesBrainList.Keys.ToArray());
+        }
+
+        public void LoadFoxBrainFromFile(string filePath)
+        {
+            print("Load rabbit:  " + filePath);
+            DestroyAllWorlds();
+            sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            NeuralNetwork[] brainList = NeuralNetworkStorage.ReadFromFile(filePath);
+            foreach (var brain in brainList)
+            {
+                sortedFoxesBrainList.Add(-1f, brain);
             }
             CreateAllWorlds();
         }

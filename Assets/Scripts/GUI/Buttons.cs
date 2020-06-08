@@ -9,22 +9,41 @@ public class Buttons : MonoBehaviour
 {
     public WorldCreator worldCreator;
 
-    public void OnSaveButton()
+    public void OnSaveRabbitButton()
     {
         string path = EditorUtility.SaveFilePanel("Choose file to load", "", "", "txt");
         if (path.Length != 0)
         {
-            worldCreator.SaveBestBrainToFile(path);
+            worldCreator.SaveRabbitBrainToFile(path);
         }
     }
 
-    public void OnLoadButton()
+    public void OnLoadRabbitButton()
     {
 
         string path = EditorUtility.OpenFilePanel("Choose file to load", "", "txt");
         if (path.Length != 0)
         {
-            worldCreator.LoadBrainFromFile(path);
+            worldCreator.LoadRabbitBrainFromFile(path);
+        }
+    }
+
+    public void OnSaveFoxButton()
+    {
+        string path = EditorUtility.SaveFilePanel("Choose file to load", "", "", "txt");
+        if (path.Length != 0)
+        {
+            worldCreator.SaveFoxBrainToFile(path);
+        }
+    }
+
+    public void OnLoadFoxButton()
+    {
+
+        string path = EditorUtility.OpenFilePanel("Choose file to load", "", "txt");
+        if (path.Length != 0)
+        {
+            worldCreator.LoadFoxBrainFromFile(path);
         }
     }
 
