@@ -68,8 +68,7 @@ namespace World
             world.transform.Translate(position);
             for (int i = 0; i < objectsNames.Count; i++)
             {
-                GameObject prefab;
-                prefabs.TryGetValue(objectsNames[i], out prefab);
+                prefabs.TryGetValue(objectsNames[i], out GameObject prefab);
                 for (int c = 0; c < objectsCount[i]; c++)   // spawn required amount of objects in random position from given list
                 {
                     Vector3 pos;
@@ -86,6 +85,10 @@ namespace World
                     if (objectsNames[i] == "rabbit")
                     {
                         world.AddRabbit(prefab, pos + new Vector3(0.5f, 0f, 0.5f));
+                    }
+                    else if (objectsNames[i] == "fox")
+                    {
+                        world.AddFox(prefab, pos + new Vector3(0.5f, 0f, 0.5f));
                     }
                     else if (objectsNames[i] == "grass")
                     {
@@ -112,7 +115,7 @@ namespace World
 
 internal class PositionSelector
 {
-    private List<Vector2> positions;
+    private readonly List<Vector2> positions;
 
     public static PositionSelector FromPointList(string list)
     {

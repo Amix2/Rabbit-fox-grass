@@ -26,6 +26,18 @@ public class Settings : MonoBehaviour
         get { return instance.neuralNetwork; }
     }
 
+    public RabbitSettings rabbitSettings;
+    public static RabbitSettings Rabbit
+    {
+        get { return instance.rabbitSettings; }
+    }
+
+    public FoxSettings foxSettings;
+    public static FoxSettings Fox
+    {
+        get { return instance.foxSettings; }
+    }
+
 
     public NeuralMutationSettings neuralMutation;
     public static NeuralMutationSettings NeuralMutationSettings
@@ -53,7 +65,6 @@ public class PlayerSettings
     public float cameraRotateSensitivity = 500f;
     public bool fastTrainingMode = false;
     public RenderOptions renderOptions = RenderOptions.Full;
-    public int[] neuralNetworkLayers = new[] { 2, 10, 10, 2 };
     public double[] neuralNetworkWeightsRange = new[] { -4.0, 4.0 };
     public double[] neuralNetworkBiasRange = new[] { -4.0, 4.0 };
 }
@@ -65,20 +76,42 @@ public class WorldSettings
     public string[] allowedObjectNames;
     public float foodInGrass = 0.5f;
     public float grassGrowthRate = 0.5f;   // per sec
-    public float rabbitMultiplicationChance = 0.1f;
-    public float foxMultiplicationChance = 0.1f;
+
+    #region rabbit
+    
+    #endregion
+
+
+
+    public bool collectHistory = true;
+    public float simulationDeltaTime;
+    public float maxAnimalLifetime;
+    public bool rabbitHungerInNeuralNet;
+    public bool foxHungerInNeuralNet;
     public float multipliedAnimalSpawnRadius = 1.0f;
+}
+[System.Serializable]
+public class RabbitSettings
+{
+    public int[] neuralNetworkLayers;
     public float foodInRabbits = 1f;
     public float rabbitEatingDistance = 1.3f;
     public float rabbitMaxVelocity = 2f;   // per sec
     public float rabbitHungerRate = 0.5f;   // per sec
     public float rabbitEatingSpeed = 1f;   // per sec
-    public bool collectHistory = true;
-    public float simulationDeltaTime;
-    public float maxAnimalLifetime;
-    public bool rabbitHungerInNeuralNet;
+    public float rabbitMultiplicationChance = 0.1f;
 }
 
+[System.Serializable]
+public class FoxSettings
+{
+    public int[] neuralNetworkLayers;
+    public float foxEatingDistance = 1.3f;
+    public float foxMaxVelocity = 2f;   // per sec
+    public float foxHungerRate = 0.5f;   // per sec
+    public float foxEatingSpeed = 1f;   // per sec
+    public float foxMultiplicationChance = 0.1f;
+}
 [System.Serializable]
 public class NeuralNetworkSettings
 {

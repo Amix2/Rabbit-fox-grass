@@ -7,7 +7,6 @@ namespace World
     public abstract class Animal : WorldObject, IAlive, IUpdatable
     {
         public Vector2Int worldSize;
-        public LayerMask feedOnLayer;
         public bool UseLocalViewSpace;
 
 
@@ -42,12 +41,13 @@ namespace World
             currentTurn++;
             if(currentTurn > deadAtTurn)
             {
-                Debug.Log("Immortal animal " + currentTurn);
+                //Debug.Log("Immortal animal " + currentTurn);
                 Health = -1;
             }
-            
+
             // Handle hunger
             Health -= HungerRate * Settings.World.simulationDeltaTime;
+            Health = Mathf.Clamp01(Health);
             if (Health <= 0f)
             {
                 HandleDeath();
@@ -96,7 +96,7 @@ namespace World
             newPosition.x = Mathf.Clamp(newPosition.x, 0.5f, worldSize.x - 0.5f);
             newPosition.z = Mathf.Clamp(newPosition.z, 0.5f, worldSize.y - 0.5f);
 
-            if (velocity.sqrMagnitude > 0) transform.forward = velocity.normalized;
+            if ((MaxVelocity * velocity).sqrMagnitude > 0) transform.forward = (MaxVelocity * velocity).normalized;
 
             transform.localPosition = newPosition;
             position = newPosition;

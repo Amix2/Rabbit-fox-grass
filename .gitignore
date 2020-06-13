@@ -322,3 +322,4 @@ __pycache__/
 # Builds
 UnityExtension/**/manifest.json
 tests/IntegrationTests/IOTestsRepo/
+Assets/StreamingAssets/PlotsData/

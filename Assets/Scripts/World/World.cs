@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,13 +11,12 @@ namespace World
 
         public static float deltaTime;
 
-        public List<Rabbit> rabbitList;
+        public List<Animal> animalList;
         public List<Grass> grassList;
 
-        private ConcurrentBag<Rabbit> deadRabbits;
-        internal NeuralNetwork bigBrain;
+        private ConcurrentBag<Animal> deadAnimals;
 
-        public bool IsAlive { get => rabbitList.Count > 0; }
+        public bool IsAlive { get => animalList.Count > 0; }
 
         public Vector2Int Size
         {
@@ -40,21 +40,23 @@ namespace World
             }
         }
         public MultiTypeEventHandler<HistoryEventType, float, int, Vector3> WorldEvents { get; private set; }
+        internal NeuralNetwork BigBrain { get; set; }
+        internal NeuralNetwork FoxBrain { get; set; }
 
         private new void Awake()
         {
             base.Awake();
             WorldEvents = new MultiTypeEventHandler<HistoryEventType, float, int, Vector3>();
             WorldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 posiiton) => HandleDeath(sender));
-            rabbitList = new List<Rabbit>();
+            animalList = new List<Animal>();
             grassList = new List<Grass>();
             History = new WorldHistory(WorldEvents);
-            deadRabbits = new ConcurrentBag<Rabbit>();
+            deadAnimals = new ConcurrentBag<Animal>();
         }
 
         public void HandleDeath(object obj)
         {
-            if (typeof(Rabbit).IsInstanceOfType(obj)) deadRabbits.Add(obj as Rabbit);
+            if (typeof(Animal).IsInstanceOfType(obj)) deadAnimals.Add(obj as Animal);
         }
 
         /// <summary>
@@ -65,13 +67,13 @@ namespace World
         {
             History.lifeTime++;
             WorldEvents.Invoke(this, HistoryEventType.TURN_UPDATE, 1);
-            while (deadRabbits.TryTake(out Rabbit deadRabbit))
+            while (deadAnimals.TryTake(out Animal deadAnimal))
             {
-                Destroy(deadRabbit.gameObject);
-                rabbitList.Remove(deadRabbit);
+                Destroy(deadAnimal.gameObject);
+                animalList.Remove(deadAnimal);
             }
 
-            return rabbitList.Count > 0;
+            return IsAlive;
         }
 
         //////////////////////////////////////////
@@ -86,11 +88,11 @@ namespace World
         public void AddRabbit(GameObject prefab, Vector3 position)
         {
             var rabbitGO = AddGameObject(prefab, position);
-            rabbitGO.name = "Rabbit_" + rabbitList.Count;
+            rabbitGO.name = "Rabbit_" + animalList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = Size;
-            rabbitGO.GetComponent<Rabbit>().Brain = bigBrain;
+            rabbitGO.GetComponent<Rabbit>().Brain = BigBrain;
             if (!Render) rabbitGO.GetComponent<Rabbit>().DisableModel();
-            rabbitList.Add(rabbitGO.GetComponent<Rabbit>());
+            animalList.Add(rabbitGO.GetComponent<Rabbit>());
             rabbitGO.GetComponent<Rabbit>().world = this;
             WorldEvents.Invoke(rabbitGO.GetComponent<Rabbit>(), HistoryEventType.BIRTH, position);
         }
@@ -102,6 +104,17 @@ namespace World
             if (!Render) grassGO.GetComponent<Grass>().DisableModel();
             grassList.Add(grassGO.GetComponent<Grass>());
             WorldEvents.Invoke(grassGO.GetComponent<Grass>(), HistoryEventType.BIRTH, position);
+        }
+
+        internal void AddFox(GameObject prefab, Vector3 position)
+        {
+            var foxGO = AddGameObject(prefab, position);
+            foxGO.name = "Fox_" + animalList.Count;
+            foxGO.GetComponent<Fox>().worldSize = Size;
+            foxGO.GetComponent<Fox>().Brain = FoxBrain;
+            if (!Render) foxGO.GetComponent<Fox>().DisableModel();
+            animalList.Add(foxGO.GetComponent<Fox>());
+            WorldEvents.Invoke(foxGO.GetComponent<Fox>(), HistoryEventType.BIRTH, position);
         }
 
         private GameObject AddGameObject(GameObject prefab, Vector3 position)

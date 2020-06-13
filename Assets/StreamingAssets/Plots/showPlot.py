@@ -13,12 +13,15 @@ if __name__ == "__main__":
         print(fileLen)
         names = []
         values = {}
+        title = ""
         F = open(sys.argv[2],"r") 
         currFileLen = 0
         for ind, line in enumerate(F.readlines()):
             currFileLen += 1
             line = line.rstrip()
             if(ind == 0):
+                title = line
+            elif(ind == 1):
                 names = line.split(";")
             else:
                 for valId, val in enumerate(line.split(";")):
@@ -34,6 +37,7 @@ if __name__ == "__main__":
             if not legendSet and colorId > 0:
                 plt.legend(loc="upper left")
                 legendSet = True
+            plt.title(title)
 
         plt.pause(float(sys.argv[1]))
         #plt.show()
