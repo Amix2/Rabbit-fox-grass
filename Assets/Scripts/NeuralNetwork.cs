@@ -53,7 +53,7 @@ public class NeuralNetwork
         {
             var res = _weights[i] * prevNeurons + _biases[i];
             NormalizeVector(res);
-           // Debug.Log(res);
+            // Debug.Log(res);
 
             prevNeurons = res;
         }
@@ -89,7 +89,7 @@ public class NeuralNetwork
     {
         var stringBuilder = new StringBuilder().AppendLine("{");
 
-        stringBuilder.AppendLine("\"fitness\":" + fitness.ToString() + ",");
+        stringBuilder.AppendLine("\"fitness\":" + fitness.ToString().Replace(',','.') + ",");
 
         stringBuilder.Append("\"weights\":" + MatrixArrayToString(_weights));
 

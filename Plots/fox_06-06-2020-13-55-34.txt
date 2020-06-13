@@ -1,3 +1,0 @@
-Fox fitness
-Max;Avg;Min
-2.331896;-0.03522215;-1

@@ -1759,7 +1759,7 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 1
+    fastTrainingMode: 0
     renderOptions: 2
     neuralNetworkWeightsRange:
     - -4
@@ -1768,29 +1768,29 @@ MonoBehaviour:
     - -4
     - 4
   world:
-    animalViewRange: 15
+    animalViewRange: 20
     allowedObjectNames:
     - grass
     - rabbit
     - fox
-    foodInGrass: 1
-    grassGrowthRate: 0.02
+    foodInGrass: 0.5
+    grassGrowthRate: 0.03
     collectHistory: 1
     simulationDeltaTime: 0
-    maxAnimalLifetime: 100
+    maxAnimalLifetime: 200
     rabbitHungerInNeuralNet: 1
     foxHungerInNeuralNet: 1
   rabbitSettings:
     neuralNetworkLayers: 210000002100000002000000
     foodInRabbits: 1
     rabbitEatingDistance: 0.5
-    rabbitMaxVelocity: 1
-    rabbitHungerRate: 0.02
+    rabbitMaxVelocity: 2
+    rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
   foxSettings:
     neuralNetworkLayers: 110000001100000002000000
     foxEatingDistance: 0.5
-    foxMaxVelocity: 1
+    foxMaxVelocity: 2
     foxHungerRate: 0.05
     foxEatingSpeed: 1
   neuralMutation:
@@ -1952,7 +1952,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14138
+  m_Name: pb_Mesh18860
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

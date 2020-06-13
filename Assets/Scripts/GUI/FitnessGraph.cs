@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using World;
 
 public class FitnessGraph : MonoBehaviour
@@ -11,8 +12,8 @@ public class FitnessGraph : MonoBehaviour
     public WorldCreator worldCreator;
     public float plotRefreshTime = 1;
 
-    private string PlotDataDirPath => Application.dataPath + "/../Plots/";
-    private string PlotScriptDirPath => Application.dataPath + "/Plots/";
+    private string PlotDataDirPath => Application.streamingAssetsPath + "/PlotsData/";
+    private string PlotScriptDirPath => Application.streamingAssetsPath + "/Plots/";
     private string rabbitDataFilePath;
     private string FullRabbitDataFilePath => PlotDataDirPath + rabbitDataFilePath;
     private string foxDataFilePath;
@@ -29,6 +30,7 @@ public class FitnessGraph : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        UnityEngine.Debug.Log(Application.streamingAssetsPath);
         if (!showPlot || !Settings.World.collectHistory)
         {
             Destroy(this.gameObject);
