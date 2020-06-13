@@ -139,7 +139,7 @@ namespace World
         protected override void MultiplyAnimal()
         {
             var random = new MersenneTwister();
-            if (!(Convert.ToSingle(random.NextDouble()) < Settings.World.rabbitMultiplicationChance)) return;
+            if (!(Convert.ToSingle(random.NextDouble()) < Settings.Rabbit.rabbitMultiplicationChance)) return;
 
             var radius = Settings.World.multipliedAnimalSpawnRadius;
             var xPos = gameObject.transform.position.x;
