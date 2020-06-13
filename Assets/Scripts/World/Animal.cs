@@ -102,6 +102,7 @@ namespace World
 
         protected Vector3 CalculateMultipliedAnimalPosition()
         {
+            Debug.Log(Position);
             var radius = Settings.World.multipliedAnimalSpawnRadius;
             var objPosition = Position;
             var xPos = objPosition.x;
@@ -114,6 +115,11 @@ namespace World
             base.Awake();
             deadAtTurn = (int) (Settings.World.maxAnimalLifetime / Settings.World.simulationDeltaTime);
             world = transform.parent.GetComponent<World>();
+        }
+
+        protected void Start()
+        {
+            position = gameObject.transform.localPosition;
         }
     }
 }
