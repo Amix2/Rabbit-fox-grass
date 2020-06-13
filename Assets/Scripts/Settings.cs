@@ -65,6 +65,9 @@ public class WorldSettings
     public string[] allowedObjectNames;
     public float foodInGrass = 0.5f;
     public float grassGrowthRate = 0.5f;   // per sec
+    public float rabbitMultiplicationChance = 0.1f;
+    public float foxMultiplicationChance = 0.1f;
+    public float multipliedAnimalSpawnRadius = 1.0f;
     public float foodInRabbits = 1f;
     public float rabbitEatingDistance = 1.3f;
     public float rabbitMaxVelocity = 2f;   // per sec

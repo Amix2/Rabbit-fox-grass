@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+using System;
+using MathNet.Numerics.Random;
+using UnityEngine;
 
 namespace World
 {
@@ -129,6 +131,19 @@ namespace World
         public float Consumed(float amount = 1)
         {
             throw new System.NotImplementedException();
+        }
+
+        protected override void MultiplyAnimal()
+        {
+            var random = new MersenneTwister();
+            if (!(Convert.ToSingle(random.NextDouble()) < Settings.World.rabbitMultiplicationChance)) return;
+
+            var radius = Settings.World.multipliedAnimalSpawnRadius;
+            var xPos = gameObject.transform.position.x;
+            var zPos = gameObject.transform.position.z;
+            
+            var newPosition = new Vector3(UnityEngine.Random.Range(xPos-radius,xPos+radius), 0,UnityEngine.Random.Range(zPos-radius,zPos+radius));
+            world.AddRabbit(gameObject, newPosition);
         }
 
         private void OnDrawGizmosSelected()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -28,6 +28,8 @@ namespace World
         abstract protected void CollectInfoAboutSurroundings();
 
         abstract protected float[] CreateNetInputs();
+        
+        abstract protected void MultiplyAnimal();
 
         /// <summary>
         /// Parallel update, sets velocity
@@ -57,7 +59,11 @@ namespace World
 
             // Consume food
             ConsumeFood();
-
+            
+            // Multiply if health is full
+            if(Health > 0.99f)
+                MultiplyAnimal();
+            
             // Get decision from net
             Profiler.BeginSample("run NeuralNet");
             Vector3 decision = brain.GetDecision(CreateNetInputs());
