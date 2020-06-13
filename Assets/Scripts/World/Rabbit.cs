@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace World
 {
@@ -128,6 +128,14 @@ namespace World
             netInputs = new float[Settings.Rabbit.neuralNetworkLayers[0]];
             sqrRabbitEatingDistance = Settings.Rabbit.rabbitEatingDistance * Settings.Rabbit.rabbitEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
+        }
+        
+        protected override void MultiplyAnimal()
+        {
+            var multiplyChance = Utils.RandomFloat();
+
+            if (!(multiplyChance < Settings.Rabbit.rabbitMultiplicationChance)) return;
+            world.AddRabbit(WorldCreator.prefabs["rabbit"], CalculateMultipliedAnimalPosition());
         }
 
         public float Consumed(float amount = 1)

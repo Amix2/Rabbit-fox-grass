@@ -128,6 +128,14 @@ namespace World
             sqrFoxEatingDistance = Settings.Fox.foxEatingDistance * Settings.Fox.foxEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
         }
+        
+        protected override void MultiplyAnimal()
+        {
+            var multiplyChance = Utils.RandomFloat();
+
+            if (!(multiplyChance < Settings.Fox.foxMultiplicationChance)) return;
+            world.AddFox(WorldCreator.prefabs["fox"], CalculateMultipliedAnimalPosition());
+        }
 
         public float Consumed(float amount = 1)
         {

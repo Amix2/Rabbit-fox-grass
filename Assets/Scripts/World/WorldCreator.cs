@@ -12,6 +12,7 @@ namespace World
 {
     public class WorldCreator : MonoBehaviour
     {
+        public static Dictionary<string, GameObject> prefabs;
         public GameObject worldPrefab;
         public SimulationObjectPrefab[] objectPrefabs;
         public TextAsset worldDefinitionFile;
@@ -27,7 +28,7 @@ namespace World
         private List<WorldBuilder> worldOptions;
         private List<GameObject> worldGameObjects;
         private List<World> worlds;
-        private Dictionary<string, GameObject> prefabs;
+
         private Vector2Int size;
         private float gapBetweenWorlds;
         private IFitnessCalculator rabbitFitnessCalculator;
