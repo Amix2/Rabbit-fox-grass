@@ -2359,12 +2359,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7695852279255118766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df54f5977bd1bd74f88eea26aac1dbff, type: 3}
+  m_Script: {fileID: 11500000, guid: db1d32b8deebb9a448501d66860d562f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deadColor: {r: 0.5566038, g: 0.31613785, b: 0.22316661, a: 0}
-  middleColor: {r: 0.05918476, g: 0.3584906, b: 0.100468345, a: 0}
-  fullColor: {r: 0.254539, g: 0.8301887, b: 0.3388933, a: 0}
+  deadColor: {r: 0.6981132, g: 0.33898392, b: 0, a: 0}
+  middleColor: {r: 0.64979386, g: 1, b: 0, a: 0}
+  fullColor: {r: 0.14686084, g: 1, b: 0, a: 0}
 --- !u!135 &5572098751161341072
 SphereCollider:
   m_ObjectHideFlags: 0
