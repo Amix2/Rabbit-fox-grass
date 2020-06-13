@@ -100,6 +100,7 @@ public class RabbitSettings
     public float rabbitHungerRate = 0.5f;   // per sec
     public float rabbitEatingSpeed = 1f;   // per sec
     public float rabbitMultiplicationChance = 0.1f;
+    public float healthDropAfterMultiplied = 0.5f;
 }
 
 [System.Serializable]
@@ -111,6 +112,7 @@ public class FoxSettings
     public float foxHungerRate = 0.5f;   // per sec
     public float foxEatingSpeed = 1f;   // per sec
     public float foxMultiplicationChance = 0.1f;
+    public float healthDropAfterMultiplied = 0.5f;
 }
 [System.Serializable]
 public class NeuralNetworkSettings

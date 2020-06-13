@@ -135,6 +135,7 @@ namespace World
 
             if (!(multiplyChance < Settings.Fox.foxMultiplicationChance)) return;
             world.AddFoxToMultiply(WorldCreator.prefabs["fox"], CalculateMultipliedAnimalPosition());
+            Health -= Settings.Fox.healthDropAfterMultiplied;
         }
 
         public float Consumed(float amount = 1)

@@ -136,6 +136,7 @@ namespace World
 
             if (!(multiplyChance < Settings.Rabbit.rabbitMultiplicationChance)) return;
             world.AddRabbitToMultiply(WorldCreator.prefabs["rabbit"], CalculateMultipliedAnimalPosition());
+            Health -= Settings.Rabbit.healthDropAfterMultiplied;
         }
 
         public float Consumed(float amount = 1)
