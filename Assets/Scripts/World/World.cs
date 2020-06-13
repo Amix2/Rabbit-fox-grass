@@ -15,8 +15,8 @@ namespace World
         public List<Grass> grassList;
 
         private ConcurrentBag<Animal> deadAnimals;
-        private List<Tuple<GameObject, Vector3>> multiplyRabbitsQueue = new List<Tuple<GameObject, Vector3>>();
-        private List<Tuple<GameObject, Vector3>> multiplyFoxesQueue = new List<Tuple<GameObject, Vector3>>();
+        private ConcurrentBag<Tuple<GameObject, Vector3>> multiplyRabbitsQueue;
+        private ConcurrentBag<Tuple<GameObject, Vector3>> multiplyFoxesQueue;
 
         public bool IsAlive { get => animalList.Count > 0; }
 
@@ -54,6 +54,8 @@ namespace World
             grassList = new List<Grass>();
             History = new WorldHistory(WorldEvents);
             deadAnimals = new ConcurrentBag<Animal>();
+            multiplyRabbitsQueue = new ConcurrentBag<Tuple<GameObject, Vector3>>();
+            multiplyFoxesQueue = new ConcurrentBag<Tuple<GameObject, Vector3>>();
         }
 
         public void HandleDeath(object obj)
@@ -138,18 +140,15 @@ namespace World
 
         private void MultiplyAnimals()
         {
-            foreach (var (animalPrefab, animalPosition) in multiplyRabbitsQueue)
+            while (multiplyRabbitsQueue.TryTake(out Tuple<GameObject, Vector3> animalTuple))
             {
-                AddRabbit(animalPrefab,animalPosition);
+                AddRabbit(animalTuple.Item1,animalTuple.Item2);
             }
             
-            foreach (var (animalPrefab, animalPosition) in multiplyFoxesQueue)
+            while (multiplyFoxesQueue.TryTake(out Tuple<GameObject, Vector3> animalTuple))
             {
-                AddFox(animalPrefab,animalPosition);
+                AddFox(animalTuple.Item1,animalTuple.Item2);
             }
-
-            if(multiplyRabbitsQueue.Count>0) multiplyRabbitsQueue.Clear();
-            if(multiplyFoxesQueue.Count>0) multiplyFoxesQueue.Clear();
         }
     }
 }
