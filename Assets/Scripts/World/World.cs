@@ -15,6 +15,8 @@ namespace World
         public List<Grass> grassList;
 
         private ConcurrentBag<Animal> deadAnimals;
+        private List<Tuple<GameObject, Vector3>> multiplyRabbitsQueue = new List<Tuple<GameObject, Vector3>>();
+        private List<Tuple<GameObject, Vector3>> multiplyFoxesQueue = new List<Tuple<GameObject, Vector3>>();
 
         public bool IsAlive { get => animalList.Count > 0; }
 
@@ -72,7 +74,7 @@ namespace World
                 Destroy(deadAnimal.gameObject);
                 animalList.Remove(deadAnimal);
             }
-
+            MultiplyAnimals();
             return IsAlive;
         }
 
@@ -122,6 +124,32 @@ namespace World
             var obj = Instantiate(prefab, transform);
             obj.transform.localPosition = position;
             return obj;
+        }
+
+        public void AddRabbitToMultiply(GameObject gameObject, Vector3 position)
+        {
+            multiplyRabbitsQueue.Add(Tuple.Create(gameObject,position));
+        }
+        
+        public void AddFoxToMultiply(GameObject gameObject, Vector3 position)
+        {
+            multiplyFoxesQueue.Add(Tuple.Create(gameObject,position));
+        }
+
+        private void MultiplyAnimals()
+        {
+            foreach (var (animalPrefab, animalPosition) in multiplyRabbitsQueue)
+            {
+                AddRabbit(animalPrefab,animalPosition);
+            }
+            
+            foreach (var (animalPrefab, animalPosition) in multiplyFoxesQueue)
+            {
+                AddFox(animalPrefab,animalPosition);
+            }
+
+            if(multiplyRabbitsQueue.Count>0) multiplyRabbitsQueue.Clear();
+            if(multiplyFoxesQueue.Count>0) multiplyFoxesQueue.Clear();
         }
     }
 }

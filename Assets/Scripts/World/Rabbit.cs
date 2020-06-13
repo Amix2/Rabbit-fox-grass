@@ -135,7 +135,7 @@ namespace World
             var multiplyChance = Utils.RandomFloat();
 
             if (!(multiplyChance < Settings.Rabbit.rabbitMultiplicationChance)) return;
-            world.AddRabbit(WorldCreator.prefabs["rabbit"], CalculateMultipliedAnimalPosition());
+            world.AddRabbitToMultiply(WorldCreator.prefabs["rabbit"], CalculateMultipliedAnimalPosition());
         }
 
         public float Consumed(float amount = 1)

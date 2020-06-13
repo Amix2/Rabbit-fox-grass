@@ -134,7 +134,7 @@ namespace World
             var multiplyChance = Utils.RandomFloat();
 
             if (!(multiplyChance < Settings.Fox.foxMultiplicationChance)) return;
-            world.AddFox(WorldCreator.prefabs["fox"], CalculateMultipliedAnimalPosition());
+            world.AddFoxToMultiply(WorldCreator.prefabs["fox"], CalculateMultipliedAnimalPosition());
         }
 
         public float Consumed(float amount = 1)
