@@ -24,6 +24,10 @@ namespace World
                 Health += food;
                 Health = Mathf.Clamp01(Health);
                 world.WorldEvents.Invoke(this, HistoryEventType.EAT, food);
+                
+                // Multiply after consuming if health is full
+                if(Health > 0.99f)
+                    MultiplyAnimal();
             }
         }
 

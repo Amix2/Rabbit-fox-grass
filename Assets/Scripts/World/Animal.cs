@@ -1,4 +1,5 @@
 using System;
+using MathNet.Numerics.Random;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -27,8 +28,6 @@ namespace World
         abstract protected void CollectInfoAboutSurroundings();
 
         abstract protected float[] CreateNetInputs();
-        
-        abstract protected void MultiplyAnimal();
 
         /// <summary>
         /// Parallel update, sets velocity
@@ -59,11 +58,7 @@ namespace World
 
             // Consume food
             ConsumeFood();
-            
-            // Multiply if health is full
-            if(Health > 0.99f)
-                MultiplyAnimal();
-            
+
             // Get decision from net
             Profiler.BeginSample("run NeuralNet");
             Vector3 decision = brain.GetDecision(CreateNetInputs());
@@ -103,6 +98,36 @@ namespace World
             forward = transform.forward;
             Right = transform.right;
         }
+        
+        protected void MultiplyAnimal()
+        {
+            var random = new MersenneTwister();
+            var multiplyChance = Convert.ToSingle(random.NextDouble());
+
+            if (gameObject.name.ToLower().Contains("rabbit"))
+            {
+                if (multiplyChance < Settings.Rabbit.rabbitMultiplicationChance)
+                {
+                    world.AddRabbit(gameObject,CalculatePosition());
+                }
+            }
+            else
+            {
+                if (multiplyChance < Settings.Fox.foxMultiplicationChance)
+                {
+                    world.AddFox(gameObject,CalculatePosition());
+                }
+            }
+        }
+        
+        private Vector3 CalculatePosition()
+        {
+            float radius = Settings.World.multipliedAnimalSpawnRadius;
+            var objPosition = gameObject.transform.position;
+            var xPos = objPosition.x;
+            var zPos = objPosition.z;
+            return new Vector3(UnityEngine.Random.Range(xPos-radius,xPos+radius), 0,UnityEngine.Random.Range(zPos-radius,zPos+radius));
+        } 
 
         protected new void Awake()
         {

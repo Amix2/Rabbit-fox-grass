@@ -1,5 +1,3 @@
-using System;
-using MathNet.Numerics.Random;
 using UnityEngine;
 
 namespace World
@@ -25,6 +23,10 @@ namespace World
                 Health += food;
                 Health = Mathf.Clamp01(Health);
                 world.WorldEvents.Invoke(this, HistoryEventType.EAT, food);
+                
+                // Multiply after consuming if health is full
+                if(Health > 0.99f)
+                    MultiplyAnimal();
             }
         }
 
@@ -134,19 +136,6 @@ namespace World
             amount = Mathf.Min(amount, Health);
             Health = Mathf.Clamp01(Health - amount);
             return FoodAmount * amount;
-        }
-
-        protected override void MultiplyAnimal()
-        {
-            var random = new MersenneTwister();
-            if (!(Convert.ToSingle(random.NextDouble()) < Settings.Rabbit.rabbitMultiplicationChance)) return;
-
-            var radius = Settings.World.multipliedAnimalSpawnRadius;
-            var xPos = gameObject.transform.position.x;
-            var zPos = gameObject.transform.position.z;
-            
-            var newPosition = new Vector3(UnityEngine.Random.Range(xPos-radius,xPos+radius), 0,UnityEngine.Random.Range(zPos-radius,zPos+radius));
-            world.AddRabbit(gameObject, newPosition);
         }
 
         private void OnDrawGizmosSelected()
