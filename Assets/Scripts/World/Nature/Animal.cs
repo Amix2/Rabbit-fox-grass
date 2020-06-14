@@ -114,15 +114,14 @@ namespace World
             return new Vector3(Utils.FloatInRange(xPos-radius,xPos+radius), 0,Utils.FloatInRange(zPos-radius,zPos+radius));
         } 
 
-        protected new void Awake()
+        protected void Awake()
         {
-            base.Awake();
             deadAtTurn = (int) (Settings.World.maxAnimalLifetime / Settings.World.simulationDeltaTime);
             world = transform.parent.GetComponent<World>();
         }
 
         protected void Start()
-        {
+        { 
             position = gameObject.transform.localPosition;
         }
     }

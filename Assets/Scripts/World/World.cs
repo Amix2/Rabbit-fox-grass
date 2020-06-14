@@ -45,9 +45,8 @@ namespace World
         internal NeuralNetwork BigBrain { get; set; }
         internal NeuralNetwork FoxBrain { get; set; }
 
-        private new void Awake()
+        private void Awake()
         {
-            base.Awake();
             WorldEvents = new MultiTypeEventHandler<HistoryEventType, float, int, Vector3>();
             WorldEvents.Subscribe(HistoryEventType.DEATH, (object sender, Vector3 posiiton) => HandleDeath(sender));
             animalList = new List<Animal>();
@@ -125,6 +124,7 @@ namespace World
         {
             var obj = Instantiate(prefab, transform);
             obj.transform.localPosition = position;
+            obj.GetComponent<WorldObject>().SetupObject();
             return obj;
         }
 

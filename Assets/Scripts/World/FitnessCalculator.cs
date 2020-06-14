@@ -50,8 +50,8 @@ namespace World
             float scoreSum = 0f;
             foreach (WorldHistory.AnimalHistory rabbitHist in worldHistory.rabbits)
             {
-                float sqrDistanceToClosest = SqrDistaceToClosestGrass(worldHistory.grassPositions, rabbitHist.positions);
-                scoreSum += (rabbitHist.foodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
+                float sqrDistanceToClosest = SqrDistaceToClosestGrass(worldHistory.grassPositions, rabbitHist.Positions);
+                scoreSum += (rabbitHist.FoodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
             }
             float scoreAvg = scoreSum / worldHistory.rabbits.Count;
 
@@ -69,8 +69,8 @@ namespace World
             float scoreSum = 0f;
             foreach (WorldHistory.AnimalHistory rabbitHist in worldHistory.rabbits)
             {
-                float sqrAvgDistanceToClosest = AvgSqrDistaceToClosestTarget(worldHistory.grassPositions, rabbitHist.positions);
-                scoreSum += (rabbitHist.foodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
+                float sqrAvgDistanceToClosest = AvgSqrDistaceToClosestTarget(worldHistory.grassPositions, rabbitHist.Positions);
+                scoreSum += (rabbitHist.FoodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
             }
             float scoreAvg = scoreSum / worldHistory.rabbits.Count;
 
@@ -93,9 +93,9 @@ namespace World
                 rabbitsPositionsInTime.Add(new List<Vector3>());
                 for (int i=rabbits.Count-1; i>=0; i--)
                 {
-                    if(rabbits[i].positions.Count > it)
+                    if(rabbits[i].Positions.Count > it)
                     {
-                        rabbitsPositionsInTime[rabbitsPositionsInTime.Count - 1].Add(rabbits[i].positions[it]);
+                        rabbitsPositionsInTime[rabbitsPositionsInTime.Count - 1].Add(rabbits[i].Positions[it]);
                     } else
                     {
                         rabbits.RemoveAt(i);
@@ -106,8 +106,8 @@ namespace World
             float scoreSum = 0f;
             foreach (WorldHistory.AnimalHistory foxHistory in worldHistory.foxes)
             {
-                float sqrAvgDistanceToClosest = AvgSqrDistaceToClosestTarget(rabbitsPositionsInTime, foxHistory.positions);
-                scoreSum += (foxHistory.foodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
+                float sqrAvgDistanceToClosest = AvgSqrDistaceToClosestTarget(rabbitsPositionsInTime, foxHistory.Positions);
+                scoreSum += (foxHistory.FoodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
             }
             float scoreAvg = scoreSum / worldHistory.foxes.Count;
             return scoreAvg;

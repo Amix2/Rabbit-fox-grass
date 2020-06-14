@@ -104,8 +104,8 @@ namespace World
                 throw new System.Exception("Animal has not yet been born");
             }
             aliveAnimals.TryRemove(animal, out AnimalHistory hist);
-            hist.deathPosition = pos;
-            hist.lifeTime = lifeTime - hist.lifeTime;
+            hist.DeathPosition = pos;
+            hist.DeathTime = lifeTime;
             deadAnimals.Add(hist);
         }
 
@@ -115,7 +115,7 @@ namespace World
             {
                 throw new System.Exception("Animal is a Jezus, he was reborned");
             }
-            aliveAnimals.TryAdd(animal, new AnimalHistory { birthPosition = pos, deathPosition = Vector3.zero, foodEaten = 0f, lifeTime = lifeTime });
+            aliveAnimals.TryAdd(animal, new AnimalHistory { BirthPosition = pos, DeathPosition = Vector3.zero, FoodEaten = 0f, BirthTime = lifeTime });
         }
 
         private void AnimalEat(ConcurrentDictionary<Animal, AnimalHistory> aliveAnimals, Animal animal, float food)
@@ -125,7 +125,7 @@ namespace World
                 throw new System.Exception("Rabbit has not yet been born");
             }
             var hist = aliveAnimals[animal];
-            hist.foodEaten += food;
+            hist.FoodEaten += food;
             aliveAnimals[animal] = hist;
         }
 
@@ -136,7 +136,7 @@ namespace World
                 throw new System.Exception("Rabbit has not yet been born");
             }
             var hist = aliveAnimals[animal];
-            hist.positions.Add(position);
+            hist.Positions.Add(position);
             aliveAnimals[animal] = hist;
         }
 
@@ -147,10 +147,20 @@ namespace World
 
         public class AnimalHistory
         {
-            public Vector3 birthPosition, deathPosition;
-            public int lifeTime;
-            public float foodEaten;
-            public List<Vector3> positions = new List<Vector3>();
+            private Vector3 deathPosition;
+            private Vector3 birthPosition;
+            private int birthTime;
+            private int deathTime;
+            private float foodEaten;
+            private List<Vector3> positions = new List<Vector3>();
+
+            public Vector3 BirthPosition { get => birthPosition; set => birthPosition = value; }
+            public Vector3 DeathPosition { get => deathPosition; set => deathPosition = value; }
+            public int LifeTime { get => deathTime - birthTime; }
+            public float FoodEaten { get => foodEaten; set => foodEaten = value; }
+            public List<Vector3> Positions { get => positions; set => positions = value; }
+            public int BirthTime { get => birthTime; set => birthTime = value; }
+            public int DeathTime { get => deathTime; set => deathTime = value; }
         }
     }
 }

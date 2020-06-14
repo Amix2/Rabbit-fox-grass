@@ -11,12 +11,9 @@ public abstract class WorldObject : MonoBehaviour
 
     public Vector3 Right { get; protected set; }
 
-    protected void Awake()
+    public void SetupObject()
     {
-        //if(Settings.Player.renderOptions == RenderOptions.None)
-        //{
-        //    this.DisableModel();
-        //}
+        position = transform.localPosition;
     }
 
     public void DisableModel()

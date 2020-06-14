@@ -48,7 +48,7 @@ namespace World
             return true;
         }
 
-        private new void Awake()
+        private void Awake()
         {
             foreach (Transform eachChild in transform)
             {
@@ -57,7 +57,6 @@ namespace World
                     modelTransform = eachChild;
                 }
             }
-            base.Awake();
             meshRenderers = modelTransform.GetComponentsInChildren<MeshRenderer>();
             Health = 1f;
         }
