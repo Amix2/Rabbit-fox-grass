@@ -1132,7 +1132,7 @@ MonoBehaviour:
     prefab: {fileID: 5469908333711757376, guid: a2af05269309dd94a8ba4f0542b11451,
       type: 3}
   worldDefinitionFile: {fileID: 4900000, guid: fd41a42b276ec094aa7929e761c43187, type: 3}
-  numberOfWorldsToCreate: 1
+  numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 1
   foxFitnessFunction: 0
 --- !u!4 &758577819
@@ -1777,7 +1777,7 @@ MonoBehaviour:
     grassGrowthRate: 0.03
     collectHistory: 1
     simulationDeltaTime: 0
-    maxAnimalLifetime: 200
+    maxAnimalLifetime: 500
     rabbitHungerInNeuralNet: 1
     foxHungerInNeuralNet: 1
     multipliedAnimalSpawnRadius: 1
@@ -1785,7 +1785,7 @@ MonoBehaviour:
     neuralNetworkLayers: 210000002100000002000000
     foodInRabbits: 1
     rabbitEatingDistance: 0.5
-    rabbitMaxVelocity: 2
+    rabbitMaxVelocity: 3
     rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
     rabbitMultiplicationChance: 1
@@ -1793,7 +1793,7 @@ MonoBehaviour:
   foxSettings:
     neuralNetworkLayers: 110000001100000002000000
     foxEatingDistance: 0.5
-    foxMaxVelocity: 2
+    foxMaxVelocity: 4
     foxHungerRate: 0.05
     foxEatingSpeed: 1
     foxMultiplicationChance: 1

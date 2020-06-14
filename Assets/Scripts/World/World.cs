@@ -68,7 +68,6 @@ namespace World
         /// <returns></returns>
         public bool UpdateTurn()
         {
-            History.lifeTime++;
             WorldEvents.Invoke(this, HistoryEventType.TURN_UPDATE, 1);
             while (deadAnimals.TryTake(out Animal deadAnimal))
             {

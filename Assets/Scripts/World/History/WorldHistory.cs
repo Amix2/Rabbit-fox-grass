@@ -11,8 +11,9 @@ namespace World
         private readonly ConcurrentDictionary<Animal, AnimalHistory> aliveFoxes;
         public readonly ConcurrentBag<AnimalHistory> foxes;
         public readonly List<Vector3> grassPositions;
-        public int lifeTime = 0;
         public Vector2Int worldSize;
+
+        public int LifeTime { get; private set; } = 0;
 
         public WorldHistory(MultiTypeEventHandler<HistoryEventType, float, int, Vector3> worldEvents)
         {
@@ -33,7 +34,7 @@ namespace World
 
         private void UpdateTurnEvent(int amount)
         {
-            lifeTime += amount;
+            LifeTime += amount;
         }
 
         private void HandleDeathEvent(object obj, Vector3 position)
@@ -104,8 +105,7 @@ namespace World
                 throw new System.Exception("Animal has not yet been born");
             }
             aliveAnimals.TryRemove(animal, out AnimalHistory hist);
-            hist.DeathPosition = pos;
-            hist.DeathTime = lifeTime;
+            hist.DeathTime = LifeTime;
             deadAnimals.Add(hist);
         }
 
@@ -115,7 +115,7 @@ namespace World
             {
                 throw new System.Exception("Animal is a Jezus, he was reborned");
             }
-            aliveAnimals.TryAdd(animal, new AnimalHistory { BirthPosition = pos, DeathPosition = Vector3.zero, FoodEaten = 0f, BirthTime = lifeTime });
+            aliveAnimals.TryAdd(animal, new AnimalHistory { BirthTime = LifeTime });
         }
 
         private void AnimalEat(ConcurrentDictionary<Animal, AnimalHistory> aliveAnimals, Animal animal, float food)
@@ -145,22 +145,5 @@ namespace World
             grassPositions.Add(pos);
         }
 
-        public class AnimalHistory
-        {
-            private Vector3 deathPosition;
-            private Vector3 birthPosition;
-            private int birthTime;
-            private int deathTime;
-            private float foodEaten;
-            private List<Vector3> positions = new List<Vector3>();
-
-            public Vector3 BirthPosition { get => birthPosition; set => birthPosition = value; }
-            public Vector3 DeathPosition { get => deathPosition; set => deathPosition = value; }
-            public int LifeTime { get => deathTime - birthTime; }
-            public float FoodEaten { get => foodEaten; set => foodEaten = value; }
-            public List<Vector3> Positions { get => positions; set => positions = value; }
-            public int BirthTime { get => birthTime; set => birthTime = value; }
-            public int DeathTime { get => deathTime; set => deathTime = value; }
-        }
     }
 }

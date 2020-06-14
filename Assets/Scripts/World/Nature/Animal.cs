@@ -38,6 +38,8 @@ namespace World
         {
             if (!IsAlive) throw new Exception("Update on dead animal");
 
+            world.WorldEvents.Invoke(this, HistoryEventType.POSITION, Position);
+            
             currentTurn++;
             if(currentTurn > deadAtTurn)
             {
@@ -77,7 +79,6 @@ namespace World
             {
                 velocity = decision;
             }
-            world.WorldEvents.Invoke(this, HistoryEventType.POSITION, Position);
             return true;
         }
 
