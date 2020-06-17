@@ -14,6 +14,8 @@ namespace World
         public List<Animal> animalList;
         public List<Grass> grassList;
 
+        private int rabbitCount = 0;
+        private int foxCount = 0;
         private ConcurrentBag<Animal> deadAnimals;
         private ConcurrentBag<Tuple<GameObject, Vector3>> multiplyRabbitsQueue;
         private ConcurrentBag<Tuple<GameObject, Vector3>> multiplyFoxesQueue;
@@ -89,6 +91,10 @@ namespace World
 
         public void AddRabbit(GameObject prefab, Vector3 position)
         {
+            if (rabbitCount > Settings.Rabbit.maxAnimalsInScene)
+                return;
+            rabbitCount++;
+
             var rabbitGO = AddGameObject(prefab, position);
             rabbitGO.name = "Rabbit_" + animalList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = Size;
@@ -110,6 +116,10 @@ namespace World
 
         internal void AddFox(GameObject prefab, Vector3 position)
         {
+            if (foxCount > Settings.Fox.maxAnimalsInScene)
+                return;
+            foxCount++;
+
             var foxGO = AddGameObject(prefab, position);
             foxGO.name = "Fox_" + animalList.Count;
             foxGO.GetComponent<Fox>().worldSize = Size;

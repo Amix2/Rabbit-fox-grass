@@ -79,7 +79,6 @@ namespace World
         }
     }
 
-    [Description("Assumes all animals are born in the same moment")]
     public class Fox_FoodAndAvgDistanceToClosestRabbitInFrame : IFitnessCalculator
     {
 

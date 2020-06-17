@@ -76,13 +76,6 @@ public class WorldSettings
     public string[] allowedObjectNames;
     public float foodInGrass = 0.5f;
     public float grassGrowthRate = 0.5f;   // per sec
-
-    #region rabbit
-    
-    #endregion
-
-
-
     public bool collectHistory = true;
     public float simulationDeltaTime;
     public float maxAnimalLifetime;
@@ -101,6 +94,7 @@ public class RabbitSettings
     public float rabbitEatingSpeed = 1f;   // per sec
     public float rabbitMultiplicationChance = 0.1f;
     public float healthDropAfterMultiplied = 0.5f;
+    public int maxAnimalsInScene;
 }
 
 [System.Serializable]
@@ -113,6 +107,7 @@ public class FoxSettings
     public float foxEatingSpeed = 1f;   // per sec
     public float foxMultiplicationChance = 0.1f;
     public float healthDropAfterMultiplied = 0.5f;
+    public int maxAnimalsInScene;
 }
 [System.Serializable]
 public class NeuralNetworkSettings

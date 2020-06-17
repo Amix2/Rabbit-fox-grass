@@ -1,1 +1,0 @@
-51,75 | rabbit : 1 : position : 25,15 | grass : 1 : rectangle : 23,43 - 27,48

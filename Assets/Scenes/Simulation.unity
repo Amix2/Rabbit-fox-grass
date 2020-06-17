@@ -1131,7 +1131,7 @@ MonoBehaviour:
   - name: fox
     prefab: {fileID: 5469908333711757376, guid: a2af05269309dd94a8ba4f0542b11451,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: fd41a42b276ec094aa7929e761c43187, type: 3}
+  worldDefinitionFile: {fileID: 4900000, guid: 146264d63cdde944f972ba0be80cd7ff, type: 3}
   numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 1
   foxFitnessFunction: 0
@@ -1759,7 +1759,7 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 1
+    fastTrainingMode: 0
     renderOptions: 2
     neuralNetworkWeightsRange:
     - -4
@@ -1782,22 +1782,24 @@ MonoBehaviour:
     foxHungerInNeuralNet: 1
     multipliedAnimalSpawnRadius: 1
   rabbitSettings:
-    neuralNetworkLayers: 210000002100000002000000
+    neuralNetworkLayers: 310000003100000002000000
     foodInRabbits: 1
     rabbitEatingDistance: 0.5
     rabbitMaxVelocity: 3
     rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
-    rabbitMultiplicationChance: 1
+    rabbitMultiplicationChance: 0
     healthDropAfterMultiplied: 0.5
+    maxAnimalsInScene: 20
   foxSettings:
-    neuralNetworkLayers: 110000001100000002000000
+    neuralNetworkLayers: 190000001900000002000000
     foxEatingDistance: 0.5
     foxMaxVelocity: 4
     foxHungerRate: 0.05
     foxEatingSpeed: 1
-    foxMultiplicationChance: 1
+    foxMultiplicationChance: 0
     healthDropAfterMultiplied: 0.5
+    maxAnimalsInScene: 20
   neuralMutation:
     mutationProbability: 0.015
     mutationStrategyEnum: 0

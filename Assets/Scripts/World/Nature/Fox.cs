@@ -66,9 +66,17 @@ namespace World
                     {
                         int sector = GetSector(rabbitOffset.normalized);
 
-                        if (rabbitDist < netInputs[sector])
-                        {
+                        if (netInputs[sector] == sqrAnimalViewRange)
+                        {   // fist rabbit in this sector
                             netInputs[sector] = rabbitDist;
+                        }
+                        else
+                        {   // multiple rabbit in this sector
+                            float newDist = (netInputs[sector] + rabbitDist) * 0.5f * 0.5f; // half of the average
+                            if (newDist < netInputs[sector])
+                            {
+                                netInputs[sector] = newDist;
+                            }
                         }
                     }
                 }
@@ -78,10 +86,11 @@ namespace World
         private int GetSector(Vector3 grassOffset)
         {
             if (grassOffset.sqrMagnitude == 0f) return 0;
+            grassOffset = Quaternion.AngleAxis(ViewAngleOffset, Vector3.up) * grassOffset.normalized;
             Vector3 cross = Vector3.Cross(ViewForward, grassOffset);
             float angle = Vector3.Angle(ViewForward, grassOffset);
-            angle += ViewAngleOffset;
-            if (cross.y > 0.001f)
+            //angle += ViewAngleOffset;
+            if (cross.y > 0.001f)   // angle more than 180
             {
                 angle = 360f - angle;
                 if (angle == 360f)

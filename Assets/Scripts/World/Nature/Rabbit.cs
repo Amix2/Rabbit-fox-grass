@@ -9,11 +9,13 @@ namespace World
         private Grass closestGrass;
         private Grass[] closestGrassInSectors;
         private float[] netInputs;
+        private float[] sectorGrassDistances;
+        private float[] sectorFoxDistances;
         private float sqrRabbitEatingDistance;
         private float sqrAnimalViewRange;
 
         private Vector3 ViewForward => UseLocalViewSpace ? Forward : Vector3.forward;
-        private float ViewAngleOffset => 180f / numOfSectors;
+        private float ViewAngleOffset => -180f / numOfSectors;
 
         protected override void ConsumeFood()
         {
@@ -36,11 +38,11 @@ namespace World
             // clear data from previous runs
             float sqrDistanceToClosestGrass = sqrRabbitEatingDistance;
             closestGrass = null;
-            for (int i = 0; i < 2 * numOfSectors; i++)    // clear data for grass and for foxes
+            for (int i = 0; i < numOfSectors; i++)    // clear data for grass and for foxes
             {
-                netInputs[i] = sqrAnimalViewRange;
+                sectorGrassDistances[i] = sqrAnimalViewRange;
+                sectorFoxDistances[i] = sqrAnimalViewRange;
             }
-;
             // iterate over all grass objects in the world, find closest one (for eatting) and closest in each sector
             foreach (Grass grass in world.grassList)
             {
@@ -63,22 +65,58 @@ namespace World
                     {
                         int sector = GetSector(grassOffset.normalized);
 
-                        if (grassDist < netInputs[sector])
-                        {
-                            netInputs[sector] = grassDist;
+                        if(sectorGrassDistances[sector] == sqrAnimalViewRange)
+                        {   // fist grass in this sector
+                            sectorGrassDistances[sector] = grassDist;
+                        }
+                        else
+                        {   // multiple grass in this sector
+                            float newDist = (sectorGrassDistances[sector] + grassDist) * 0.5f * 0.5f; // half of the average
+                            if (newDist < sectorGrassDistances[sector])
+                            {
+                                sectorGrassDistances[sector] = newDist;
+                            }
                         }
                     }
                 }
+            }
+
+            foreach (Animal animal in world.animalList)
+            {
+                Fox fox = animal as Fox;
+                if (fox == null) continue;
+                
+                Vector3 foxPos = fox.Position;
+                Vector3 foxOffset = (foxPos - position);
+                float foxDist = foxOffset.sqrMagnitude;
+                 
+                
+                int sector = GetSector(foxOffset.normalized);
+
+                if (sectorFoxDistances[sector] == sqrAnimalViewRange)
+                {   // fist fox in this sector
+                    sectorFoxDistances[sector] = foxDist;
+                }
+                else
+                {   // multiple fox in this sector
+                    float newDist = (sectorFoxDistances[sector] + foxDist) * 0.5f * 0.5f; // half of the average
+                    if (newDist < sectorFoxDistances[sector])
+                    {
+                        sectorFoxDistances[sector] = newDist;
+                    }
+                }
+   
             }
         }
 
         private int GetSector(Vector3 grassOffset)
         {
             if (grassOffset.sqrMagnitude == 0f) return 0;
+            grassOffset = Quaternion.AngleAxis(ViewAngleOffset, Vector3.up) * grassOffset.normalized;
             Vector3 cross = Vector3.Cross(ViewForward, grassOffset);
             float angle = Vector3.Angle(ViewForward, grassOffset);
-            angle += ViewAngleOffset;
-            if (cross.y > 0.001f)
+            //angle += ViewAngleOffset;
+            if (cross.y > 0.001f)   // angle more than 180
             {
                 angle = 360f - angle;
                 if (angle == 360f)
@@ -93,12 +131,18 @@ namespace World
         protected override float[] CreateNetInputs()
         {
             
-            for (int i = 0; i < 2 * numOfSectors; i++)    // normalize data
+            for (int i = 0; i < numOfSectors; i++)    // normalize data
             {
-                netInputs[i] = sqrAnimalViewRange - netInputs[i];
+                netInputs[i] = sqrAnimalViewRange - sectorGrassDistances[i];
                 netInputs[i] /= sqrAnimalViewRange;
             }
-            if(Settings.World.rabbitHungerInNeuralNet) netInputs[Settings.Rabbit.neuralNetworkLayers[0]-1] = Health;
+
+            for (int i = 0; i < numOfSectors; i++)    // normalize data
+            {
+                netInputs[numOfSectors+i] = sqrAnimalViewRange - sectorFoxDistances[i];
+                netInputs[numOfSectors+i] /= sqrAnimalViewRange;
+            }
+            if (Settings.World.rabbitHungerInNeuralNet) netInputs[Settings.Rabbit.neuralNetworkLayers[0]-1] = Health;
             return netInputs;
         }
 
@@ -126,6 +170,8 @@ namespace World
             base.Awake();
             closestGrassInSectors = new Grass[numOfSectors];
             netInputs = new float[Settings.Rabbit.neuralNetworkLayers[0]];
+            sectorGrassDistances = new float[numOfSectors];
+            sectorFoxDistances = new float[numOfSectors];
             sqrRabbitEatingDistance = Settings.Rabbit.rabbitEatingDistance * Settings.Rabbit.rabbitEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
         }
@@ -149,17 +195,41 @@ namespace World
 
         private void OnDrawGizmosSelected()
         {
+            CollectInfoAboutSurroundings();
             float angle = 360f / numOfSectors;
+            Gizmos.color = Color.white;
             for (int i = 0; i < numOfSectors; i++)    
             {
                 Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle + ViewAngleOffset, Vector3.up) * ViewForward * Settings.World.animalViewRange + transform.parent.position);
             }
-            Gizmos.color = Color.red;
-            foreach (Grass grass in closestGrassInSectors)
+            Gizmos.color = Color.green;
+            for (int i = 0; i < numOfSectors; i++)
             {
-                if (grass == null) continue;
-                Gizmos.DrawLine(position + transform.parent.position, grass.Position + transform.parent.position);
+                Vector3 offset = Quaternion.AngleAxis((i + 0.48f) * angle + ViewAngleOffset, Vector3.up) * ViewForward;
+                Gizmos.DrawLine(Position + transform.parent.position, Position + offset * Mathf.Sqrt(sectorGrassDistances[GetSector(offset)]) + transform.parent.position);
             }
+
+            Gizmos.color = Color.red;
+            for (int i = 0; i < numOfSectors; i++)
+            {
+                Vector3 offset = Quaternion.AngleAxis((i + 0.52f) * angle + ViewAngleOffset, Vector3.up) * ViewForward;
+                Gizmos.DrawLine(Position + transform.parent.position, Position + offset * Mathf.Sqrt(sectorFoxDistances[GetSector(offset)]) + transform.parent.position);
+            }
+
+            //Gizmos.color = Color.blue;
+            //for (int i = 0; i < numOfSectors; i++)
+            //{
+            //    Vector3 offset = Quaternion.AngleAxis((i + 0.52f) * angle + ViewAngleOffset, Vector3.up) * ViewForward;
+            //    if(sectorGrassDistances[GetSector(offset)] < sqrAnimalViewRange)
+            //    Gizmos.DrawLine(Position + transform.parent.position, closestGrassInSectors[GetSector(offset)].Position + transform.parent.position);
+            //}
+
+            //Gizmos.color = Color.cyan;
+            //for (int i = 0; i < 360; i++)
+            //{
+            //    Vector3 offset = Quaternion.AngleAxis(i + ViewAngleOffset, Vector3.up) * ViewForward;
+            //    Gizmos.DrawLine(Position + transform.parent.position, Position + offset.normalized * GetSector(offset) + transform.parent.position);
+            //}
         }
     }
 }

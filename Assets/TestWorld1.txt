@@ -1,1 +1,0 @@
-7,7 | rabbit : 1 : position : 3,3 | grass : 1 : position : 2,2 - 3,2 - 4,2 - 4,3 - 4,4 - 3,4 - 2,4  - 2,3  
