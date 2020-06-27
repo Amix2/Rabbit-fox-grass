@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace World
 {
-
     public class HealthBar : MonoBehaviour
     {
         private Material material;

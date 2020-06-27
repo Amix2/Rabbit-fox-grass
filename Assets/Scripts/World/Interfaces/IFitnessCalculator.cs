@@ -36,7 +36,6 @@ namespace World
                     {
                         sqrDistanceToClosest = sqrMagnitude;
                     }
-
                 }
             }
             return sqrDistanceToClosest;

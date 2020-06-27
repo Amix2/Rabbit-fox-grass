@@ -11,7 +11,7 @@ namespace World
         private readonly List<Vector3> positions = new List<Vector3>();
 
         public Vector3 BirthPosition { get => Positions[0]; }
-        public Vector3 DeathPosition { get => Positions[Positions.Count-1]; }
+        public Vector3 DeathPosition { get => Positions[Positions.Count - 1]; }
         public int LifeTime { get => deathTime - birthTime + 1; }
         public float FoodEaten { get => foodEaten; set => foodEaten = value; }
         public List<Vector3> Positions { get => positions; }
@@ -20,7 +20,7 @@ namespace World
 
         public bool PositionInTime(int time, out Vector3 position)
         {
-            if(time < birthTime || time > deathTime)
+            if (time < birthTime || time > deathTime)
             {
                 position = default;
                 return false;

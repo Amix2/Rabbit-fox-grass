@@ -4,7 +4,6 @@ namespace World
 {
     public class Rabbit : Animal, IEdible
     {
-
         private int numOfSectors;
         private Grass closestGrass;
         private Grass[] closestGrassInSectors;
@@ -25,9 +24,9 @@ namespace World
                 Health += food;
                 Health = Mathf.Clamp01(Health);
                 world.WorldEvents.Invoke(this, HistoryEventType.EAT, food);
-                
+
                 // Multiply after consuming if health is full
-                if(Health > 0.99f)
+                if (Health > 0.99f)
                     MultiplyAnimal();
             }
         }
@@ -65,7 +64,7 @@ namespace World
                     {
                         int sector = GetSector(grassOffset.normalized);
 
-                        if(sectorGrassDistances[sector] == sqrAnimalViewRange)
+                        if (sectorGrassDistances[sector] == sqrAnimalViewRange)
                         {   // fist grass in this sector
                             sectorGrassDistances[sector] = grassDist;
                         }
@@ -85,12 +84,11 @@ namespace World
             {
                 Fox fox = animal as Fox;
                 if (fox == null) continue;
-                
+
                 Vector3 foxPos = fox.Position;
                 Vector3 foxOffset = (foxPos - position);
                 float foxDist = foxOffset.sqrMagnitude;
-                 
-                
+
                 int sector = GetSector(foxOffset.normalized);
 
                 if (sectorFoxDistances[sector] == sqrAnimalViewRange)
@@ -105,7 +103,6 @@ namespace World
                         sectorFoxDistances[sector] = newDist;
                     }
                 }
-   
             }
         }
 
@@ -130,7 +127,6 @@ namespace World
 
         protected override float[] CreateNetInputs()
         {
-            
             for (int i = 0; i < numOfSectors; i++)    // normalize data
             {
                 netInputs[i] = sqrAnimalViewRange - sectorGrassDistances[i];
@@ -139,10 +135,10 @@ namespace World
 
             for (int i = 0; i < numOfSectors; i++)    // normalize data
             {
-                netInputs[numOfSectors+i] = sqrAnimalViewRange - sectorFoxDistances[i];
-                netInputs[numOfSectors+i] /= sqrAnimalViewRange;
+                netInputs[numOfSectors + i] = sqrAnimalViewRange - sectorFoxDistances[i];
+                netInputs[numOfSectors + i] /= sqrAnimalViewRange;
             }
-            if (Settings.World.rabbitHungerInNeuralNet) netInputs[Settings.Rabbit.neuralNetworkLayers[0]-1] = Health;
+            if (Settings.World.rabbitHungerInNeuralNet) netInputs[Settings.Rabbit.neuralNetworkLayers[0] - 1] = Health;
             return netInputs;
         }
 
@@ -158,7 +154,8 @@ namespace World
 
         public override float HungerRate { get { return Settings.Rabbit.rabbitHungerRate; } }
 
-        static bool firstInit = true;
+        private static bool firstInit = true;
+
         private new void Awake()
         {
             numOfSectors = Settings.Rabbit.neuralNetworkLayers[0] / 2;
@@ -175,7 +172,7 @@ namespace World
             sqrRabbitEatingDistance = Settings.Rabbit.rabbitEatingDistance * Settings.Rabbit.rabbitEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
         }
-        
+
         protected override void MultiplyAnimal()
         {
             var multiplyChance = Utils.RandomFloat();
@@ -198,7 +195,7 @@ namespace World
             CollectInfoAboutSurroundings();
             float angle = 360f / numOfSectors;
             Gizmos.color = Color.white;
-            for (int i = 0; i < numOfSectors; i++)    
+            for (int i = 0; i < numOfSectors; i++)
             {
                 Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle + ViewAngleOffset, Vector3.up) * ViewForward * Settings.World.animalViewRange + transform.parent.position);
             }

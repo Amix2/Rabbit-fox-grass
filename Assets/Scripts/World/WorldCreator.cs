@@ -1,10 +1,8 @@
 ﻿using DefaultNamespace;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -15,8 +13,6 @@ namespace World
         public static Dictionary<string, GameObject> prefabs;
         public GameObject worldPrefab;
         public SimulationObjectPrefab[] objectPrefabs;
-        public TextAsset worldDefinitionFile;
-        public int numberOfWorldsToCreate;
         public RabbitFitnessCalculatorOptions rabbitFitnessFunction;
         public FoxFitnessCalculatorOptions foxFitnessFunction;
         public float BestFitnessScore { get { return sortedBrainList.Count > 0 ? sortedBrainList.Keys[0] : -1; } }
@@ -103,7 +99,7 @@ namespace World
 
         private SortedList<float, NeuralNetwork> MutateListOfBrains(SortedList<float, NeuralNetwork> sortedBrainList)
         {
-            SortedList<float, NeuralNetwork> newBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            SortedList<float, NeuralNetwork> newBrainList = new SortedList<float, NeuralNetwork>(Settings.World.numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             int currentBrainIndex = 0;
             IList<float> brainListFitness = sortedBrainList.Keys;
             IList<NeuralNetwork> brainListBrains = sortedBrainList.Values;
@@ -136,9 +132,9 @@ namespace World
         {
             print("Load rabbit:  " + filePath);
             DestroyAllWorlds();
-            sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            sortedBrainList = new SortedList<float, NeuralNetwork>(Settings.World.numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             NeuralNetwork[] brainList = NeuralNetworkStorage.ReadFromFile(filePath);
-            foreach(var brain in brainList)
+            foreach (var brain in brainList)
             {
                 sortedBrainList.Add(-1f, brain);
             }
@@ -155,7 +151,7 @@ namespace World
         {
             print("Load rabbit:  " + filePath);
             DestroyAllWorlds();
-            sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(Settings.World.numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             NeuralNetwork[] brainList = NeuralNetworkStorage.ReadFromFile(filePath);
             foreach (var brain in brainList)
             {
@@ -178,10 +174,10 @@ namespace World
             {
                 UpdateAllWorlds();
             }
-            if(RunSimulation)
+            if (RunSimulation)
             {
                 SetMoveableObjectIterators();
-                foreach (Animal animal in  animalIterator)
+                foreach (Animal animal in animalIterator)
                 {
                     animal.UpdatePosition();
                 }
@@ -206,8 +202,8 @@ namespace World
         private void Start()
         {
             gapBetweenWorlds = 1;
-            sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
-            sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            sortedBrainList = new SortedList<float, NeuralNetwork>(Settings.World.numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(Settings.World.numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             rabbitFitnessCalculator = rabbitFitnessFunction.GetCalculator();
             foxFitnessCalculator = foxFitnessFunction.GetCalculator();
             // Create field objects
@@ -221,8 +217,8 @@ namespace World
         public void ResetWorlds()
         {
             DestroyAllWorlds();
-            sortedBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
-            sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            sortedBrainList = new SortedList<float, NeuralNetwork>(Settings.World.numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
+            sortedFoxesBrainList = new SortedList<float, NeuralNetwork>(Settings.World.numberOfWorldsToCreate, new ReverseDuplicateKeyComparer<float>());
             CreateAllWorlds();
         }
 
@@ -237,30 +233,29 @@ namespace World
 
         private void CreateAllWorlds()
         {
-            
             float timeStart = Time.realtimeSinceStartup;
             Vector3 offset = Vector3.zero;  // offset to bottom-left corner
             int worldsOnX = 0;
 
-            for(int i = sortedBrainList.Count; i<numberOfWorldsToCreate; i++)
+            for (int i = sortedBrainList.Count; i < Settings.World.numberOfWorldsToCreate; i++)
             {
                 sortedBrainList.Add(-1f, new NeuralNetwork(Settings.Rabbit.neuralNetworkLayers));
             }
 
-            for (int i = sortedFoxesBrainList.Count; i < numberOfWorldsToCreate; i++)
+            for (int i = sortedFoxesBrainList.Count; i < Settings.World.numberOfWorldsToCreate; i++)
             {
                 sortedFoxesBrainList.Add(-1f, new NeuralNetwork(Settings.Fox.neuralNetworkLayers));
             }
 
             WorldBuilder builder = worldOptions[UnityEngine.Random.Range(0, worldOptions.Count)];
             builder.StartNewBuild();
-            for (int i = 0; i < numberOfWorldsToCreate; i++)
+            for (int i = 0; i < Settings.World.numberOfWorldsToCreate; i++)
             {
                 GameObject world = CreateRandomWorld(builder, ref offset, ref worldsOnX, i);
                 worldGameObjects.Add(world);
                 worlds.Add(world.GetComponent<World>());
             }
-           
+
             Debug.Log("CreateAllWorlds time: " + (Time.realtimeSinceStartup - timeStart));
         }
 
@@ -268,11 +263,10 @@ namespace World
         {
             animalIterator = new MultiListIterator<Animal>();
             grassIterator = new MultiListIterator<Grass>();
-            foreach(World world in this.worlds)
+            foreach (World world in this.worlds)
             {
                 animalIterator.AddList(world.animalList);
                 grassIterator.AddList(world.grassList);
-
             }
         }
 
@@ -289,8 +283,8 @@ namespace World
         {
             GameObject world = Instantiate(worldPrefab, this.transform);
             world.name = "World_" + index;
-            world.GetComponent<World>().Render = Settings.Player.renderOptions == RenderOptions.Reduced 
-                || Settings.Player.renderOptions == RenderOptions.Full 
+            world.GetComponent<World>().Render = Settings.Player.renderOptions == RenderOptions.Reduced
+                || Settings.Player.renderOptions == RenderOptions.Full
                 || index == 0 && Settings.Player.renderOptions == RenderOptions.OnlyBest;
             world.GetComponent<World>().BigBrain = sortedBrainList.Values[index];
             world.GetComponent<World>().FoxBrain = sortedFoxesBrainList.Values[index];
@@ -308,7 +302,7 @@ namespace World
 
         private void ParseInputFile()
         {
-            foreach (var line in worldDefinitionFile.text.Split('\n'))
+            foreach (var line in Settings.World.worldDefinitionFile.text.Split('\n'))
             {
                 try
                 {
@@ -329,12 +323,12 @@ namespace World
             prefabs = new Dictionary<string, GameObject>();
             worldOptions = new List<WorldBuilder>();
 
-            foreach (var prefabInfo in objectPrefabs)
+            foreach (SimulationObjectPrefab prefabInfo in objectPrefabs)
             {
                 prefabs.Add(prefabInfo.name, prefabInfo.prefab);
             }
 
-            size = CalculateSize(numberOfWorldsToCreate);
+            size = CalculateSize(Settings.World.numberOfWorldsToCreate);
         }
     }
 

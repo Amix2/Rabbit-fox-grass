@@ -11,6 +11,7 @@ namespace World
 
         private bool healthChange = false;
         private float health;
+
         public float Health
         {
             get { return health; }
@@ -68,7 +69,7 @@ namespace World
 
         private void Update()
         {
-            if(Settings.Player.renderOptions == RenderOptions.None || !healthChange) return;
+            if (Settings.Player.renderOptions == RenderOptions.None || !healthChange) return;
             healthChange = false;
             modelTransform.localScale = new Vector3(health, health, health);
             foreach (var mesh in meshRenderers)

@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-namespace World
+﻿namespace World
 {
     public interface IAlive
     {
@@ -8,5 +6,4 @@ namespace World
         float HungerRate { get; }
         bool IsAlive { get; }
     }
-
 }

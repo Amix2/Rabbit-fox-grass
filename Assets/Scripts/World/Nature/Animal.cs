@@ -9,7 +9,6 @@ namespace World
         public Vector2Int worldSize;
         public bool UseLocalViewSpace;
 
-
         protected Vector3 velocity = Vector3.zero;
         protected NeuralNetwork brain;
         protected int deadAtTurn;
@@ -27,7 +26,7 @@ namespace World
         abstract protected void CollectInfoAboutSurroundings();
 
         abstract protected float[] CreateNetInputs();
-        
+
         abstract protected void MultiplyAnimal();
 
         /// <summary>
@@ -39,9 +38,9 @@ namespace World
             if (!IsAlive) throw new Exception("Update on dead animal");
 
             world.WorldEvents.Invoke(this, HistoryEventType.POSITION, Position);
-            
+
             currentTurn++;
-            if(currentTurn > deadAtTurn)
+            if (currentTurn > deadAtTurn)
             {
                 //Debug.Log("Immortal animal " + currentTurn);
                 Health = -1;
@@ -72,10 +71,11 @@ namespace World
             {
                 decision = decision * Settings.World.simulationDeltaTime / World.deltaTime;
             }
-            if(UseLocalViewSpace)
+            if (UseLocalViewSpace)
             {
                 velocity = Forward * decision.x + Right * decision.z;
-            } else
+            }
+            else
             {
                 velocity = decision;
             }
@@ -112,17 +112,17 @@ namespace World
             var objPosition = Position;
             var xPos = objPosition.x;
             var zPos = objPosition.z;
-            return new Vector3(Utils.FloatInRange(xPos-radius,xPos+radius), 0,Utils.FloatInRange(zPos-radius,zPos+radius));
-        } 
+            return new Vector3(Utils.FloatInRange(xPos - radius, xPos + radius), 0, Utils.FloatInRange(zPos - radius, zPos + radius));
+        }
 
         protected void Awake()
         {
-            deadAtTurn = (int) (Settings.World.maxAnimalLifetime / Settings.World.simulationDeltaTime);
+            deadAtTurn = (int)(Settings.World.maxAnimalLifetime / Settings.World.simulationDeltaTime);
             world = transform.parent.GetComponent<World>();
         }
 
         protected void Start()
-        { 
+        {
             position = gameObject.transform.localPosition;
         }
     }

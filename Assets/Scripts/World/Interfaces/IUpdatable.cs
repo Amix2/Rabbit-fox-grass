@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using UnityEditor;
-namespace World
+﻿namespace World
 {
     public interface IUpdatable
     {

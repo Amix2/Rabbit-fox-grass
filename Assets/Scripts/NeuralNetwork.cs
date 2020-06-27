@@ -1,12 +1,12 @@
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Single;
+using MathNet.Numerics.Random;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Single;
-using MathNet.Numerics.Random;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class NeuralNetwork
@@ -18,7 +18,6 @@ public class NeuralNetwork
     private readonly int[] _layers;
     private Matrix<float>[] _weights;
     private Matrix<float>[] _biases;
-
 
     public NeuralNetwork(int[] layers)
     {
@@ -38,10 +37,9 @@ public class NeuralNetwork
         _biases = biases;
     }
 
-
     public Vector3 GetDecision(float[] input)
     {
-        for(int i=1; i<input.Length; i++)
+        for (int i = 1; i < input.Length; i++)
         {
             //if(input[i]< 1) Debug.Log(input[i]);
         }
@@ -59,9 +57,9 @@ public class NeuralNetwork
         }
 
         var decision = new Vector3();
-        decision.x = 2 * Convert.ToSingle((double) prevNeurons[0, 0]) - 1f;
+        decision.x = 2 * Convert.ToSingle((double)prevNeurons[0, 0]) - 1f;
         decision.y = 0f;
-        decision.z = 2 * Convert.ToSingle((double) prevNeurons[1, 0]) - 1f;
+        decision.z = 2 * Convert.ToSingle((double)prevNeurons[1, 0]) - 1f;
 
         return decision.sqrMagnitude > 1 ? decision.normalized : decision;
     }
@@ -89,7 +87,7 @@ public class NeuralNetwork
     {
         var stringBuilder = new StringBuilder().AppendLine("{");
 
-        stringBuilder.AppendLine("\"fitness\":" + fitness.ToString().Replace(',','.') + ",");
+        stringBuilder.AppendLine("\"fitness\":" + fitness.ToString().Replace(',', '.') + ",");
 
         stringBuilder.Append("\"weights\":" + MatrixArrayToString(_weights));
 
@@ -165,7 +163,7 @@ public class NeuralNetwork
             Matrix<float> layerWeights = DenseMatrix.Create(_layers[i], _layers[i - 1], 0.0f);
             Matrix<float> layerBiases = DenseMatrix.Create(_layers[i], 1, 0.0f);
             var random = new MersenneTwister();
-            
+
             double weightsRange = Settings.Player.neuralNetworkWeightsRange[1] - Settings.Player.neuralNetworkWeightsRange[0];
             double biasRange = Settings.Player.neuralNetworkBiasRange[1] - Settings.Player.neuralNetworkBiasRange[0];
             for (var j = 0; j < layerWeights.RowCount; j++)

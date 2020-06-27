@@ -1,0 +1,83 @@
+{
+  "WorldFileName": "Maps/51x51_5fox_5rab_30gra_set",
+  "Player": {
+    "mouseSensitivity": 150.0,
+    "cameraMoveSensitivity": 10.0,
+    "cameraScrollSensitivity": 5.0,
+    "cameraRotateSensitivity": 500.0,
+    "fastTrainingMode": true,
+    "renderOptions": 2,
+    "neuralNetworkWeightsRange": [
+      -4.0,
+      4.0
+    ],
+    "neuralNetworkBiasRange": [
+      -4.0,
+      4.0
+    ]
+  },
+  "World": {
+    "animalViewRange": 15.0,
+    "allowedObjectNames": [
+      "grass",
+      "rabbit",
+      "fox"
+    ],
+    "foodInGrass": 0.5,
+    "grassGrowthRate": 0.03,
+    "collectHistory": false,
+    "simulationDeltaTime": 0.0,
+    "maxAnimalLifetime": 500.0,
+    "rabbitHungerInNeuralNet": true,
+    "foxHungerInNeuralNet": true,
+    "multipliedAnimalSpawnRadius": 1.0,
+    "numberOfWorldsToCreate": 1
+  },
+  "RabbitSettings": {
+    "neuralNetworkLayers": [
+      49,
+      49,
+      2
+    ],
+    "foodInRabbits": 1.0,
+    "rabbitEatingDistance": 0.8,
+    "rabbitMaxVelocity": 3.0,
+    "rabbitHungerRate": 0.05,
+    "rabbitEatingSpeed": 1.0,
+    "rabbitMultiplicationChance": 0.0,
+    "healthDropAfterMultiplied": 0.2,
+    "maxAnimalsInScene": 20
+  },
+  "FoxSettings": {
+    "neuralNetworkLayers": [
+      25,
+      25,
+      2
+    ],
+    "foxEatingDistance": 0.5,
+    "foxMaxVelocity": 3.5,
+    "foxHungerRate": 0.05,
+    "foxEatingSpeed": 0.8,
+    "foxMultiplicationChance": 0.0,
+    "healthDropAfterMultiplied": 0.5,
+    "maxAnimalsInScene": 20
+  },
+  "NeuralMutation": {
+    "mutationProbability": 0.012,
+    "mutationStrategyEnum": 0,
+    "listMutationQuantity": [
+      {
+        "count": 10,
+        "quantity": 4
+      },
+      {
+        "count": 10,
+        "quantity": 2
+      },
+      {
+        "count": 10,
+        "quantity": 1
+      }
+    ]
+  }
+}

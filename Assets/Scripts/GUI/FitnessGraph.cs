@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 using World;
 
 public class FitnessGraph : MonoBehaviour
@@ -24,12 +23,14 @@ public class FitnessGraph : MonoBehaviour
 
     private readonly string pythonScriptName = "runPlot.bat";
 
-    //private Process cmd;
-    // FileStream file;
-
     // Start is called before the first frame update
     private void Start()
     {
+        if (!Directory.Exists(PlotDataDirPath))
+        {
+            Directory.CreateDirectory(PlotDataDirPath);
+        }
+
         UnityEngine.Debug.Log(Application.streamingAssetsPath);
         if (!showPlot || !Settings.World.collectHistory)
         {
@@ -48,7 +49,7 @@ public class FitnessGraph : MonoBehaviour
 
             File.Create(FullRabbitDataFilePath).Close();
             using (StreamWriter writer = File.AppendText(FullRabbitDataFilePath))
-            { 
+            {
                 writer.WriteLine("Rabbit fitness");
                 writer.WriteLine("Max;Avg;Min");
                 writer.Close();
@@ -118,7 +119,7 @@ public class FitnessGraph : MonoBehaviour
     }
 }
 
-class GraphScript
+internal class GraphScript
 {
     private readonly string scriptPath;
     private readonly string dataFilePath;
@@ -139,7 +140,7 @@ class GraphScript
     {
         process = new Process();
         process.StartInfo.FileName = scriptPath;
-        process.StartInfo.Arguments = string.Format("\"{0}\" {1} \"{2}\"", scriptPath.Substring(0, scriptPath.LastIndexOf("/")+1), refreshInterval, dataFilePath);
+        process.StartInfo.Arguments = string.Format("\"{0}\" {1} \"{2}\"", scriptPath.Substring(0, scriptPath.LastIndexOf("/") + 1), refreshInterval, dataFilePath);
         process.StartInfo.CreateNoWindow = true;
         process.StartInfo.UseShellExecute = true;
         process.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;

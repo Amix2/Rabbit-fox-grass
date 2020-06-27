@@ -1,8 +1,4 @@
 ﻿using SFB;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using UnityEditor;
 using UnityEngine;
 using World;
 
@@ -12,7 +8,6 @@ public class Buttons : MonoBehaviour
 
     public void OnSaveRabbitButton()
     {
-
         try
         {
             var extensions = new[] {
@@ -27,7 +22,6 @@ public class Buttons : MonoBehaviour
         }
         catch (System.Exception)
         {
-
         }
     }
 
@@ -45,9 +39,9 @@ public class Buttons : MonoBehaviour
             {
                 worldCreator.LoadRabbitBrainFromFile(path);
             }
-        } catch (System.Exception)
+        }
+        catch (System.Exception)
         {
-
         }
     }
 
@@ -67,9 +61,7 @@ public class Buttons : MonoBehaviour
         }
         catch (System.Exception)
         {
-
         }
-
     }
 
     public void OnLoadFoxButton()
@@ -89,7 +81,6 @@ public class Buttons : MonoBehaviour
         }
         catch (System.Exception)
         {
-
         }
     }
 

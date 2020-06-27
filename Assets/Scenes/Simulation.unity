@@ -1131,8 +1131,6 @@ MonoBehaviour:
   - name: fox
     prefab: {fileID: 5469908333711757376, guid: a2af05269309dd94a8ba4f0542b11451,
       type: 3}
-  worldDefinitionFile: {fileID: 4900000, guid: 146264d63cdde944f972ba0be80cd7ff, type: 3}
-  numberOfWorldsToCreate: 100
   rabbitFitnessFunction: 1
   foxFitnessFunction: 0
 --- !u!4 &758577819
@@ -1759,7 +1757,7 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 0
+    fastTrainingMode: 1
     renderOptions: 2
     neuralNetworkWeightsRange:
     - -4
@@ -1768,40 +1766,43 @@ MonoBehaviour:
     - -4
     - 4
   world:
-    animalViewRange: 20
+    animalViewRange: 15
     allowedObjectNames:
     - grass
     - rabbit
     - fox
     foodInGrass: 0.5
     grassGrowthRate: 0.03
-    collectHistory: 1
+    collectHistory: 0
     simulationDeltaTime: 0
     maxAnimalLifetime: 500
     rabbitHungerInNeuralNet: 1
     foxHungerInNeuralNet: 1
     multipliedAnimalSpawnRadius: 1
+    worldDefinitionFile: {fileID: 4900000, guid: 3b11c9c30321c9c4880f59e36731093f,
+      type: 3}
+    numberOfWorldsToCreate: 1
   rabbitSettings:
     neuralNetworkLayers: 310000003100000002000000
     foodInRabbits: 1
-    rabbitEatingDistance: 0.5
+    rabbitEatingDistance: 0.8
     rabbitMaxVelocity: 3
     rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
     rabbitMultiplicationChance: 0
-    healthDropAfterMultiplied: 0.5
+    healthDropAfterMultiplied: 0.2
     maxAnimalsInScene: 20
   foxSettings:
     neuralNetworkLayers: 190000001900000002000000
     foxEatingDistance: 0.5
-    foxMaxVelocity: 4
+    foxMaxVelocity: 3.5
     foxHungerRate: 0.05
-    foxEatingSpeed: 1
+    foxEatingSpeed: 0.8
     foxMultiplicationChance: 0
     healthDropAfterMultiplied: 0.5
     maxAnimalsInScene: 20
   neuralMutation:
-    mutationProbability: 0.015
+    mutationProbability: 0.012
     mutationStrategyEnum: 0
     listMutationQuantity:
     - count: 10

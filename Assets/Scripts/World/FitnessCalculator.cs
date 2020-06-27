@@ -1,9 +1,4 @@
-﻿using MathNet.Numerics.Optimization.ObjectiveFunctions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace World
@@ -81,7 +76,6 @@ namespace World
 
     public class Fox_FoodAndAvgDistanceToClosestRabbitInFrame : IFitnessCalculator
     {
-
         public override float CalculateFitness(WorldHistory worldHistory)
         {
             if (!Settings.World.collectHistory || worldHistory.foxes.Count == 0) return 0f;
@@ -127,7 +121,6 @@ namespace World
             // for each fox
             foreach (AnimalHistory foxHistory in worldHistory.foxes)
             {
-
                 float sumSqrDistanceInTime = 0;
                 int sqrDistCount = 0;
                 // for every time
@@ -162,7 +155,6 @@ namespace World
 
                 // add to score sum over every fox
                 scoreSum += (foxHistory.FoodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - avgSqrDistanceInTime) / worldHistory.worldSize.sqrMagnitude;
-
             }
 
             float scoreAvg = scoreSum / worldHistory.foxes.Count;
@@ -173,11 +165,11 @@ namespace World
         {
             if (sourcePositions.Count == 0) return 0;
             float distSqrSum = 0;
-            for(int i=0; i<Mathf.Min(targetPositionsInTime.Count, sourcePositions.Count); i++)
+            for (int i = 0; i < Mathf.Min(targetPositionsInTime.Count, sourcePositions.Count); i++)
             {
                 if (targetPositionsInTime[i].Count == 0) continue;
                 float curSqrDist = float.MaxValue;
-                foreach(Vector3 pos in targetPositionsInTime[i])
+                foreach (Vector3 pos in targetPositionsInTime[i])
                 {
                     if (curSqrDist > (pos - sourcePositions[i]).sqrMagnitude) curSqrDist = (pos - sourcePositions[i]).sqrMagnitude;
                 }

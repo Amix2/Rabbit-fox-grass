@@ -17,7 +17,7 @@ namespace World
 
         public WorldHistory(MultiTypeEventHandler<HistoryEventType, float, int, Vector3> worldEvents)
         {
-            if(Settings.World.collectHistory)
+            if (Settings.World.collectHistory)
             {
                 grassPositions = new List<Vector3>();
                 aliveRabbits = new ConcurrentDictionary<Animal, AnimalHistory>();
@@ -97,9 +97,8 @@ namespace World
             else throw new System.Exception("Unhandeled event sender : " + obj.GetType());
         }
 
-        private void AnimalDeath(ConcurrentDictionary<Animal, AnimalHistory>  aliveAnimals, ConcurrentBag<AnimalHistory> deadAnimals, Animal animal, Vector3 pos)
+        private void AnimalDeath(ConcurrentDictionary<Animal, AnimalHistory> aliveAnimals, ConcurrentBag<AnimalHistory> deadAnimals, Animal animal, Vector3 pos)
         {
-
             if (!aliveAnimals.ContainsKey(animal))
             {
                 throw new System.Exception("Animal has not yet been born");
@@ -144,6 +143,5 @@ namespace World
         {
             grassPositions.Add(pos);
         }
-
     }
 }

@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-namespace World
+﻿namespace World
 {
     public interface IEdible
     {
@@ -8,5 +6,4 @@ namespace World
 
         float Consumed(float amount = 1f);
     }
-
 }

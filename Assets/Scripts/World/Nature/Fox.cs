@@ -4,7 +4,6 @@ namespace World
 {
     public class Fox : Animal
     {
-
         private int numOfSectors;
         private Rabbit closestRabbit;
         private Rabbit[] closestRabbitInSectors;
@@ -20,13 +19,13 @@ namespace World
             if (closestRabbit != null)
             {
                 float food = closestRabbit.Consumed(Settings.Fox.foxEatingSpeed * Settings.World.simulationDeltaTime);
-               // Debug.Log("FOx eat: " + food + " Health: "+ Health) ;
+                // Debug.Log("FOx eat: " + food + " Health: "+ Health) ;
                 Health += food;
                 Health = Mathf.Clamp01(Health);
                 world.WorldEvents.Invoke(this, HistoryEventType.EAT, food);
-                
+
                 // Multiply after consuming if health is full
-                if(Health > 0.99f)
+                if (Health > 0.99f)
                     MultiplyAnimal();
             }
         }
@@ -104,13 +103,12 @@ namespace World
 
         protected override float[] CreateNetInputs()
         {
-            
             for (int i = 0; i < numOfSectors; i++)    // normalize data
             {
                 netInputs[i] = sqrAnimalViewRange - netInputs[i];
                 netInputs[i] /= sqrAnimalViewRange;
             }
-            if(Settings.World.foxHungerInNeuralNet) netInputs[Settings.Fox.neuralNetworkLayers[0]-1] = Health;
+            if (Settings.World.foxHungerInNeuralNet) netInputs[Settings.Fox.neuralNetworkLayers[0] - 1] = Health;
             return netInputs;
         }
 
@@ -121,7 +119,8 @@ namespace World
 
         public override float HungerRate { get { return Settings.Fox.foxHungerRate; } }
 
-        static bool firstInit = true;
+        private static bool firstInit = true;
+
         private new void Awake()
         {
             numOfSectors = Settings.Fox.neuralNetworkLayers[0];
@@ -137,7 +136,7 @@ namespace World
             sqrFoxEatingDistance = Settings.Fox.foxEatingDistance * Settings.Fox.foxEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
         }
-        
+
         protected override void MultiplyAnimal()
         {
             var multiplyChance = Utils.RandomFloat();
@@ -155,7 +154,7 @@ namespace World
         private void OnDrawGizmosSelected()
         {
             float angle = 360f / numOfSectors;
-            for (int i = 0; i < numOfSectors; i++)    
+            for (int i = 0; i < numOfSectors; i++)
             {
                 Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle + ViewAngleOffset, Vector3.up) * ViewForward * Settings.World.animalViewRange + transform.parent.position);
             }

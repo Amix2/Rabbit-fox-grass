@@ -7,7 +7,7 @@ public class CameraConroller : MonoBehaviour
     public float offsetLength = 15f;
     public float maxCameraFrameMove = 1f;
 
-    const float minCameraDistance = 1f;
+    private const float minCameraDistance = 1f;
 
     private void Start()
     {
@@ -23,9 +23,9 @@ public class CameraConroller : MonoBehaviour
         UpdatePosition();
     }
 
-    void UpdatePosition()
+    private void UpdatePosition()
     {
-        if(Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1))
         {
             // move root based on mouse movement, camera is a child of root so it will move automatically
             Vector3 mouseMove = new Vector3(Input.GetAxis("Mouse X"), 0f, Input.GetAxis("Mouse Y"));
@@ -35,7 +35,7 @@ public class CameraConroller : MonoBehaviour
         }
     }
 
-    void UpdateDistance()
+    private void UpdateDistance()
     {
         // canculate zoom based on % of distance to root, cameraScrollSensitivity and delta time
         float change = offsetLength * Settings.Player.cameraScrollSensitivity * Input.mouseScrollDelta.y * Time.deltaTime;
@@ -49,7 +49,7 @@ public class CameraConroller : MonoBehaviour
         offsetLength -= change;
     }
 
-    void UpdateAngle()
+    private void UpdateAngle()
     {
         if (Input.GetMouseButton(0))
         {

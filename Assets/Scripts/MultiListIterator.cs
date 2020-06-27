@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 public class MultiListIterator<T> : IEnumerator<T>, IEnumerable<T>
@@ -19,7 +18,6 @@ public class MultiListIterator<T> : IEnumerator<T>, IEnumerable<T>
         listEnumerator = lists.GetEnumerator();
         listEnumerator.MoveNext();
         elementEnumerator = listEnumerator.Current.GetEnumerator();
-        
     }
 
     public void RemoveList(List<T> list)
@@ -41,7 +39,7 @@ public class MultiListIterator<T> : IEnumerator<T>, IEnumerable<T>
     {
         if (lists.Count == 0) return false;
         if (elementEnumerator.MoveNext()) return true; // more elements in curent list
-        while (listEnumerator.MoveNext() && listEnumerator.Current.Count == 0) {  }
+        while (listEnumerator.MoveNext() && listEnumerator.Current.Count == 0) { }
         // we have no more lists OR we found not-empty one
         if (listEnumerator.Current == null) return false;
         if (listEnumerator.Current.Count > 0)
@@ -77,5 +75,3 @@ public class MultiListIterator<T> : IEnumerator<T>, IEnumerable<T>
         return GetEnumerator();
     }
 }
-
-

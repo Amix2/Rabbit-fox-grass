@@ -33,16 +33,20 @@ namespace World
 
         public WorldHistory History { get; private set; }
         private bool render;
-        public bool Render { get
+
+        public bool Render
+        {
+            get
             {
                 return render;
             }
             set
             {
                 render = value;
-                if(!value) DisableModel();
+                if (!value) DisableModel();
             }
         }
+
         public MultiTypeEventHandler<HistoryEventType, float, int, Vector3> WorldEvents { get; private set; }
         internal NeuralNetwork BigBrain { get; set; }
         internal NeuralNetwork FoxBrain { get; set; }
@@ -139,24 +143,24 @@ namespace World
 
         public void AddRabbitToMultiply(GameObject gameObject, Vector3 position)
         {
-            multiplyRabbitsQueue.Add(Tuple.Create(gameObject,position));
+            multiplyRabbitsQueue.Add(Tuple.Create(gameObject, position));
         }
-        
+
         public void AddFoxToMultiply(GameObject gameObject, Vector3 position)
         {
-            multiplyFoxesQueue.Add(Tuple.Create(gameObject,position));
+            multiplyFoxesQueue.Add(Tuple.Create(gameObject, position));
         }
 
         private void MultiplyAnimals()
         {
             while (multiplyRabbitsQueue.TryTake(out Tuple<GameObject, Vector3> animalTuple))
             {
-                AddRabbit(animalTuple.Item1,animalTuple.Item2);
+                AddRabbit(animalTuple.Item1, animalTuple.Item2);
             }
-            
+
             while (multiplyFoxesQueue.TryTake(out Tuple<GameObject, Vector3> animalTuple))
             {
-                AddFox(animalTuple.Item1,animalTuple.Item2);
+                AddFox(animalTuple.Item1, animalTuple.Item2);
             }
         }
     }

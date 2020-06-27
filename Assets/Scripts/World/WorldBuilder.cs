@@ -39,7 +39,7 @@ namespace World
         }
 
         private void ParseOneOption(string[] optionsArr, int i)
-        { 
+        {
             string[] option = optionsArr[i].Split(':');
 
             // check if object name is allowed (set allowed in Settings)
@@ -72,7 +72,7 @@ namespace World
                 for (int c = 0; c < objectsCount[i]; c++)   // spawn required amount of objects in random position from given list
                 {
                     Vector3 pos;
-                    if(firstInGen)
+                    if (firstInGen)
                     {
                         pos = objectsPositions[i].GetRandomPosition();
                         spawnPositionHistory.Add(pos);
@@ -136,10 +136,10 @@ internal class PositionSelector
         string[] centerValues = values[0].Split(',');
         Vector2 center = new Vector2(float.Parse(centerValues[0]), float.Parse(centerValues[1]));
         float radius = float.Parse(values[1]);
-        for(float angle = 0; angle < 360; angle += 1)
+        for (float angle = 0; angle < 360; angle += 1)
         {
             Vector2 newPoint = new Vector2(Mathf.Round(center.x + Mathf.Sin(angle) * radius), Mathf.Round(center.y + Mathf.Cos(angle) * radius));
-            if(!selector.positions.Contains(newPoint))
+            if (!selector.positions.Contains(newPoint))
             {
                 selector.positions.Add(newPoint);
             }
@@ -157,11 +157,11 @@ internal class PositionSelector
         int maxX = int.Parse(twoPoints[1].Split(',')[0]);
         int maxY = int.Parse(twoPoints[1].Split(',')[1]);
 
-        for(int x = minX; x <= maxX; x++)
+        for (int x = minX; x <= maxX; x++)
         {
-            for(int y=minY; y <= maxY; y++)
+            for (int y = minY; y <= maxY; y++)
             {
-                selector.AddPosition(new Vector2(x,y));
+                selector.AddPosition(new Vector2(x, y));
             }
         }
 
