@@ -1431,7 +1431,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldCreator: {fileID: 758577818}
-  fitnessScore: {fileID: 0}
 --- !u!114 &912444492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1773,7 +1772,7 @@ MonoBehaviour:
     - fox
     foodInGrass: 0.5
     grassGrowthRate: 0.03
-    collectHistory: 0
+    collectHistory: 1
     simulationDeltaTime: 0
     maxAnimalLifetime: 500
     rabbitHungerInNeuralNet: 1

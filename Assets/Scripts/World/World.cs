@@ -48,7 +48,7 @@ namespace World
         }
 
         public MultiTypeEventHandler<HistoryEventType, float, int, Vector3> WorldEvents { get; private set; }
-        internal NeuralNetwork BigBrain { get; set; }
+        internal NeuralNetwork RabbitBrain { get; set; }
         internal NeuralNetwork FoxBrain { get; set; }
 
         private void Awake()
@@ -102,7 +102,7 @@ namespace World
             var rabbitGO = AddGameObject(prefab, position);
             rabbitGO.name = "Rabbit_" + animalList.Count;
             rabbitGO.GetComponent<Rabbit>().worldSize = Size;
-            rabbitGO.GetComponent<Rabbit>().Brain = BigBrain;
+            rabbitGO.GetComponent<Rabbit>().Brain = RabbitBrain;
             if (!Render) rabbitGO.GetComponent<Rabbit>().DisableModel();
             animalList.Add(rabbitGO.GetComponent<Rabbit>());
             rabbitGO.GetComponent<Rabbit>().world = this;

@@ -81,7 +81,7 @@ public class FitnessGraph : MonoBehaviour
 
     private void SafeDataToFile()
     {
-        SafeListDataToFile(worldCreator.sortedBrainList.Keys, FullRabbitDataFilePath);
+        SafeListDataToFile(worldCreator.sortedRabbitBrainList.Keys, FullRabbitDataFilePath);
         SafeListDataToFile(worldCreator.sortedFoxesBrainList.Keys, FullFoxDataFilePath);
     }
 

@@ -25,7 +25,7 @@
     ],
     "foodInGrass": 0.5,
     "grassGrowthRate": 0.03,
-    "collectHistory": false,
+    "collectHistory": true,
     "simulationDeltaTime": 0.0,
     "maxAnimalLifetime": 500.0,
     "rabbitHungerInNeuralNet": true,
