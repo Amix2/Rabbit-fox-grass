@@ -1,6 +1,7 @@
 ﻿using DefaultNamespace;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -32,6 +33,8 @@ namespace World
 
         private MultiListIterator<Animal> animalIterator;
         private MultiListIterator<Grass> grassIterator;
+
+        private int iterationNumber = 0;
 
         private bool UpdateBehaviourAllWorlds()
         {
@@ -86,6 +89,18 @@ namespace World
             if (!anyWorldsLeft)
             {
                 OnRecreateWorlds?.Invoke();
+                iterationNumber++;
+                if(iterationNumber%20 == 0)
+                {
+                    string brainPath = Application.streamingAssetsPath + @"\brainTemp\" ;
+                    if (!Directory.Exists(brainPath))
+                    {
+                        Directory.CreateDirectory(brainPath);
+                    }
+                    string id = DateTime.Now.ToLongTimeString().Replace(":", "-");
+                    SaveRabbitBrainToFile(brainPath + "rabbit_brain_"+id+"_" + iterationNumber + ".txt");
+                    SaveFoxBrainToFile(brainPath + "fox_brain_" + id + "_" + iterationNumber + ".txt");
+                }
                 MutateBrains();
                 CreateAllWorlds();
             }

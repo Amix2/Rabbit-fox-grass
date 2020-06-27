@@ -57,6 +57,7 @@ public class Settings : MonoBehaviour
         instance.neuralMutation = settings.NeuralMutation;
 #endif
         instance.world.simulationDeltaTime = Time.fixedDeltaTime;
+
     }
 }
 
