@@ -45,12 +45,12 @@ namespace World
             // iterate over all grass objects in the world, find closest one (for eatting) and closest in each sector
             foreach (Grass grass in world.grassList)
             {
+                Vector3 grassPos = grass.Position;
+                Vector3 grassOffset = (grassPos - position);
+                float grassDist = grassOffset.sqrMagnitude;
                 // dont touch grass with less than 0.1 health
-                if (grass.Health > 0.1f)
+                if (grassDist < sqrAnimalViewRange && grass.Health > 0.1f)
                 {
-                    Vector3 grassPos = grass.Position;
-                    Vector3 grassOffset = (grassPos - position);
-                    float grassDist = grassOffset.sqrMagnitude;
 
                     // assign closest grass for eatting
                     if (grassDist < sqrDistanceToClosestGrass)

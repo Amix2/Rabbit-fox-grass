@@ -1780,7 +1780,7 @@ MonoBehaviour:
     multipliedAnimalSpawnRadius: 1
     worldDefinitionFile: {fileID: 4900000, guid: 3b11c9c30321c9c4880f59e36731093f,
       type: 3}
-    numberOfWorldsToCreate: 1
+    numberOfWorldsToCreate: 100
   rabbitSettings:
     neuralNetworkLayers: 310000003100000002000000
     foodInRabbits: 1
@@ -1795,7 +1795,7 @@ MonoBehaviour:
     neuralNetworkLayers: 190000001900000002000000
     foxEatingDistance: 0.5
     foxMaxVelocity: 3.5
-    foxHungerRate: 0.05
+    foxHungerRate: 10000.05
     foxEatingSpeed: 0.8
     foxMultiplicationChance: 0
     healthDropAfterMultiplied: 0.5

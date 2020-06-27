@@ -46,12 +46,13 @@ namespace World
             {
                 Rabbit rabbit = animal as Rabbit;
                 if (rabbit == null) continue;
+
+                Vector3 rabbitPos = rabbit.Position;
+                Vector3 rabbitOffset = (rabbitPos - position);
+                float rabbitDist = rabbitOffset.sqrMagnitude;
                 // dont touch rabbit with less than 0.1 health
-                if (rabbit.Health > 0.1f)
+                if (rabbitDist < sqrAnimalViewRange && rabbit.Health > 0.1f)
                 {
-                    Vector3 rabbitPos = rabbit.Position;
-                    Vector3 rabbitOffset = (rabbitPos - position);
-                    float rabbitDist = rabbitOffset.sqrMagnitude;
 
                     // assign closest rabbit for eatting
                     if (rabbitDist < sqrDistanceToClosestGrass)
