@@ -88,19 +88,21 @@ namespace World
                 Vector3 foxPos = fox.Position;
                 Vector3 foxOffset = (foxPos - position);
                 float foxDist = foxOffset.sqrMagnitude;
+                if(foxDist > sqrAnimalViewRange)
+                {
+                    int sector = GetSector(foxOffset.normalized);
 
-                int sector = GetSector(foxOffset.normalized);
-
-                if (sectorFoxDistances[sector] == sqrAnimalViewRange)
-                {   // fist fox in this sector
-                    sectorFoxDistances[sector] = foxDist;
-                }
-                else
-                {   // multiple fox in this sector
-                    float newDist = (sectorFoxDistances[sector] + foxDist) * 0.5f * 0.5f; // half of the average
-                    if (newDist < sectorFoxDistances[sector])
-                    {
-                        sectorFoxDistances[sector] = newDist;
+                    if (sectorFoxDistances[sector] == sqrAnimalViewRange)
+                    {   // fist fox in this sector
+                        sectorFoxDistances[sector] = foxDist;
+                    }
+                    else
+                    {   // multiple fox in this sector
+                        float newDist = (sectorFoxDistances[sector] + foxDist) * 0.5f * 0.5f; // half of the average
+                        if (newDist < sectorFoxDistances[sector])
+                        {
+                            sectorFoxDistances[sector] = newDist;
+                        }
                     }
                 }
             }
