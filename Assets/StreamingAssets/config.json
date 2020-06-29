@@ -23,7 +23,7 @@
       "rabbit",
       "fox"
     ],
-    "foodInGrass": 0.5,
+    "foodInGrass": 0.6,
     "grassGrowthRate": 0.15,
     "collectHistory": true,
     "simulationDeltaTime": 0.0,
