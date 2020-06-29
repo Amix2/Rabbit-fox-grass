@@ -88,7 +88,7 @@ namespace World
                 Vector3 foxPos = fox.Position;
                 Vector3 foxOffset = (foxPos - position);
                 float foxDist = foxOffset.sqrMagnitude;
-                if(foxDist > sqrAnimalViewRange)
+                if(foxDist < sqrAnimalViewRange)
                 {
                     int sector = GetSector(foxOffset.normalized);
 
