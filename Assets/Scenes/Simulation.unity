@@ -1756,7 +1756,7 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 1
+    fastTrainingMode: 0
     renderOptions: 2
     neuralNetworkWeightsRange:
     - -4
@@ -1771,7 +1771,7 @@ MonoBehaviour:
     - rabbit
     - fox
     foodInGrass: 0.5
-    grassGrowthRate: 0.03
+    grassGrowthRate: 0.15
     collectHistory: 1
     simulationDeltaTime: 0
     maxAnimalLifetime: 500
@@ -1780,24 +1780,24 @@ MonoBehaviour:
     multipliedAnimalSpawnRadius: 1
     worldDefinitionFile: {fileID: 4900000, guid: 3b11c9c30321c9c4880f59e36731093f,
       type: 3}
-    numberOfWorldsToCreate: 100
+    numberOfWorldsToCreate: 1
   rabbitSettings:
     neuralNetworkLayers: 310000003100000002000000
     foodInRabbits: 1
-    rabbitEatingDistance: 0.8
-    rabbitMaxVelocity: 3
+    rabbitEatingDistance: 1
+    rabbitMaxVelocity: 4
     rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
-    rabbitMultiplicationChance: 0
+    rabbitMultiplicationChance: 1
     healthDropAfterMultiplied: 0.2
     maxAnimalsInScene: 20
   foxSettings:
     neuralNetworkLayers: 190000001900000002000000
     foxEatingDistance: 0.5
-    foxMaxVelocity: 3.5
-    foxHungerRate: 0.05
+    foxMaxVelocity: 4.5
+    foxHungerRate: 0.02
     foxEatingSpeed: 0.8
-    foxMultiplicationChance: 0
+    foxMultiplicationChance: 1
     healthDropAfterMultiplied: 0.5
     maxAnimalsInScene: 20
   neuralMutation:

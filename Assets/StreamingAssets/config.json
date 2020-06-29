@@ -5,7 +5,7 @@
     "cameraMoveSensitivity": 10.0,
     "cameraScrollSensitivity": 5.0,
     "cameraRotateSensitivity": 500.0,
-    "fastTrainingMode": true,
+    "fastTrainingMode": false,
     "renderOptions": 2,
     "neuralNetworkWeightsRange": [
       -4.0,
@@ -24,7 +24,7 @@
       "fox"
     ],
     "foodInGrass": 0.5,
-    "grassGrowthRate": 0.03,
+    "grassGrowthRate": 0.15,
     "collectHistory": true,
     "simulationDeltaTime": 0.0,
     "maxAnimalLifetime": 500.0,
@@ -40,11 +40,11 @@
       2
     ],
     "foodInRabbits": 1.0,
-    "rabbitEatingDistance": 0.8,
-    "rabbitMaxVelocity": 3.0,
+    "rabbitEatingDistance": 1.0,
+    "rabbitMaxVelocity": 4.0,
     "rabbitHungerRate": 0.05,
     "rabbitEatingSpeed": 1.0,
-    "rabbitMultiplicationChance": 0.0,
+    "rabbitMultiplicationChance": 1.0,
     "healthDropAfterMultiplied": 0.2,
     "maxAnimalsInScene": 20
   },
@@ -55,10 +55,10 @@
       2
     ],
     "foxEatingDistance": 0.5,
-    "foxMaxVelocity": 3.5,
-    "foxHungerRate": 0.05,
+    "foxMaxVelocity": 4.5,
+    "foxHungerRate": 0.02,
     "foxEatingSpeed": 0.8,
-    "foxMultiplicationChance": 0.0,
+    "foxMultiplicationChance": 1.0,
     "healthDropAfterMultiplied": 0.5,
     "maxAnimalsInScene": 20
   },
