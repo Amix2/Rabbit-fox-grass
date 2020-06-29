@@ -77,6 +77,13 @@ namespace World
             WorldEvents.Invoke(this, HistoryEventType.TURN_UPDATE, 1);
             while (deadAnimals.TryTake(out Animal deadAnimal))
             {
+                if(typeof(Rabbit).IsInstanceOfType(deadAnimal))
+                {
+                    rabbitCount--;
+                } else if (typeof(Fox).IsInstanceOfType(deadAnimal))
+                {
+                    foxCount--;
+                }
                 Destroy(deadAnimal.gameObject);
                 animalList.Remove(deadAnimal);
             }
