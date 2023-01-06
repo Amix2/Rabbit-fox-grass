@@ -4,15 +4,11 @@ namespace World
 {
     public class Fox : Animal
     {
-        private int numOfSectors;
         private Rabbit closestRabbit;
         private Rabbit[] closestRabbitInSectors;
         private float[] netInputs;
         private float sqrFoxEatingDistance;
         private float sqrAnimalViewRange;
-
-        private Vector3 ViewForward => UseLocalViewSpace ? Forward : Vector3.forward;
-        private float ViewAngleOffset => 180f / numOfSectors;
 
         protected override void ConsumeFood()
         {
@@ -34,13 +30,19 @@ namespace World
         protected override void CollectInfoAboutSurroundings()
         {
             // clear data from previous runs
-            float sqrDistanceToClosestGrass = sqrFoxEatingDistance;
-            closestRabbit = null;
-            for (int i = 0; i < numOfSectors; i++)    // clear data for rabbit and for foxes
+            if (netInputs == null || netInputs.Length != SegmentCount + 1)
             {
-                netInputs[i] = sqrAnimalViewRange;
+                closestRabbitInSectors = new Rabbit[SegmentCount];
+                netInputs = new float[SegmentCount + 1];
             }
-;
+
+            netInputs[0] = Health;
+
+            for (int i = 1; i < SegmentCount + 1; i++)    // clear data for rabbit and for foxes
+                netInputs[i] = sqrAnimalViewRange;
+
+            closestRabbit = null;
+            float sqrDistanceToClosestRabbit = sqrFoxEatingDistance;
             // iterate over all rabbit objects in the world, find closest one (for eatting) and closest in each sector
             foreach (Animal animal in world.animalList)
             {
@@ -53,18 +55,17 @@ namespace World
                 // dont touch rabbit with less than 0.1 health
                 if (rabbitDist < sqrAnimalViewRange && rabbit.Health > 0.1f)
                 {
-
                     // assign closest rabbit for eatting
-                    if (rabbitDist < sqrDistanceToClosestGrass)
+                    if (rabbitDist < sqrDistanceToClosestRabbit)
                     {
-                        sqrDistanceToClosestGrass = rabbitDist;
+                        sqrDistanceToClosestRabbit = rabbitDist;
                         closestRabbit = rabbit;
                     }
 
-                    // rabbit with health < 0.5 doesnt count as input value
+                    // rabbit with health dont count as input value
                     if (rabbit.Health > 0.2f)
                     {
-                        int sector = GetSector(rabbitOffset.normalized);
+                        int sector = GetSector(rabbitOffset.normalized) + 1;    // +1 cos [0] is health
 
                         if (netInputs[sector] == sqrAnimalViewRange)
                         {   // fist rabbit in this sector
@@ -83,33 +84,25 @@ namespace World
             }
         }
 
-        private int GetSector(Vector3 grassOffset)
-        {
-            if (grassOffset.sqrMagnitude == 0f) return 0;
-            grassOffset = Quaternion.AngleAxis(ViewAngleOffset, Vector3.up) * grassOffset.normalized;
-            Vector3 cross = Vector3.Cross(ViewForward, grassOffset);
-            float angle = Vector3.Angle(ViewForward, grassOffset);
-            //angle += ViewAngleOffset;
-            if (cross.y > 0.001f)   // angle more than 180
-            {
-                angle = 360f - angle;
-                if (angle == 360f)
-                {
-                    angle = 0f;
-                    Debug.LogWarning(cross.y);
-                }
-            }
-            return (int)(angle * numOfSectors / 360f);
-        }
+
 
         protected override float[] CreateNetInputs()
         {
-            for (int i = 0; i < numOfSectors; i++)    // normalize data
-            {
-                netInputs[i] = sqrAnimalViewRange - netInputs[i];
-                netInputs[i] /= sqrAnimalViewRange;
-            }
-            if (Settings.World.foxHungerInNeuralNet) netInputs[Settings.Fox.neuralNetworkLayers[0] - 1] = Health;
+            //for (int i = 0; i < numOfSectors; i++)    // normalize data
+            //{
+            //    netInputs[i] = sqrAnimalViewRange - netInputs[i];
+            //    netInputs[i] /= sqrAnimalViewRange;
+            //}
+            //if (Settings.World.foxHungerInNeuralNet)
+            //{
+            //    int i = Settings.Fox.brainParams[0] - 1;
+            //    if (i < 0 || i >= netInputs.Length)
+            //    {
+            //        int asd = 0;
+
+            //    }
+            //    netInputs[i] = Health;
+            //}
             return netInputs;
         }
 
@@ -118,22 +111,14 @@ namespace World
             get { return Settings.Fox.foxMaxVelocity; }
         }
 
-        public override float HungerRate { get { return Settings.Fox.foxHungerRate; } }
-
-        private static bool firstInit = true;
+        public override float HungerRate
+        { get { return Settings.Fox.foxHungerRate; } }
 
         private new void Awake()
         {
-            numOfSectors = Settings.Fox.neuralNetworkLayers[0];
-            if (Settings.World.foxHungerInNeuralNet) numOfSectors--;
-            if (firstInit)
-            {
-                firstInit = false;
-                Debug.LogFormat("Fox: sectors: {0}, net size: {1}, values filled by surroundings: {2}, hunger in net: {3}", numOfSectors, Settings.Fox.neuralNetworkLayers[0], numOfSectors, Settings.World.foxHungerInNeuralNet);
-            }
+
             base.Awake();
-            closestRabbitInSectors = new Rabbit[numOfSectors];
-            netInputs = new float[Settings.Fox.neuralNetworkLayers[0]];
+
             sqrFoxEatingDistance = Settings.Fox.foxEatingDistance * Settings.Fox.foxEatingDistance;
             sqrAnimalViewRange = Settings.World.animalViewRange * Settings.World.animalViewRange;
         }
@@ -154,8 +139,8 @@ namespace World
 
         private void OnDrawGizmosSelected()
         {
-            float angle = 360f / numOfSectors;
-            for (int i = 0; i < numOfSectors; i++)
+            float angle = 360f / SegmentCount;
+            for (int i = 0; i < SegmentCount; i++)
             {
                 Gizmos.DrawLine(Position + transform.parent.position, Position + Quaternion.AngleAxis(i * angle + ViewAngleOffset, Vector3.up) * ViewForward * Settings.World.animalViewRange + transform.parent.position);
             }

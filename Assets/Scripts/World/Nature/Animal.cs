@@ -10,16 +10,18 @@ namespace World
         public bool UseLocalViewSpace;
 
         protected Vector3 velocity = Vector3.zero;
-        protected NeuralNetwork brain;
+        protected IAnimalBrain brain;
         protected int deadAtTurn;
         protected int currentTurn = 0;
         public World world;
-        public NeuralNetwork Brain { set { brain = value; } }
+        public IAnimalBrain Brain { set { brain = value; } }
 
         protected abstract float MaxVelocity { get; }
         public abstract float HungerRate { get; }
         public float Health { get; set; } = 1f;
         public bool IsAlive => Health > 0f;
+
+        protected int SegmentCount => brain.GetSegmentCount();
 
         abstract protected void ConsumeFood();
 
@@ -95,9 +97,9 @@ namespace World
 
             if ((MaxVelocity * velocity).sqrMagnitude > 0)
             {
-                transform.forward += (MaxVelocity * velocity).normalized;
-                transform.forward *= 0.5f;
-                transform.forward.Normalize();
+                transform.forward = (MaxVelocity * velocity).normalized;
+                //transform.forward *= 0.5f;
+                //transform.forward.Normalize();
             }
 
             transform.localPosition = newPosition;
@@ -124,6 +126,27 @@ namespace World
         protected void Start()
         {
             position = gameObject.transform.localPosition;
+        }
+
+        protected Vector3 ViewForward => UseLocalViewSpace ? Forward : Vector3.forward;
+        protected float ViewAngleOffset => 180f / SegmentCount;
+        protected int GetSector(Vector3 offset)
+        {
+            if (offset.sqrMagnitude == 0f) return 0;
+            offset = Quaternion.AngleAxis(-ViewAngleOffset, Vector3.up) * offset.normalized;
+            Vector3 cross = Vector3.Cross(ViewForward, offset);
+            float angle = Vector3.Angle(ViewForward, offset);
+            //angle += ViewAngleOffset;
+            if (cross.y > 0.001f)   // angle more than 180
+            {
+                angle = 360f - angle;
+                if (angle == 360f)
+                {
+                    angle = 0f;
+                    Debug.LogWarning(cross.y);
+                }
+            }
+            return (int)(angle * SegmentCount / 360f);
         }
     }
 }

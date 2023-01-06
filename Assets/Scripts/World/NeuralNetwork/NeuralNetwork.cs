@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class NeuralNetwork
+public class NeuralNetwork : IAnimalBrain
 {
     public Matrix<float>[] Weights => _weights;
     public Matrix<float>[] Biases => _biases;
@@ -37,7 +37,7 @@ public class NeuralNetwork
         _biases = biases;
     }
 
-    public Vector3 GetDecision(float[] input)
+    public override Vector3 GetDecision(float[] input)
     {
         for (int i = 1; i < input.Length; i++)
         {
@@ -69,12 +69,12 @@ public class NeuralNetwork
         var layersWeights = new List<Matrix<float>>();
         var layersBiases = new List<Matrix<float>>();
 
-        foreach (var matrixToken in network["weights"].Children().ToList())
+        foreach (JToken matrixToken in network["weights"].Children().ToList())
         {
             layersWeights.Add(StringTo2DMatrix(matrixToken));
         }
 
-        foreach (var matrixToken in network["biases"].Children().ToList())
+        foreach (JToken matrixToken in network["biases"].Children().ToList())
         {
             layersBiases.Add(StringTo1DMatrix(matrixToken));
         }

@@ -20,7 +20,7 @@ public class Buttons : MonoBehaviour
                 worldCreator.SaveRabbitBrainToFile(path);
             }
         }
-        catch (System.Exception)
+        catch (System.Exception e)
         {
         }
     }

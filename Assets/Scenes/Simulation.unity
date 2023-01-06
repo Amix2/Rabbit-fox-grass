@@ -650,7 +650,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &257427311
 Transform:
   m_ObjectHideFlags: 0
@@ -2835,7 +2835,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1083890490
 Transform:
   m_ObjectHideFlags: 0
@@ -2886,8 +2886,8 @@ MonoBehaviour:
     cameraMoveSensitivity: 10
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
-    fastTrainingMode: 0
-    renderOptions: 0
+    fastTrainingMode: 1
+    renderOptions: 2
     neuralNetworkWeightsRange:
     - -4
     - 4
@@ -2905,24 +2905,22 @@ MonoBehaviour:
     collectHistory: 1
     simulationDeltaTime: 0
     maxAnimalLifetime: 500
-    rabbitHungerInNeuralNet: 1
-    foxHungerInNeuralNet: 1
     multipliedAnimalSpawnRadius: 1
-    worldDefinitionFile: {fileID: 4900000, guid: 3b11c9c30321c9c4880f59e36731093f,
+    worldDefinitionFile: {fileID: 4900000, guid: 6fb3ec90c91de6544aa44c6b61263d51,
       type: 3}
-    numberOfWorldsToCreate: 1
+    numberOfWorldsToCreate: 100
   rabbitSettings:
-    neuralNetworkLayers: 310000003100000002000000
+    brainParams: 1000000020000000
     foodInRabbits: 1
     rabbitEatingDistance: 1
     rabbitMaxVelocity: 4
     rabbitHungerRate: 0.05
     rabbitEatingSpeed: 1
-    rabbitMultiplicationChance: 1
+    rabbitMultiplicationChance: 0
     healthDropAfterMultiplied: 0.2
     maxAnimalsInScene: 20
   foxSettings:
-    neuralNetworkLayers: 190000001900000002000000
+    brainParams: 1000000018000000
     foxEatingDistance: 0.5
     foxMaxVelocity: 4.5
     foxHungerRate: 0.02
@@ -4049,7 +4047,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh17746
+  m_Name: pb_Mesh18624
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

@@ -84,8 +84,6 @@ public class WorldSettings
     public bool collectHistory = true;
     public float simulationDeltaTime;
     public float maxAnimalLifetime;
-    public bool rabbitHungerInNeuralNet;
-    public bool foxHungerInNeuralNet;
     public float multipliedAnimalSpawnRadius = 1.0f;
 
     [Newtonsoft.Json.JsonIgnore]
@@ -97,7 +95,7 @@ public class WorldSettings
 [System.Serializable]
 public class RabbitSettings
 {
-    public int[] neuralNetworkLayers;
+    public int[] brainParams;
     public float foodInRabbits = 1f;
     public float rabbitEatingDistance = 1.3f;
     public float rabbitMaxVelocity = 2f;   // per sec
@@ -111,7 +109,7 @@ public class RabbitSettings
 [System.Serializable]
 public class FoxSettings
 {
-    public int[] neuralNetworkLayers;
+    public int[] brainParams;
     public float foxEatingDistance = 1.3f;
     public float foxMaxVelocity = 2f;   // per sec
     public float foxHungerRate = 0.5f;   // per sec
@@ -183,7 +181,6 @@ public class SettingsSerialized
     public static SettingsSerialized ReadFromFile()
     {
         string jsonText = File.ReadAllText(Path);
-        Debug.Log(jsonText);
         SettingsSerialized settings = JsonConvert.DeserializeObject<SettingsSerialized>(jsonText);
         settings.world.worldDefinitionFile = Resources.Load<TextAsset>(settings.worldFileName);
         return settings;

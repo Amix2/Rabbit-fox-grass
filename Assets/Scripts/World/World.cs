@@ -48,8 +48,8 @@ namespace World
         }
 
         public MultiTypeEventHandler<HistoryEventType, float, int, Vector3> WorldEvents { get; private set; }
-        internal NeuralNetwork RabbitBrain { get; set; }
-        internal NeuralNetwork FoxBrain { get; set; }
+        internal IAnimalBrain RabbitBrain { get; set; }
+        internal IAnimalBrain FoxBrain { get; set; }
 
         private void Awake()
         {
