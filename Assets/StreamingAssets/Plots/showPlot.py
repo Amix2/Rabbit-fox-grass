@@ -11,6 +11,7 @@ if __name__ == "__main__":
     fileLen = 0
     while(plt.get_fignums()):
         print(fileLen)
+        plt.clf()
         names = []
         values = {}
         title = ""
@@ -31,6 +32,10 @@ if __name__ == "__main__":
         if(fileLen < currFileLen):
             fileLen = currFileLen
             colorId = 0
+            for key,val in values.items():
+                for i, v in enumerate(val):
+                    if(i > 0):
+                        val[i] = val[i-1] * 0.5 + val[i] * 0.5
             for key,val in values.items():
                 plt.plot(val, color=colors[colorId], label=key)
                 colorId += 1

@@ -7,17 +7,17 @@ import graphviz
 
 file_path = filedialog.askopenfilename()
 
-  
+print(file_path)
 f = open(file_path)
 data = json.load(f)
 f.close()
 
-best = data["best"]
-tree = Tree()
-for item in best:
-    if("parent" in item):
-        tree.create_node(item["value"],  item["id"], parent=item["parent"])
-    else:
-        tree.create_node(item["value"],  item["id"])
-
-tree.show()
+bestList = data["best"]
+for best in bestList:
+    tree = Tree()
+    for item in best:
+        if("parent" in item):
+            tree.create_node(item["value"],  item["id"], parent=item["parent"])
+        else:
+            tree.create_node(item["value"],  item["id"])
+    tree.show()

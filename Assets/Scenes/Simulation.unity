@@ -650,7 +650,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &257427311
 Transform:
   m_ObjectHideFlags: 0
@@ -2835,7 +2835,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1083890490
 Transform:
   m_ObjectHideFlags: 0
@@ -2887,7 +2887,7 @@ MonoBehaviour:
     cameraScrollSensitivity: 5
     cameraRotateSensitivity: 500
     fastTrainingMode: 1
-    renderOptions: 2
+    renderOptions: 0
     neuralNetworkWeightsRange:
     - -4
     - 4
@@ -2895,35 +2895,35 @@ MonoBehaviour:
     - -4
     - 4
   world:
-    animalViewRange: 15
+    animalViewRange: 20
     allowedObjectNames:
     - grass
     - rabbit
     - fox
-    foodInGrass: 0.5
-    grassGrowthRate: 0.15
-    collectHistory: 1
+    foodInGrass: 1
+    grassGrowthRate: 0.05
+    collectHistory: 0
     simulationDeltaTime: 0
-    maxAnimalLifetime: 500
+    maxAnimalLifetime: 300
     multipliedAnimalSpawnRadius: 1
-    worldDefinitionFile: {fileID: 4900000, guid: 6fb3ec90c91de6544aa44c6b61263d51,
+    worldDefinitionFile: {fileID: 4900000, guid: 146264d63cdde944f972ba0be80cd7ff,
       type: 3}
-    numberOfWorldsToCreate: 100
+    numberOfWorldsToCreate: 1
   rabbitSettings:
-    brainParams: 1000000020000000
+    brainParams: 1000000010000000
     foodInRabbits: 1
     rabbitEatingDistance: 1
-    rabbitMaxVelocity: 4
-    rabbitHungerRate: 0.05
+    rabbitMaxVelocity: 20
+    rabbitHungerRate: 0.001
     rabbitEatingSpeed: 1
-    rabbitMultiplicationChance: 0
+    rabbitMultiplicationChance: 1
     healthDropAfterMultiplied: 0.2
     maxAnimalsInScene: 20
   foxSettings:
-    brainParams: 1000000018000000
-    foxEatingDistance: 0.5
+    brainParams: 0100000001000000
+    foxEatingDistance: 1
     foxMaxVelocity: 4.5
-    foxHungerRate: 0.02
+    foxHungerRate: 0.0008
     foxEatingSpeed: 0.8
     foxMultiplicationChance: 1
     healthDropAfterMultiplied: 0.5
@@ -4047,7 +4047,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh18624
+  m_Name: pb_Mesh22918
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

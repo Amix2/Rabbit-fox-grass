@@ -28,6 +28,10 @@ namespace World
             else
             {
                 int ind = time - birthTime;
+                while (ind < 0)
+                    ind++;
+                while (ind >= Positions.Count)
+                    ind--;
                 position = Positions[ind];
                 return true;
             }

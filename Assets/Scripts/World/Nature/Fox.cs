@@ -14,6 +14,11 @@ namespace World
         {
             if (closestRabbit != null)
             {
+                Vector3 rabbitPos = closestRabbit.Position;
+                Vector3 rabbitOffset = (rabbitPos - position);
+                float rabbitDist = rabbitOffset.sqrMagnitude;
+                if (rabbitDist > sqrFoxEatingDistance)
+                    return;
                 float food = closestRabbit.Consumed(Settings.Fox.foxEatingSpeed * Settings.World.simulationDeltaTime);
                 // Debug.Log("FOx eat: " + food + " Health: "+ Health) ;
                 Health += food;
@@ -42,7 +47,7 @@ namespace World
                 netInputs[i] = sqrAnimalViewRange;
 
             closestRabbit = null;
-            float sqrDistanceToClosestRabbit = sqrFoxEatingDistance;
+            float sqrDistanceToClosestRabbit = float.MaxValue;// sqrFoxEatingDistance;
             // iterate over all rabbit objects in the world, find closest one (for eatting) and closest in each sector
             foreach (Animal animal in world.animalList)
             {
@@ -52,16 +57,15 @@ namespace World
                 Vector3 rabbitPos = rabbit.Position;
                 Vector3 rabbitOffset = (rabbitPos - position);
                 float rabbitDist = rabbitOffset.sqrMagnitude;
+                // assign closest rabbit for eatting
+                if (rabbitDist < sqrDistanceToClosestRabbit)
+                {
+                    sqrDistanceToClosestRabbit = rabbitDist;
+                    closestRabbit = rabbit;
+                }
                 // dont touch rabbit with less than 0.1 health
                 if (rabbitDist < sqrAnimalViewRange && rabbit.Health > 0.1f)
                 {
-                    // assign closest rabbit for eatting
-                    if (rabbitDist < sqrDistanceToClosestRabbit)
-                    {
-                        sqrDistanceToClosestRabbit = rabbitDist;
-                        closestRabbit = rabbit;
-                    }
-
                     // rabbit with health dont count as input value
                     if (rabbit.Health > 0.2f)
                     {
@@ -84,7 +88,16 @@ namespace World
             }
         }
 
+        public override Vector3 GetDecision() 
+        {
+            UseLocalViewSpace = false;
+            if (closestRabbit == null)
+                return new Vector3(0,0,0);
 
+            Vector3 rabbitPos = closestRabbit.Position;
+            Vector3 rabbitOffset = (rabbitPos - position);
+            return rabbitOffset.normalized;
+        }
 
         protected override float[] CreateNetInputs()
         {

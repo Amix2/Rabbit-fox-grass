@@ -32,22 +32,34 @@ namespace DefaultNamespace
 
         internal static void SaveToFile(string filePath, IAnimalBrain[] animalBrains, float[] fitnesses)
         {
-            var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("{ \"brains\":");
-            stringBuilder.AppendLine("[");
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine("{ \"brains\":");
+                stringBuilder.AppendLine("[");
+                System.IO.File.WriteAllText(filePath, stringBuilder.ToString());
+            }
             for (int i = 0; i < animalBrains.Length; i++)
             {
+                var stringBuilder = new StringBuilder();
                 animalBrains[i].AddToFile(fitnesses[i], stringBuilder);
                 if (i < animalBrains.Length - 1) stringBuilder.AppendLine(",");
+                System.IO.File.AppendAllText(filePath, stringBuilder.ToString());
             }
-
-            stringBuilder.AppendLine("],");
-            stringBuilder.AppendLine("\"best\":");
-            stringBuilder.AppendLine("[");
-            animalBrains[0].AsBestToFile(stringBuilder);
-            Debug.Log(stringBuilder.ToString());
-            stringBuilder.AppendLine("] }");
-            System.IO.File.WriteAllText(filePath, stringBuilder.ToString());
+            {
+                var stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine("],");
+                stringBuilder.AppendLine("\"best\":");
+                stringBuilder.AppendLine("[");
+                for (int i = 0; i < Math.Min(animalBrains.Length, 3); i++)
+                {
+                    stringBuilder.AppendLine("[");
+                    animalBrains[i].AsBestToFile(stringBuilder);
+                    stringBuilder.AppendLine("]");
+                    if (i < Math.Min(animalBrains.Length-1, 3-1)) stringBuilder.AppendLine(",");
+                }
+                stringBuilder.AppendLine("] }");
+                System.IO.File.AppendAllText(filePath, stringBuilder.ToString());
+            }
         }
 
         public static IAnimalBrain[] ReadFromFile(string filePath)

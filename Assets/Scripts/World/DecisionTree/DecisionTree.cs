@@ -5,24 +5,28 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class RandomEnum
+internal class RandomEnum
 {
-    static System.Random _R = new System.Random();
+    private static System.Random _R = new System.Random();
+
     public static T Value<T>()
     {
         var v = Enum.GetValues(typeof(T));
         return (T)v.GetValue(_R.Next(v.Length));
     }
 }
+
 public abstract class ITreeNode
 {
     public static int MaxValue = 1000;
+
     public abstract Vector3 GetDecision(float[] floats);
+
     public abstract string ToJsonString();
 
     public abstract void AsBestToFile(StringBuilder stringBuilder, string parent, string add);
-    public abstract bool IsLeaf();
 
+    public abstract bool IsLeaf();
 }
 
 public class TreeLeaf : ITreeNode
@@ -32,16 +36,19 @@ public class TreeLeaf : ITreeNode
 
     [SerializeField]
     public Type type;
+
     public string CLASS_NAME = "TreeLeaf";
 
     public TreeLeaf(Type type)
     {
         this.type = type;
     }
-    public TreeLeaf() 
+
+    public TreeLeaf()
     {
-        type = RandomEnum.Value<Type>();   
+        type = RandomEnum.Value<Type>();
     }
+
     public TreeLeaf(string jsonString)
     {
         TreeLeaf obj = JsonConvert.DeserializeObject<TreeLeaf>(jsonString);
@@ -50,8 +57,6 @@ public class TreeLeaf : ITreeNode
 
     public override string ToJsonString()
     { return JsonConvert.SerializeObject(this, Formatting.None); }
-
-
 
     public override Vector3 GetDecision(float[] floats)
     {
@@ -74,7 +79,7 @@ public class TreeLeaf : ITreeNode
 
     public override void AsBestToFile(StringBuilder stringBuilder, string parent, string add)
     {
-        stringBuilder.Append(String.Format("{{\"parent\":\"{0}\", \"id\":\"{1}\", \"value\":\"{2}\"}},", parent, parent+add,type.ToString()));
+        stringBuilder.Append(String.Format("{{\"parent\":\"{0}\", \"id\":\"{1}\", \"value\":\"{2}\"}},", parent, parent + add, type.ToString()));
     }
 
     public override bool IsLeaf()
@@ -86,11 +91,14 @@ public class TreeLeaf : ITreeNode
 public class TreeNode : ITreeNode
 {
     public ITreeNode lessChild, moreChild;
-    public enum Operator { MIN, MAX, AVG, ADD };
-    Operator leftOper;
-    Operator rightOper;
-    List<int> leftValues;
-    List<int> rightValues;
+
+    public enum Operator
+    { MIN, MAX, AVG, ADD };
+
+    public Operator leftOper;
+    public Operator rightOper;
+    public List<int> leftValues;
+    public List<int> rightValues;
     public string CLASS_NAME = "TreeNode";
 
     public TreeNode(ITreeNode lessChild, ITreeNode moreChild, Operator leftOper, List<int> leftValues, Operator rightOper, List<int> rightValues)
@@ -114,33 +122,37 @@ public class TreeNode : ITreeNode
         this.rightValues = RandomValues(valueProb, valuesSize);
     }
 
-    List<int> RandomValues(float prob, int valuesSize)
+    private List<int> RandomValues(float prob, int valuesSize)
     {
         HashSet<int> set = new HashSet<int>();
         bool numValuePresent = false;
 
-        while(UnityEngine.Random.Range(0.0f, 1.0f) < prob / Mathf.Max(1, set.Count) || set.Count == 0)
+        while (UnityEngine.Random.Range(0.0f, 1.0f) < prob / Mathf.Max(1, set.Count) || set.Count == 0)
         {
             int value = UnityEngine.Random.Range(0, valuesSize + 1);
-            if(value == valuesSize && !numValuePresent)
+            if (value == valuesSize)
             {
-                numValuePresent = true;
-                set.Add(-1*UnityEngine.Random.Range(0, MaxValue));
+                if (!numValuePresent)
+                {
+                    numValuePresent = true;
+                    set.Add(-1 * UnityEngine.Random.Range(0, MaxValue));
+                }
             }
             else
             {
                 set.Add(value);
             }
         }
-
-        return set.ToList();
+        var list = set.ToList();
+        list.Sort();
+        return list;
     }
 
     public void VisitAll(Action<ITreeNode> visitor)
     {
         visitor(this);
 
-        if(lessChild != null)
+        if (lessChild != null)
         {
             if (lessChild.IsLeaf())
                 visitor(lessChild);
@@ -162,7 +174,7 @@ public class TreeNode : ITreeNode
         leftValues = JsonConvert.DeserializeObject<List<int>>(objDict["leftValues"]);
         rightValues = JsonConvert.DeserializeObject<List<int>>(objDict["rightValues"]);
         string lessChildClassName = JsonConvert.DeserializeObject<Dictionary<string, string>>(objDict["LessChild"])["CLASS_NAME"];
-        if(lessChildClassName == "TreeNode")
+        if (lessChildClassName == "TreeNode")
         {
             lessChild = new TreeNode(objDict["LessChild"]);
         }
@@ -192,8 +204,7 @@ public class TreeNode : ITreeNode
         dict.Add("LessChild", lessChild.ToJsonString());
         dict.Add("MoreChild", moreChild.ToJsonString());
 
-        return JsonConvert.SerializeObject(dict, Formatting.None); 
-    
+        return JsonConvert.SerializeObject(dict, Formatting.None);
     }
 
     public override Vector3 GetDecision(float[] floats)
@@ -210,15 +221,19 @@ public class TreeNode : ITreeNode
                 case Operator.MIN:
                     leftVal = MIN(floats, values);
                     break;
+
                 case Operator.MAX:
                     leftVal = MAX(floats, values);
                     break;
+
                 case Operator.AVG:
                     leftVal = AVG(floats, values);
                     break;
+
                 case Operator.ADD:
                     leftVal = ADD(floats, values);
                     break;
+
                 default:
                     leftVal = 0;
                     break;
@@ -231,33 +246,48 @@ public class TreeNode : ITreeNode
     private float ADD(float[] floats, List<int> values)
     {
         float sum = 0;
-        foreach(int val in values)
+        foreach (int val in values)
+        {
+            if (floats.Length <= val)
+                continue;
             if (val >= 0)
                 sum += floats[val];
             else
                 sum += ((float)Math.Abs(val)) / MaxValue;
+        }
         return sum;
     }
+
     private float MIN(float[] floats, List<int> values)
     {
         float minval = 0;
         foreach (int val in values)
+        {
+            if (floats.Length <= val)
+                continue;
             if (val >= 0)
                 minval = Math.Min(minval, floats[val]);
             else
-                minval = Math.Min(minval, ((float)Math.Abs(val))/MaxValue);
+                minval = Math.Min(minval, ((float)Math.Abs(val)) / MaxValue);
+        }
         return minval;
     }
+
     private float MAX(float[] floats, List<int> values)
     {
         float minval = 0;
         foreach (int val in values)
+        {
+            if (floats.Length <= val)
+                continue;
             if (val >= 0)
                 minval = Math.Max(minval, floats[val]);
             else
-                minval = Math.Max(minval, ((float)Math.Abs(val)) / MaxValue);   
+                minval = Math.Max(minval, ((float)Math.Abs(val)) / MaxValue);
+        }
         return minval;
     }
+
     private float AVG(float[] floats, List<int> values)
     {
         return ADD(floats, values) / values.Count;
@@ -274,11 +304,10 @@ public class TreeNode : ITreeNode
         dict.Add("LessChild", lessChild.ToJsonString());
         dict.Add("MoreChild", moreChild.ToJsonString());
 
-        stringBuilder.Append(String.Format("{{\"parent\":\"{0}\", \"id\":\"{1}\", \"value\":\"{2}({3}) < {4}({5})\"}},", parent, parent+add
+        stringBuilder.Append(String.Format("{{\"parent\":\"{0}\", \"id\":\"{1}\", \"value\":\"{2}({3}) < {4}({5})\"}},", parent, parent + add
             , dict["leftOper"], dict["leftValues"], dict["rightOper"], dict["rightValues"]));
         lessChild.AsBestToFile(stringBuilder, parent + add, "L");
         moreChild.AsBestToFile(stringBuilder, parent + add, "R");
-
     }
 
     public override bool IsLeaf()
@@ -289,21 +318,27 @@ public class TreeNode : ITreeNode
 
 public class DecisionTree : IAnimalBrain
 {
-    int segmentCount;
-    int maxSize;
-    TreeNode root;
+    private int segmentCount;
+    private int maxSize;
+    private int currentNodeCount;
+    private TreeNode root;
+
     public DecisionTree(string jsonString)
     {
         Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
-        root =  new TreeNode(dict["TreeData"]);
+        root = new TreeNode(dict["TreeData"]);
         segmentCount = int.Parse(dict["SegmentCount"]);
         maxSize = int.Parse(dict["MaxSize"]);
+        currentNodeCount = int.Parse(dict["currentNodeCount"]);
+        CalculateNodeCount();
     }
+
     public DecisionTree(int[] treeParams)
     {
         segmentCount = UnityEngine.Random.Range(3, treeParams[0]);
         maxSize = treeParams[1];
         root = CreateRandom(0.5f, 1);
+        CalculateNodeCount();
     }
 
     public DecisionTree(DecisionTree other)
@@ -311,15 +346,108 @@ public class DecisionTree : IAnimalBrain
         float timeStart = Time.realtimeSinceStartup;
         segmentCount = other.segmentCount;
         maxSize = other.maxSize;
-
-        root = new TreeNode(other.root.ToJsonString());
-        //root = CreateRandom(0.5f, 1);
+        currentNodeCount = other.currentNodeCount;
+        //root = new TreeNode(other.root.ToJsonString());
+        root = CreateRandom(0.5f, 1);
         //Debug.Log("DecisionTree Mutate time: " + (Time.realtimeSinceStartup - timeStart));
 
+        float dropChildprop = 0.1f / (float)currentNodeCount/ (float)currentNodeCount;
+        float addChildprop = 0.20f / (float)currentNodeCount;
+        float valueListPop = 0.20f / (float)currentNodeCount;
+        float segmentCountPop = 0.20f / (float)currentNodeCount;
+
+        if (UnityEngine.Random.Range(0.0f, 1.0f) < segmentCountPop)
+            segmentCount += UnityEngine.Random.Range(-2, 2);
+        if (segmentCount < 3)
+            segmentCount = 3;
+
+        Action<ITreeNode> mutateNodesVisitor = delegate (ITreeNode node)
+        {
+            if (!node.IsLeaf())
+            {
+                TreeNode treeNode = node as TreeNode;
+                if (UnityEngine.Random.Range(0.0f, 1.0f) < dropChildprop)
+                    if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5)
+                        treeNode.lessChild = null;
+                    else
+                        treeNode.moreChild = null;
+
+                if (UnityEngine.Random.Range(0.0f, 1.0f) < addChildprop)
+                    if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5)
+                        if (treeNode.lessChild == null)
+                            treeNode.lessChild = new TreeNode(GetSegmentCount(), 1);
+                        else
+                        if (treeNode.moreChild == null)
+                            treeNode.moreChild = new TreeNode(GetSegmentCount(), 1);
+
+                if (UnityEngine.Random.Range(0.0f, 1.0f) < valueListPop)
+                {
+                    if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5)
+                    {
+                        if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.1)
+                        {
+                            treeNode.leftOper = RandomEnum.Value<TreeNode.Operator>();
+                        }
+                        else
+                        {
+                            HashSet<int> values = new HashSet<int>(treeNode.leftValues);
+                            MutateValues(treeNode.leftValues, values);
+                            treeNode.leftValues = values.ToList();
+                        }
+                    }
+                    else
+                    {
+                        if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.1)
+                        {
+                            treeNode.rightOper = RandomEnum.Value<TreeNode.Operator>();
+                        }
+                        else
+                        {
+                            HashSet<int> values = new HashSet<int>(treeNode.rightValues);
+                            MutateValues(treeNode.rightValues, values);
+                            treeNode.rightValues = values.ToList();
+                        }
+                    }
+                }
+            }
+        };
+        root.VisitAll(mutateNodesVisitor);
+
+        AddLeafsToEndings(root);
+
+        CalculateNodeCount();
+
+        void MutateValues(List<int> valuesList, HashSet<int> values)
+        {
+            bool hasSimplevalue = valuesList.Exists(x => x < 0);
+            if (hasSimplevalue && UnityEngine.Random.Range(0.0f, 1.0f) < 1.0f / values.Count)
+            {
+                int value = valuesList.Find(x => x < 0);
+                value = (int)UnityEngine.Random.Range(value - ITreeNode.MaxValue * 0.1f, value + ITreeNode.MaxValue * 0.1f);
+                if (value < -ITreeNode.MaxValue)
+                    value = -ITreeNode.MaxValue;
+                if (value >= 0)
+                    value = -1;
+            }
+            if (UnityEngine.Random.Range(0.0f, 1.0f) < 0.5)
+            {
+                int randomID = UnityEngine.Random.Range(0, values.Count);
+                values.Remove(valuesList[randomID]);
+            }
+            else
+            {
+                int randomID = UnityEngine.Random.Range(0, TreeValueSize);
+                values.Add(randomID);
+            }
+        }
     }
 
     public override Vector3 GetDecision(float[] floats)
     {
+        if(floats.Length != TreeValueSize)
+        {
+            int t = 0;
+        }
         return root.GetDecision(floats);
     }
 
@@ -328,25 +456,27 @@ public class DecisionTree : IAnimalBrain
         return segmentCount;
     }
 
-    TreeNode CreateRandom(float childProp, float valueProp)
+    private int TreeValueSize => 2 * GetSegmentCount() + 1;////////////////////////////////////////////////
+
+    private TreeNode CreateRandom(float childProp, float valueProp)
     {
         float timeStart = Time.realtimeSinceStartup;
-        TreeNode root = new TreeNode(GetSegmentCount(), valueProp);
-        int nodeCount = 0;
+        TreeNode root = new TreeNode(TreeValueSize, valueProp);
+        currentNodeCount = 0;
 
         Action<ITreeNode> addNodesVisitor = delegate (ITreeNode node)
         {
             Debug.Assert(!node.IsLeaf());
             TreeNode treeNode = node as TreeNode;
-            if (UnityEngine.Random.Range(0.0f, 1.0f) < childProp && nodeCount < maxSize)
+            if (UnityEngine.Random.Range(0.0f, 1.0f) < childProp && currentNodeCount < maxSize)
             {
-                nodeCount++;
-                treeNode.lessChild = new TreeNode(GetSegmentCount(), valueProp);
+                currentNodeCount++;
+                treeNode.lessChild = new TreeNode(TreeValueSize, valueProp);
             }
-            if (UnityEngine.Random.Range(0.0f, 1.0f) < childProp && nodeCount < maxSize)
+            if (UnityEngine.Random.Range(0.0f, 1.0f) < childProp && currentNodeCount < maxSize)
             {
-                nodeCount++;
-                treeNode.moreChild = new TreeNode(GetSegmentCount(), valueProp);
+                currentNodeCount++;
+                treeNode.moreChild = new TreeNode(TreeValueSize, valueProp);
             }
         };
         root.VisitAll(addNodesVisitor);
@@ -355,6 +485,18 @@ public class DecisionTree : IAnimalBrain
 
         //Debug.Log("DecisionTree CreateRandom time: " + (Time.realtimeSinceStartup - timeStart) + ", size: " + nodeCount);
         return root;
+    }
+
+    private int CalculateNodeCount()
+    {
+        int count = 0;
+        Action<ITreeNode> nodesVisitor = delegate (ITreeNode node)
+        {
+            if (!node.IsLeaf())
+                count++;
+        };
+        root.VisitAll(nodesVisitor);
+        return count;
     }
 
     private static void AddLeafsToEndings(TreeNode root)
@@ -375,7 +517,6 @@ public class DecisionTree : IAnimalBrain
                 {
                     int t = 0;
                 }
-
             }
         };
 
@@ -389,8 +530,10 @@ public class DecisionTree : IAnimalBrain
         dict["TreeData"] = root.ToJsonString();
         dict["SegmentCount"] = segmentCount.ToString();
         dict["MaxSize"] = maxSize.ToString();
+        dict["currentNodeCount"] = currentNodeCount.ToString();
         stringBuilder.AppendLine(JsonConvert.SerializeObject(dict, Formatting.None));
     }
+
     public override void AsBestToFile(StringBuilder stringBuilder)
     {
         stringBuilder.Append(String.Format("{{\"id\":\"{0}\", \"value\":\"segmentCount: {1}\"}},", "T", segmentCount));

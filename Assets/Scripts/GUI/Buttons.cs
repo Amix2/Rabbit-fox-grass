@@ -11,7 +11,7 @@ public class Buttons : MonoBehaviour
         try
         {
             var extensions = new[] {
-            new ExtensionFilter("Text Files", "txt")
+            new ExtensionFilter("json", "json")
             };
             string path = StandaloneFileBrowser.SaveFilePanel("Choose file to safe", "", "", extensions);
 
@@ -30,7 +30,7 @@ public class Buttons : MonoBehaviour
         try
         {
             var extensions = new[] {
-            new ExtensionFilter("Text Files", "txt")
+            new ExtensionFilter("json", "json")
             };
             string[] paths = StandaloneFileBrowser.OpenFilePanel("Choose file to load", "", extensions, false);
 
@@ -50,7 +50,7 @@ public class Buttons : MonoBehaviour
         try
         {
             var extensions = new[] {
-            new ExtensionFilter("Text Files", "txt")
+            new ExtensionFilter("json", "json")
             };
             string path = StandaloneFileBrowser.SaveFilePanel("Choose file to safe", "", "", extensions);
 
@@ -69,7 +69,7 @@ public class Buttons : MonoBehaviour
         try
         {
             var extensions = new[] {
-            new ExtensionFilter("Text Files", "txt")
+            new ExtensionFilter("json", "json")
             };
             string[] paths = StandaloneFileBrowser.OpenFilePanel("Choose file to load", "", extensions, false);
 

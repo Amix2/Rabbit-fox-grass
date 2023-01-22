@@ -22,6 +22,8 @@ namespace World
 
         public bool IsAlive { get => animalList.Count > 0; }
 
+        int IterCount = 0;
+
         public Vector2Int Size
         {
             get => size; set
@@ -34,6 +36,27 @@ namespace World
         public WorldHistory History { get; private set; }
         private bool render;
 
+        void OnDestroy()
+        {
+            for (var i = gameObject.transform.childCount - 1; i >= 0; i--)
+            {
+                Destroy(gameObject.transform.GetChild(i).gameObject);
+            }
+            //foreach (Animal a in animalList)
+            //    Destroy(a);
+
+            //foreach (Grass a in grassList)
+            //    Destroy(a);
+
+            //foreach (Animal a in deadAnimals)
+            //    Destroy(a);
+
+            //foreach (Tuple<GameObject, Vector3> a in multiplyRabbitsQueue)
+            //    Destroy(a.Item1);
+
+            //foreach (Tuple<GameObject, Vector3> a in multiplyFoxesQueue)
+            //    Destroy(a.Item1);
+        }
         public bool Render
         {
             get
@@ -46,6 +69,7 @@ namespace World
                 if (!value) DisableModel();
             }
         }
+
 
         public MultiTypeEventHandler<HistoryEventType, float, int, Vector3> WorldEvents { get; private set; }
         internal IAnimalBrain RabbitBrain { get; set; }
@@ -88,6 +112,10 @@ namespace World
                 animalList.Remove(deadAnimal);
             }
             MultiplyAnimals();
+
+            IterCount++;
+            if (IterCount > Settings.World.maxAnimalLifetime)
+                return false;
             return IsAlive;
         }
 

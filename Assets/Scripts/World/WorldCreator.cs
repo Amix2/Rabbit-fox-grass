@@ -42,10 +42,15 @@ namespace World
 
             Profiler.BeginSample("rabbits");
 
-            Parallel.ForEach(animalIterator, animal =>
+            //Parallel.ForEach(animalIterator, animal =>
+            //{
+            //    animal.UpdateTurn();
+            //});
+
+            foreach(Animal animal in animalIterator)
             {
                 animal.UpdateTurn();
-            });
+            }
             animalIterator.Reset();
 
             Profiler.EndSample();
@@ -102,6 +107,7 @@ namespace World
                     SaveFoxBrainToFile(brainPath + "fox_brain_" + id + "_" + iterationNumber + ".txt");
                 }
                 MutateBrains();
+                DestroyAllWorlds();
                 CreateAllWorlds();
             }
         }
@@ -182,6 +188,12 @@ namespace World
             if (!Settings.Player.fastTrainingMode && RunSimulation)
             {
                 UpdateAllWorlds();
+                SetMoveableObjectIterators();
+                foreach (Animal animal in animalIterator)
+                {
+                    animal.UpdatePosition();
+                }
+                animalIterator.Reset();
             }
         }
 
@@ -190,9 +202,6 @@ namespace World
             if (Settings.Player.fastTrainingMode && RunSimulation)
             {
                 UpdateAllWorlds();
-            }
-            if (RunSimulation)
-            {
                 SetMoveableObjectIterators();
                 foreach (Animal animal in animalIterator)
                 {
@@ -241,6 +250,12 @@ namespace World
 
         public void DestroyAllWorlds()
         {
+            for (int i = worldGameObjects.Count - 1; i >= 0; i--)
+            {
+                Destroy(worldGameObjects[i].gameObject);
+                worldGameObjects.RemoveAt(i);
+            }
+
             for (int i = worlds.Count - 1; i >= 0; i--)
             {
                 Destroy(worlds[i].gameObject);

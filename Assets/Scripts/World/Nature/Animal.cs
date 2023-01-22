@@ -31,13 +31,29 @@ namespace World
 
         abstract protected void MultiplyAnimal();
 
+        public virtual Vector3 GetDecision()
+        {
+            return brain.GetDecision(CreateNetInputs());
+        }
+
         /// <summary>
         /// Parallel update, sets velocity
         /// </summary>
         /// <returns></returns>
+        /// 
+        void OnDestroy()
+        {
+            for (var i = gameObject.transform.childCount - 1; i >= 0; i--)
+            {
+                Destroy(gameObject.transform.GetChild(i).gameObject);
+            }
+        }
         public bool UpdateTurn()
         {
-            if (!IsAlive) throw new Exception("Update on dead animal");
+            //if (!IsAlive)
+            //{
+            //    throw new Exception("Update on dead animal");
+            //}
 
             world.WorldEvents.Invoke(this, HistoryEventType.POSITION, Position);
 
@@ -65,39 +81,44 @@ namespace World
 
             // Get decision from net
             Profiler.BeginSample("run NeuralNet");
-            Vector3 decision = brain.GetDecision(CreateNetInputs());
+            Vector3 decision = GetDecision();
             Profiler.EndSample();
 
             // Set velocity based on mode
             if (Settings.Player.fastTrainingMode)
             {
-                decision = decision * Settings.World.simulationDeltaTime / World.deltaTime;
             }
+                decision = decision / 0.01f;
             if (UseLocalViewSpace)
             {
-                velocity = Forward * decision.x + Right * decision.z;
+                Vector3 velChange = Forward * decision.x + Right * decision.z;
+                velocity += velChange * MaxVelocity/5;
+                if (velocity.magnitude > MaxVelocity)
+                    velocity = velocity.normalized * MaxVelocity;
             }
             else
             {
-                velocity = decision;
+                velocity = decision* MaxVelocity;
             }
             return true;
         }
 
-        private void HandleDeath()
+        protected void HandleDeath()
         {
             world.WorldEvents.Invoke(this, HistoryEventType.DEATH, Position);
         }
 
         public void UpdatePosition()
         {
-            var newPosition = transform.localPosition + (MaxVelocity * velocity * Time.deltaTime);
+            var newPosition = transform.localPosition + (velocity * 0.0002f);
             newPosition.x = Mathf.Clamp(newPosition.x, 0.5f, worldSize.x - 0.5f);
             newPosition.z = Mathf.Clamp(newPosition.z, 0.5f, worldSize.y - 0.5f);
 
-            if ((MaxVelocity * velocity).sqrMagnitude > 0)
+            var velDir = velocity.normalized;
+
+            if (velDir.sqrMagnitude > 0)
             {
-                transform.forward = (MaxVelocity * velocity).normalized;
+                transform.forward = velDir;
                 //transform.forward *= 0.5f;
                 //transform.forward.Normalize();
             }

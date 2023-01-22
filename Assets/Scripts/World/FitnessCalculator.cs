@@ -66,7 +66,7 @@ namespace World
             foreach (AnimalHistory rabbitHist in worldHistory.rabbits)
             {
                 float sqrAvgDistanceToClosest = AvgSqrDistaceToClosestTarget(worldHistory.grassPositions, rabbitHist.Positions);
-                scoreSum += (rabbitHist.FoodEaten + 1f) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
+                scoreSum += (rabbitHist.LifeTime + rabbitHist.FoodEaten) * (worldHistory.worldSize.sqrMagnitude - sqrAvgDistanceToClosest) / worldHistory.worldSize.sqrMagnitude;
             }
             float scoreAvg = scoreSum / worldHistory.rabbits.Count;
 

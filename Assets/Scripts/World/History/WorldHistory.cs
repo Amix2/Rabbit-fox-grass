@@ -101,6 +101,7 @@ namespace World
         {
             if (!aliveAnimals.ContainsKey(animal))
             {
+                return;
                 throw new System.Exception("Animal has not yet been born");
             }
             aliveAnimals.TryRemove(animal, out AnimalHistory hist);
@@ -112,6 +113,7 @@ namespace World
         {
             if (aliveAnimals.ContainsKey(animal))
             {
+                return;
                 throw new System.Exception("Animal is a Jezus, he was reborned");
             }
             aliveAnimals.TryAdd(animal, new AnimalHistory { BirthTime = LifeTime });
@@ -121,6 +123,7 @@ namespace World
         {
             if (!aliveAnimals.ContainsKey(animal))
             {
+                return;
                 throw new System.Exception("Rabbit has not yet been born");
             }
             var hist = aliveAnimals[animal];
@@ -132,6 +135,7 @@ namespace World
         {
             if (!aliveAnimals.ContainsKey(animal))
             {
+                return;
                 throw new System.Exception("Rabbit has not yet been born");
             }
             var hist = aliveAnimals[animal];

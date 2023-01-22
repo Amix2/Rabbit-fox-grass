@@ -31,7 +31,7 @@ namespace World
         // fill netInputs with suqre distance to nearest objects
         protected override void CollectInfoAboutSurroundings()
         {
-            if (netInputs == null || netInputs.Length != SegmentCount + 1)
+            if (netInputs == null || netInputs.Length != 2*SegmentCount + 1)
             {
                 closestGrassInSectors = new Grass[SegmentCount];
                 netInputs = new float[SegmentCount + SegmentCount + 1];
@@ -117,6 +117,7 @@ namespace World
         }
         protected override float[] CreateNetInputs()
         {
+            netInputs[0] = Health;
             for (int i = 0; i < SegmentCount; i++)    // normalize data
             {
                 int netID = i + 1;
@@ -166,6 +167,10 @@ namespace World
             if (Health < 0.1f) return 0f;
             amount = Mathf.Min(amount, Health);
             Health = Mathf.Clamp01(Health - amount);
+            if (Health <= 0f)
+            {
+                HandleDeath();
+            }
             return FoodAmount * amount;
         }
 

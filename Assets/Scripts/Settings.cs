@@ -56,7 +56,7 @@ public class Settings : MonoBehaviour
         instance.foxSettings = settings.FoxSettings;
         instance.neuralMutation = settings.NeuralMutation;
 #endif
-        instance.world.simulationDeltaTime = Time.fixedDeltaTime;
+        instance.world.simulationDeltaTime = Time.fixedDeltaTime*10;
 
     }
 }
