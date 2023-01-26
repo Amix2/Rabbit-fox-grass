@@ -5,6 +5,7 @@ namespace World
     public class Rabbit : Animal, IEdible
     {
         private Grass closestGrass;
+        private Fox closestFox;
         private Grass[] closestGrassInSectors;
         private float[] netInputs;
         private float[] sectorGrassDistances;
@@ -15,7 +16,7 @@ namespace World
 
         protected override void ConsumeFood()
         {
-            if (closestGrass != null)
+            if (closestGrass != null && (position - closestGrass.Position).sqrMagnitude < sqrRabbitEatingDistance)
             {
                 float food = closestGrass.Consumed(Settings.Rabbit.rabbitEatingSpeed * Settings.World.simulationDeltaTime);
                 Health += food;
@@ -43,7 +44,8 @@ namespace World
 
 
             // clear data from previous runs
-            float sqrDistanceToClosestGrass = sqrRabbitEatingDistance;
+            float sqrDistanceToClosestGrass = sqrAnimalViewRange;
+            float sqrDistanceToClosestFox = sqrAnimalViewRange;
             closestGrass = null;
             for (int i = 0; i < SegmentCount; i++)    // clear data for grass and for foxes
             {
@@ -98,6 +100,12 @@ namespace World
                 float foxDist = foxOffset.sqrMagnitude;
                 if(foxDist < sqrAnimalViewRange)
                 {
+                    // assign closest grass for eatting
+                    if (foxDist < sqrDistanceToClosestFox)
+                    {
+                        sqrDistanceToClosestFox = foxDist;
+                        closestFox = fox;
+                    }
                     int sector = GetSector(foxOffset.normalized);
 
                     if (sectorFoxDistances[sector] == sqrAnimalViewRange)
@@ -115,6 +123,32 @@ namespace World
                 }
             }
         }
+
+        public override Vector3 GetDecision()
+        {
+            UseLocalViewSpace = false;
+
+            float distToGrass = float.MaxValue;
+            if (closestGrass != null)
+                distToGrass = (position - closestGrass.Position).magnitude;
+
+            float distToFox = float.MaxValue;
+            if (closestFox != null)
+                distToFox = (position - closestFox.Position).magnitude;
+
+            if(distToFox < distToGrass && closestFox)
+            {
+                Vector3 foxOffset = (closestFox.Position - position);
+                foxOffset.y = 0;
+                return -foxOffset.normalized;
+            }
+            if (closestGrass == null)
+                return new Vector3(0, 0, 0);
+            Vector3 grassOffset = (closestGrass.Position - position);
+            grassOffset.y = 0;
+            return grassOffset.normalized;
+        }
+
         protected override float[] CreateNetInputs()
         {
             netInputs[0] = Health;

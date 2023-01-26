@@ -14,11 +14,17 @@ namespace World
         public List<Animal> animalList;
         public List<Grass> grassList;
 
+        public Vector3 m_vScarePosition = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+
         private int rabbitCount = 0;
         private int foxCount = 0;
         private ConcurrentBag<Animal> deadAnimals;
         private ConcurrentBag<Tuple<GameObject, Vector3>> multiplyRabbitsQueue;
         private ConcurrentBag<Tuple<GameObject, Vector3>> multiplyFoxesQueue;
+
+        GameObject RabbitPrefab;
+        GameObject GrassPrefab;
+        GameObject FoxPrefab;
 
         public bool IsAlive { get => animalList.Count > 0; }
 
@@ -128,8 +134,13 @@ namespace World
             planeTransform.localScale = new Vector3(Size.x, 0.1f, Size.y);
         }
 
+        public void AddRabbit(Vector3 position)
+        {
+            AddRabbit(RabbitPrefab, position);
+        }
         public void AddRabbit(GameObject prefab, Vector3 position)
         {
+            RabbitPrefab = prefab;
             if (rabbitCount > Settings.Rabbit.maxAnimalsInScene)
                 return;
             rabbitCount++;
@@ -144,8 +155,14 @@ namespace World
             WorldEvents.Invoke(rabbitGO.GetComponent<Rabbit>(), HistoryEventType.BIRTH, position);
         }
 
+        public void AddGrass(Vector3 position)
+        {
+            AddGrass(GrassPrefab, position);
+        }
         public void AddGrass(GameObject prefab, Vector3 position)
         {
+            GrassPrefab = prefab;
+
             var grassGO = AddGameObject(prefab, position);
             grassGO.name = "Grass_" + grassList.Count;
             if (!Render) grassGO.GetComponent<Grass>().DisableModel();
@@ -153,8 +170,14 @@ namespace World
             WorldEvents.Invoke(grassGO.GetComponent<Grass>(), HistoryEventType.BIRTH, position);
         }
 
+        public void AddFox(Vector3 position)
+        {
+            AddFox(FoxPrefab, position);
+        }
         internal void AddFox(GameObject prefab, Vector3 position)
         {
+            FoxPrefab = prefab;
+
             if (foxCount > Settings.Fox.maxAnimalsInScene)
                 return;
             foxCount++;

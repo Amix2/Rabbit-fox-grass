@@ -43,6 +43,8 @@ namespace World
 
         public bool UpdateTurn()
         {
+            if (position.y > 0)
+                position.y = Mathf.Clamp(position.y - 0.01f, 0, 1000);
             Health += Settings.World.grassGrowthRate * Settings.World.simulationDeltaTime;
 
             if (Health > 1f) Health = 1f;
@@ -69,6 +71,7 @@ namespace World
 
         private void Update()
         {
+            transform.position = position;
             if (Settings.Player.renderOptions == RenderOptions.None || !healthChange) return;
             healthChange = false;
             modelTransform.localScale = new Vector3(health, health, health);

@@ -92,7 +92,7 @@ namespace World
             if (UseLocalViewSpace)
             {
                 Vector3 velChange = Forward * decision.x + Right * decision.z;
-                velocity += velChange * MaxVelocity/5;
+                velocity += velChange * MaxVelocity/500;
                 if (velocity.magnitude > MaxVelocity)
                     velocity = velocity.normalized * MaxVelocity;
             }
@@ -113,6 +113,8 @@ namespace World
             var newPosition = transform.localPosition + (velocity * 0.0002f);
             newPosition.x = Mathf.Clamp(newPosition.x, 0.5f, worldSize.x - 0.5f);
             newPosition.z = Mathf.Clamp(newPosition.z, 0.5f, worldSize.y - 0.5f);
+            if (newPosition.y > 0)
+                newPosition.y = Mathf.Clamp(newPosition.y - 0.01f, 0, 1000);
 
             var velDir = velocity.normalized;
 

@@ -91,11 +91,21 @@ namespace World
         public override Vector3 GetDecision() 
         {
             UseLocalViewSpace = false;
+
+            if(world.m_vScarePosition.x != float.MaxValue)
+            {
+
+                Vector3 runOffset = (world.m_vScarePosition - position);
+                runOffset.y = 0;
+                return -runOffset.normalized;
+            }
+
             if (closestRabbit == null)
                 return new Vector3(0,0,0);
 
             Vector3 rabbitPos = closestRabbit.Position;
             Vector3 rabbitOffset = (rabbitPos - position);
+            rabbitOffset.y = 0;
             return rabbitOffset.normalized;
         }
 

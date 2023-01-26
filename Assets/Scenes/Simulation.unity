@@ -635,6 +635,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 187292967}
   m_CullTransparentMesh: 0
+--- !u!1 &228184643 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 376103152133210332, guid: 11cd62256b1d470f922b2c8e6446cc77,
+    type: 3}
+  m_PrefabInstance: {fileID: 515024867}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &257427310
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,6 +650,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 257427311}
+  - component: {fileID: 257427312}
   m_Layer: 0
   m_Name: XRMain
   m_TagString: Untagged
@@ -668,6 +675,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &257427312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257427310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edbd261e31ac14d4db1dd68de563ab4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  primaryButtonPress:
+    m_PersistentCalls:
+      m_Calls: []
+  LeftController: {fileID: 1173833976}
+  RightController: {fileID: 279853303}
+  Headset: {fileID: 979049831}
+  WorldCreatorGO: {fileID: 758577817}
+  RightControllerModelGO: {fileID: 228184643}
+  FireEffectGO: {fileID: 1725317912486240, guid: e55149ba6f4d00741984987e258c3378,
+    type: 3}
 --- !u!1 &279853302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1031,7 +1060,7 @@ MonoBehaviour:
   m_HapticHoverCancelIntensity: 0
   m_HapticHoverCancelDuration: 0
   m_AllowHoverHapticsWhileSelecting: 1
-  m_LineType: 0
+  m_LineType: 1
   m_BlendVisualLinePoints: 1
   m_MaxRaycastDistance: 30
   m_RayOriginTransform: {fileID: 0}
@@ -1797,6 +1826,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2481965458419996829, guid: 11cd62256b1d470f922b2c8e6446cc77,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1f680dd25d60d4241aa3afc62a3f82de, type: 2}
     - target: {fileID: 919132149155446097, guid: 11cd62256b1d470f922b2c8e6446cc77,
         type: 3}
       propertyPath: m_Name
@@ -1980,6 +2014,7 @@ MonoBehaviour:
       type: 3}
   rabbitFitnessFunction: 1
   foxFitnessFunction: 0
+  worlds: []
 --- !u!4 &758577819
 Transform:
   m_ObjectHideFlags: 0
@@ -2901,10 +2936,10 @@ MonoBehaviour:
     - rabbit
     - fox
     foodInGrass: 1
-    grassGrowthRate: 0.05
+    grassGrowthRate: 0.002
     collectHistory: 0
     simulationDeltaTime: 0
-    maxAnimalLifetime: 300
+    maxAnimalLifetime: 30000
     multipliedAnimalSpawnRadius: 1
     worldDefinitionFile: {fileID: 4900000, guid: 146264d63cdde944f972ba0be80cd7ff,
       type: 3}
@@ -2913,7 +2948,7 @@ MonoBehaviour:
     brainParams: 1000000010000000
     foodInRabbits: 1
     rabbitEatingDistance: 1
-    rabbitMaxVelocity: 20
+    rabbitMaxVelocity: 1.5
     rabbitHungerRate: 0.001
     rabbitEatingSpeed: 1
     rabbitMultiplicationChance: 1
@@ -2922,7 +2957,7 @@ MonoBehaviour:
   foxSettings:
     brainParams: 0100000001000000
     foxEatingDistance: 1
-    foxMaxVelocity: 4.5
+    foxMaxVelocity: 1.5
     foxHungerRate: 0.0008
     foxEatingSpeed: 0.8
     foxMultiplicationChance: 1
@@ -4282,6 +4317,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2481965458419996829, guid: be3083a5f26d4e859d594ecbe632f87e,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1f680dd25d60d4241aa3afc62a3f82de, type: 2}
     - target: {fileID: 919132149155446097, guid: be3083a5f26d4e859d594ecbe632f87e,
         type: 3}
       propertyPath: m_Name

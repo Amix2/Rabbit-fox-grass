@@ -24,7 +24,7 @@ namespace World
 
         private List<WorldBuilder> worldOptions;
         private List<GameObject> worldGameObjects;
-        private List<World> worlds;
+        public List<World> worlds;
 
         private Vector2Int size;
         private float gapBetweenWorlds;
@@ -35,6 +35,8 @@ namespace World
         private MultiListIterator<Grass> grassIterator;
 
         private int iterationNumber = 0;
+
+
 
         private bool UpdateBehaviourAllWorlds()
         {
